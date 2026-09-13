@@ -1,5 +1,10 @@
 # 20260914064818 / 公開導入ガイド更新 / Public setup guide update
 
+## 20260914065948
+
+- Pair README and release-note sentences as English / Japanese, preserving setup and runtime behavior. / READMEとリリース説明を文ごとの英語 / 日本語へ修正し、導入内容と実行機能を維持。
+
+
 - 読者向けサムネイル、英日README・Release、GitHub公開リンク。
 - Reader-focused thumbnail, bilingual README/Release, GitHub distribution links.
 - Runtime and workflow execution unchanged / 実行コード・ワークフロー接続は維持。

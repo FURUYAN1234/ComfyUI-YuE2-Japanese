@@ -98,7 +98,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -153,7 +153,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -239,9 +239,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914064818)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914065948)
 
-配布版：`20260914064818`、タグ：`yue2-20260914064818`。Releaseの `YuE2_Japanese_LMStudio_20260914064818.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`20260914065948`、タグ：`yue2-20260914065948`。Releaseの `YuE2_Japanese_LMStudio_20260914065948.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -249,7 +249,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch yue2-20260914064818 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch yue2-20260914065948 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 
