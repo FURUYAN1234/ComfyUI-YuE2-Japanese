@@ -70,7 +70,7 @@
 </code></pre>
 <p>案内に従って再起動とUbuntuのユーザー作成を済ませます。以降、Linux用コマンドは<strong>Ubuntuのターミナル</strong>で実行します。WindowsのPowerShellへLinuxのコマンドをそのまま貼り付けないでください。</p>
 <pre><code class="language-bash">sudo apt update
-sudo apt install -y git python3.12-venv libsndfile1 unzip
+sudo apt install -y git python3.12-venv libsndfile1 unzip build-essential
 nvidia-smi
 </code></pre>
 <p>GPU名が表示されることを確認します。WSL内へ別のLinux用GPUドライバーを重ねて入れる手順ではありません。GPUが見えない状態なら、先にWindows側ドライバーとWSLの状態を確認してください。</p>
@@ -84,17 +84,19 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python main.py --listen 127.0.0.1 --port 8188
 </code></pre>
-<p>Windowsのブラウザーで <code>http://127.0.0.1:8188</code> を開きます。既存ComfyUIでは普段の起動方法を維持してください。YuE2用ライブラリは次の独立venvへ入るため、ComfyUI本体のrequirementsへYuE2を追加する必要はありません。</p>
+<p>Windowsのブラウザーで <code>http://127.0.0.1:8188</code> を開きます。新規導入の確認ができたら、起動したターミナルで <code>Ctrl+C</code> を押して一度停止し、次の導入へ進みます。既存ComfyUIでは普段の起動方法を維持してください。YuE2用ライブラリは次の独立venvへ入るため、ComfyUI本体のrequirementsへYuE2を追加する必要はありません。</p>
 <h2>3. 配布ZIPを展開し、YuE2を導入</h2>
 <p>ZIPはUbuntuから使える作業フォルダーへ展開します。例：<code>~/Codex/packages/</code> 配下。ZIP名は受け取った実ファイル名を指定します。</p>
 <pre><code class="language-bash">mkdir -p ~/Codex/packages
 unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip -d ~/Codex/packages
 </code></pre>
 <p>展開されたフォルダーへ移動します。<code>README.md</code> と <code>install.py</code> が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。</p>
-<pre><code class="language-bash">python3 verify_package.py
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
+python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 </code></pre>
 <p>インストーラーは公式YuE2ソースを固定コミットで取得し、<code>~/Codex/work/yue2/.venv</code> にPyTorchとYuE2を入れます。既存の異なるYuE2ソースへ勝手に上書きせず停止します。その場合は <code>--runtime ~/Codex/work/yue2-music</code> のように別フォルダーを指定できます。</p>
+<p>配布ZIPを別の場所へ展開した場合は、上記の <code>cd</code> のパスを読み替えてください。<code>--runtime</code> を変更した場合は、以降の専用環境のパスもその指定先へ読み替えます。</p>
 <p>配置結果：</p>
 <pre><code class="language-text">~/Codex/work/yue2/
   .venv/                  YuE2専用Python
@@ -112,8 +114,7 @@ python3 install.py --comfyui ~/ComfyUI
 <h2>4. LM Studioと作詞モデルを準備</h2>
 <p>Windowsに<a href="https://lmstudio.ai/download">LM Studio</a>をインストールして起動します。ワークフロー左の「Qwen3.5 9Bを開く」から<a href="https://lmstudio.ai/models/qwen/qwen3.5-9b">モデルページ</a>へ進み、LM Studioで <strong>Qwen3.5 9BのQ4_K_M</strong> をダウンロードしてください。作詞側モデルはComfyUIのmodelsフォルダーへ入れません。</p>
 <p>UbuntuからWindows側CLIが見えることを確認します。</p>
-<pre><code class="language-bash">cd ~/Codex/work/yue2
-python3 -c &quot;import planner; print(planner.cli('ls'))&quot;
+<pre><code class="language-bash">(cd ~/Codex/work/yue2 &amp;&amp; python3 -c &quot;import planner; print(planner.cli('ls'))&quot;)
 </code></pre>
 <p>通常インストールのLM Studio CLIはWindowsのLocalAppDataから自動検出します。独自配置で見つからない場合のみ、ComfyUIを起動するUbuntuシェルで <code>YUE2_LMS_CLI</code> に実在する <code>lms.exe</code> のWSL形式パスを設定します。</p>
 <pre><code class="language-bash">export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
@@ -123,7 +124,8 @@ python3 -c &quot;import planner; print(planner.cli('ls'))&quot;
 <h2>5. ワークフローからモデルを取得</h2>
 <p>左側のワークフロー一覧で <code>03_音声 → 17_音楽_YuE2</code> を開きます。②のモデル選択欄と <code>properties.models</code> に、公式の固定リビジョンの取得先を設定しています。不足モデルの案内から取得先を開ける、ComfyUIで一般的な形式です。</p>
 <p><strong>重み2ファイルだけでは動きません。</strong> 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。<strong>②の「必須モデル一式を取得 / Download models」ボタン</strong>なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の <code>.part</code> は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。</p>
-<pre><code class="language-bash">python3 download_models.py --comfyui ~/ComfyUI
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
+python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 </code></pre>
 <p>必須配置：</p>

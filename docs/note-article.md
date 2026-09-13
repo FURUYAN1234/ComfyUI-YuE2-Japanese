@@ -64,7 +64,7 @@ wsl --install -d Ubuntu-24.04
 
 ```bash
 sudo apt update
-sudo apt install -y git python3.12-venv libsndfile1 unzip
+sudo apt install -y git python3.12-venv libsndfile1 unzip build-essential
 nvidia-smi
 ```
 
@@ -84,7 +84,7 @@ python3.12 -m venv .venv
 .venv/bin/python main.py --listen 127.0.0.1 --port 8188
 ```
 
-Windowsのブラウザーで `http://127.0.0.1:8188` を開きます。既存ComfyUIでは普段の起動方法を維持してください。YuE2用ライブラリは次の独立venvへ入るため、ComfyUI本体のrequirementsへYuE2を追加する必要はありません。
+Windowsのブラウザーで `http://127.0.0.1:8188` を開きます。新規導入の確認ができたら、起動したターミナルで `Ctrl+C` を押して一度停止し、次の導入へ進みます。既存ComfyUIでは普段の起動方法を維持してください。YuE2用ライブラリは次の独立venvへ入るため、ComfyUI本体のrequirementsへYuE2を追加する必要はありません。
 
 ## 3. 配布ZIPを展開し、YuE2を導入
 
@@ -98,11 +98,14 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
 
 インストーラーは公式YuE2ソースを固定コミットで取得し、`~/Codex/work/yue2/.venv` にPyTorchとYuE2を入れます。既存の異なるYuE2ソースへ勝手に上書きせず停止します。その場合は `--runtime ~/Codex/work/yue2-music` のように別フォルダーを指定できます。
+
+配布ZIPを別の場所へ展開した場合は、上記の `cd` のパスを読み替えてください。`--runtime` を変更した場合は、以降の専用環境のパスもその指定先へ読み替えます。
 
 配置結果：
 
@@ -130,8 +133,7 @@ Windowsに[LM Studio](https://lmstudio.ai/download)をインストールして�
 UbuntuからWindows側CLIが見えることを確認します。
 
 ```bash
-cd ~/Codex/work/yue2
-python3 -c "import planner; print(planner.cli('ls'))"
+(cd ~/Codex/work/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
 ```
 
 通常インストールのLM Studio CLIはWindowsのLocalAppDataから自動検出します。独自配置で見つからない場合のみ、ComfyUIを起動するUbuntuシェルで `YUE2_LMS_CLI` に実在する `lms.exe` のWSL形式パスを設定します。
@@ -151,6 +153,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```

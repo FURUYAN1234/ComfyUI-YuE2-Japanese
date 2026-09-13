@@ -26,5 +26,6 @@
   ],
   "package_verifier_tests": "normal + modified/missing/extra all passed",
   "live_download_endpoint_negative": "foreign Origin returns HTTP403 before download",
-  "version": "20260913234404"
+  "version": "20260913234820",
+  "workflow_reload": "Saved view, seeds, model selection and button verified after reload"
 }
