@@ -8,7 +8,7 @@
 
 ![実生成したワークフロー・提供画像](docs/assets/workflow-user-provided.png)
 
-上の画像は提供された元画像をそのまま掲載しています。39.6秒の曲を生成した時点の画面です。配布JSONには時間の目標設定とモデル選択欄を追加しています。現在の配置は [補足画像](docs/assets/workflow-current.jpg) を参照してください。
+上の画像は提供された元画像をそのまま掲載しています。39.6秒の曲を生成した時点の画面です。配布JSONには時間の目標設定とモデル選択欄を追加しています。現在の配置は [補足画像](docs/assets/workflow-current.png) を参照してください。
 
 ## 配布物と、別途必要なもの
 
@@ -82,7 +82,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -137,7 +137,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260913234820
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -241,3 +241,30 @@ python3 build_package.py --output /保存先フォルダー
 - [YuE2-3B](https://huggingface.co/m-a-p/YuE2-3B) / [YuE2-Vae](https://huggingface.co/m-a-p/YuE2-Vae)
 - [LM StudioのQwen3.5 9Bページ](https://lmstudio.ai/models/qwen/qwen3.5-9b)
 - [導入検討時の参考記事](https://note.com/humble_bobcat51/n/n977c99a109eb)
+
+
+## 歌詞・曲情報と完了表示
+
+④は「✅ 曲の生成が完了 / Completed」を先頭に、曲名、実際の長さ、目標時間、時間設定、曲生成・保存の所要時間、改行付き歌詞、曲調・声・楽器、保存先を表示します。表示を読みやすくする変更で、後続ノードへ渡す生成記録JSONは維持します。曲生成時間にはLM Studioでの作詞時間を含みません。
+
+既存利用者は最新版ZIPを展開して整合性を確認し、`python3 install.py --comfyui ~/ComfyUI` を実行後、ComfyUIを再起動してブラウザーを再読込してください。編集中の指示は先に保存し、インストーラーが作るバックアップも保持してください。
+
+
+更新後の通常ワークフローも実機で再確認：従来4行の日本語入力から59.9587秒の曲を生成。全工程171.848秒（作詞・ロード・保存を含む、キャッシュ省略なし）。曲生成から保存まで68.72秒。実ブラウザーで改行付き歌詞・曲情報・完了表示を確認。既存の同一条件をキャッシュで再表示する経路も確認。
+
+公開記事・試聴例：https://note.com/happy_duck780/n/n57df44cf7fd2
+
+
+掲載サンプル「傘下のコンビニエンス」（39.6秒）の生成歌詞：
+
+```text
+[Verse]
+雨の音がリズムを刻む
+温かいおにぎりが待つ
+
+[Chorus]
+少し切ないけど笑顔で
+明るい灯りに照らされて
+```
+
+歌唱の書き起こしではなく、生成時に指定した歌詞です。試聴音声はnoteに掲載し、配布ZIPには同梱しません。

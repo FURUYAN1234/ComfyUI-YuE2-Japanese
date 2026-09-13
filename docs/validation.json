@@ -27,5 +27,24 @@
   "package_verifier_tests": "normal + modified/missing/extra all passed",
   "live_download_endpoint_negative": "foreign Origin returns HTTP403 before download",
   "version": "20260913234820",
-  "workflow_reload": "Saved view, seeds, model selection and button verified after reload"
+  "workflow_reload": "Saved view, seeds, model selection and button verified after reload",
+  "lyrics_display_update": {
+    "version": "20260914045244",
+    "prompt_id": "b164c956-0e9c-4e5a-8193-87e9704d3d96",
+    "status": "success",
+    "audio_seconds": 59.9586666667,
+    "end_to_end_seconds": 171.848,
+    "song_generation_seconds": 68.72,
+    "cached_nodes": [],
+    "cached_replay_id": "0089dfa0-e8ae-452d-9ee2-b31507ba41d6",
+    "cached_replay_nodes": [
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "browser": "Live complete and cached replay show readable lyrics and metadata; original output JSON retained",
+    "tests": "Python 5 tests and JavaScript normal/malformed/unrelated cases passed",
+    "limitations": "No subjective listening-quality approval; duration targets remain approximate"
+  }
 }

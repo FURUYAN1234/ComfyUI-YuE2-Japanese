@@ -20,7 +20,7 @@ Japanese brief → lyrics/style → vocals/music → listen.
 ①に「雨の日の帰り道、切ないけど明るい曲」などを入力して実行。
 **duration_mode**：従来の歌詞量／30秒／60秒／120秒／数値指定。
 **target_seconds**：数値指定時の目標（10～240秒）。秒数モードが本文より優先。
-従来モードは **length** の4行／16行を使用。秒数の精度は低く、30秒指定で62.1秒の実測あり。曲は機械的に切りません。実際の長さは④に表示 / Target is approximate; no automatic trimming.
+従来モードは **length** の4行／16行を使用。秒数の精度は低く、30秒指定で62.1秒の実測あり。曲は機械的に切りません。④に「✅曲の生成が完了」、曲名・長さ・歌詞・曲調・保存先を表示。実際の長さは④に表示 / Target is approximate; no automatic trimming.
 ①②の **seed**：変更すると別の候補。固定すると同じ条件 / Seed controls variations.
 
 ## GPUと保存 / Processing & output
