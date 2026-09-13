@@ -1,11 +1,11 @@
-<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>日本語おまかせ作曲 — note原稿プレビュー</title><style>body{font-family:system-ui,"Yu Gothic",sans-serif;line-height:1.85;color:#26312b;background:#f4f5f2;margin:0}main{max-width:940px;padding:48px;margin:auto;background:white}h1{font-size:2.1em;line-height:1.4}h2{margin-top:2.5em;border-bottom:2px solid #9ec16e;padding-bottom:.4em}img{max-width:100%;height:auto;border-radius:8px}pre{background:#19211d;color:#edf4e6;padding:20px;overflow:auto;border-radius:8px;font-size:.9em}code{font-family:monospace}table{border-collapse:collapse;width:100%;font-size:.95em}th,td{padding:12px;border:1px solid #d7dfd3;text-align:left}th{background:#edf4e6}a{color:#326b32}blockquote{border-left:5px solid #9ec16e;padding:4px 18px;background:#f4f7ef}@media(max-width:650px){main{padding:20px}h1{font-size:1.65em}table{display:block;overflow:auto}}</style><main><h1>日本語でざっくり頼んで、RTX 5080で歌を作る。LM Studio × YuE2のComfyUIワークフロー</h1>
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>日本語おまかせ作曲 導入ガイド</title><main><h1>日本語でおまかせ作曲。LM Studio × YuE2のComfyUI導入ガイド</h1>
 <p><img src="assets/note-thumbnail.png" alt="日本語でおまかせ作曲" /></p>
 <p>画像のワークフローと同じように、「こんな感じの曲がほしい」と日本語で書いて、あとはローカルのAIに任せたい。今回は、その入口をComfyUIに用意しました。</p>
 <p>入力するのは、たとえばこんな一言です。</p>
 <blockquote>
 <p>雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。</p>
 </blockquote>
-<p>LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌と伴奏を生成します。作詞モデルをGPUから解放してから曲生成へ進むので、同じRTX 5080を順番に使います。</p>
+<p>LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌と伴奏を生成します。作詞モデルをGPUから解放してから曲生成へ進むので、同じGPUを順番に使います。</p>
 <p>試した環境では、4行の日本語歌詞から39.6秒の曲ができました。ComfyUIの実行開始から保存完了までは166.2秒。モデルの読み込みも含む時間です。ただし日本語の発音や歌詞の再現には確認が必要で、今回の結果を「毎回そのまま完成曲として使える」とは扱っていません。</p>
 <p><img src="assets/workflow-user-provided.png" alt="実生成した画面" /></p>
 <p>この画像は実生成時の提供スクリーンショットです。現在の配布版では、時間の目標設定とモデル取得ボタンを追加しています。更新後の配置はこちらです。</p>
@@ -75,7 +75,7 @@ nvidia-smi
 </code></pre>
 <p>GPU名が表示されることを確認します。WSL内へ別のLinux用GPUドライバーを重ねて入れる手順ではありません。GPUが見えない状態なら、先にWindows側ドライバーとWSLの状態を確認してください。</p>
 <h2>2. WSL内にComfyUIを準備</h2>
-<p>既存環境があれば、その実際のフォルダーを以降の <code>--comfyui</code> に指定します。新規導入は<a href="https://docs.comfy.org/installation/manual_install">ComfyUI公式手順</a>を参照してください。RTX 5080向けの作成例は以下です。<code>~/ComfyUI</code> が既に存在する場合、この新規作成例を重ねて実行しません。</p>
+<p>既存環境があれば、その実際のフォルダーを以降の <code>--comfyui</code> に指定します。新規導入は<a href="https://docs.comfy.org/installation/manual_install">ComfyUI公式手順</a>を参照してください。以下はCUDA 12.8版PyTorchを使う新規作成例です。GPUとドライバーの対応はComfyUI公式手順でも確認してください。<code>~/ComfyUI</code> が既に存在する場合、この新規作成例を重ねて実行しません。</p>
 <pre><code class="language-bash">cd ~
 git clone https://github.com/Comfy-Org/ComfyUI.git
 cd ~/ComfyUI
@@ -91,7 +91,7 @@ python3.12 -m venv .venv
 unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip -d ~/Codex/packages
 </code></pre>
 <p>展開されたフォルダーへ移動します。<code>README.md</code> と <code>install.py</code> が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。</p>
-<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 </code></pre>
@@ -124,7 +124,7 @@ python3 install.py --comfyui ~/ComfyUI
 <h2>5. ワークフローからモデルを取得</h2>
 <p>左側のワークフロー一覧で <code>03_音声 → 17_音楽_YuE2</code> を開きます。②のモデル選択欄と <code>properties.models</code> に、公式の固定リビジョンの取得先を設定しています。不足モデルの案内から取得先を開ける、ComfyUIで一般的な形式です。</p>
 <p><strong>重み2ファイルだけでは動きません。</strong> 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。<strong>②の「必須モデル一式を取得 / Download models」ボタン</strong>なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の <code>.part</code> は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。</p>
-<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 </code></pre>
@@ -273,8 +273,13 @@ python3 download_models.py --comfyui ~/ComfyUI --check-only
 </tbody>
 </table>
 <h2>バージョン管理と再構築</h2>
-<p>配布識別子は <code>VERSION</code>、変更点は <code>CHANGELOG.md</code> に記載しています。ソースはGitで管理し、改行変換を止める <code>.gitattributes</code> を設定しています。公開リポジトリを作成したことを意味するものではありません。</p>
+<p><a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese">GitHubソース</a> / <a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527">この版のRelease</a></p>
+<p>配布版：<code>20260914063527</code>、タグ：<code>yue2-20260914063527</code>。Releaseの <code>YuE2_Japanese_LMStudio_20260914063527.zip</code> を使用してください。GitHub自動生成のSource code ZIPとは別です。</p>
+<p>配布識別子は <code>VERSION</code>、変更点は <code>CHANGELOG.md</code> に記載しています。ソースはGitで管理し、改行変換を止める <code>.gitattributes</code> を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。</p>
 <p>タグ付きソースからの構築：</p>
+<pre><code class="language-bash">git clone --branch yue2-20260914063527 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+cd ComfyUI-YuE2-Japanese
+</code></pre>
 <pre><code class="language-bash">python3 build_package.py --output /保存先フォルダー
 </code></pre>
 <p>生成ZIPを新規フォルダーへ展開し、その中で <code>python3 verify_package.py</code> を実行します。SHA256一覧はマニフェスト自身以外の全ファイルを対象とし、余分なファイルもエラーにします。確認後にPythonを実行すると <code>__pycache__</code> ができる場合があるため、配布原本の確認は導入前に行ってください。</p>
@@ -286,4 +291,19 @@ python3 download_models.py --comfyui ~/ComfyUI --check-only
 <li><a href="https://lmstudio.ai/models/qwen/qwen3.5-9b">LM StudioのQwen3.5 9Bページ</a></li>
 <li><a href="https://note.com/humble_bobcat51/n/n977c99a109eb">導入検討時の参考記事</a></li>
 </ul>
-<h2>歌詞・曲情報と完了表示</h2><p>④は「✅ 曲の生成が完了 / Completed」を先頭に、曲名、実際の長さ、目標時間、時間設定、曲生成・保存の所要時間、改行付き歌詞、曲調・声・楽器、保存先を表示します。表示を読みやすくする変更で、後続ノードへ渡す生成記録JSONは維持します。曲生成時間にはLM Studioでの作詞時間を含みません。</p></main></html>
+<h2>歌詞・曲情報と完了表示</h2>
+<p>④は「✅ 曲の生成が完了 / Completed」を先頭に、曲名、実際の長さ、目標時間、時間設定、曲生成・保存の所要時間、改行付き歌詞、曲調・声・楽器、保存先を表示します。表示を読みやすくする変更で、後続ノードへ渡す生成記録JSONは維持します。曲生成時間にはLM Studioでの作詞時間を含みません。</p>
+<p>既存利用者は最新版ZIPを展開して整合性を確認し、<code>python3 install.py --comfyui ~/ComfyUI</code> を実行後、ComfyUIを再起動してブラウザーを再読込してください。編集中の指示は先に保存し、インストーラーが作るバックアップも保持してください。</p>
+<p>更新後の通常ワークフローも実機で再確認：従来4行の日本語入力から59.9587秒の曲を生成。全工程171.848秒（作詞・ロード・保存を含む、キャッシュ省略なし）。曲生成から保存まで68.72秒。実ブラウザーで改行付き歌詞・曲情報・完了表示を確認。既存の同一条件をキャッシュで再表示する経路も確認。</p>
+<p>公開記事・試聴例：https://note.com/happy_duck780/n/n57df44cf7fd2</p>
+<p>掲載サンプル「傘下のコンビニエンス」（39.6秒）の生成歌詞：</p>
+<pre><code class="language-text">[Verse]
+雨の音がリズムを刻む
+温かいおにぎりが待つ
+
+[Chorus]
+少し切ないけど笑顔で
+明るい灯りに照らされて
+</code></pre>
+<p>歌唱の書き起こしではなく、生成時に指定した歌詞です。試聴音声はnoteに掲載し、配布ZIPには同梱しません。</p>
+</main></html>

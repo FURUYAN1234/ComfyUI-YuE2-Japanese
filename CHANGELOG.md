@@ -1,3 +1,9 @@
+# 20260914063527 / 公開導入ガイド更新 / Public setup guide update
+
+- 読者向けサムネイル、英日README・Release、GitHub公開リンク。
+- Reader-focused thumbnail, bilingual README/Release, GitHub distribution links.
+- Runtime and workflow execution unchanged / 実行コード・ワークフロー接続は維持。
+
 # 20260914045244
 
 - 歌詞を改行付きで読みやすく表示。曲情報と生成完了表示を追加。

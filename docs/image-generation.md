@@ -1,7 +1,5 @@
-# サムネイル生成記録
+# サムネイル生成 / Thumbnail generation
 
-内蔵imagegen、generate（新規生成）。参考画像の編集ではありません。生成画像は未加工で採用しました。
+内蔵imagegenで既存サムネイルを編集。背景、マイク、ヘッドホン、波形と主見出しを保ち、中央の文言を「日本語入力から歌詞・歌・伴奏へ」に変更。特定GPU名を訴求に使わない読者向け画像です。
 
-生成指示の要点：noteの記事用の横長約1.91:1。ダークチャコール背景、明るいライム色の音の波形、日本語の吹き出しからマイクとヘッドホンへつながる構図。温かいスタジオ感。人や実在ロゴ、架空のUIを入れない。大きく正確な文字「日本語でおまかせ作曲」「LM Studio × YuE2」「RTX 5080でローカル生成」。スマートフォンでも主題が分かる余白と文字サイズ。
-
-提供スクリーンショットは別ファイル `workflow-user-provided.png` としてそのまま保存し、READMEとnote本文に掲載しています。
+Edited the existing thumbnail with built-in imagegen. Preserved the studio scene, microphone, headphones, waveform and main headline. Replaced the central caption with “日本語入力から歌詞・歌・伴奏へ” (From Japanese input to lyrics, vocals and accompaniment). No specific GPU is promoted. The user-provided workflow screenshot is preserved separately.

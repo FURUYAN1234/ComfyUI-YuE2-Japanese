@@ -1,4 +1,8 @@
-# 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
+# 日本語おまかせ作曲 / Japanese Song Creation — LM Studio × YuE2 / ComfyUI
+
+[日本語](#配布物と別途必要なもの) | [English setup guide](#english-setup-guide)
+
+[Download / ダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527)
 
 ![日本語おまかせ作曲](docs/assets/note-thumbnail.png)
 
@@ -56,7 +60,7 @@ GPU名が表示されることを確認します。WSL内へ別のLinux用GPUド
 
 ## 2. WSL内にComfyUIを準備
 
-既存環境があれば、その実際のフォルダーを以降の `--comfyui` に指定します。新規導入は[ComfyUI公式手順](https://docs.comfy.org/installation/manual_install)を参照してください。RTX 5080向けの作成例は以下です。`~/ComfyUI` が既に存在する場合、この新規作成例を重ねて実行しません。
+既存環境があれば、その実際のフォルダーを以降の `--comfyui` に指定します。新規導入は[ComfyUI公式手順](https://docs.comfy.org/installation/manual_install)を参照してください。以下はCUDA 12.8版PyTorchを使う新規作成例です。GPUとドライバーの対応はComfyUI公式手順でも確認してください。`~/ComfyUI` が既に存在する場合、この新規作成例を重ねて実行しません。
 
 ```bash
 cd ~
@@ -82,7 +86,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -137,7 +141,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914045244
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -223,9 +227,19 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。公開リポジトリを作成したことを意味するものではありません。
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527)
+
+配布版：`20260914063527`、タグ：`yue2-20260914063527`。Releaseの `YuE2_Japanese_LMStudio_20260914063527.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+
+
+配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
 
 タグ付きソースからの構築：
+
+```bash
+git clone --branch yue2-20260914063527 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+cd ComfyUI-YuE2-Japanese
+```
 
 ```bash
 python3 build_package.py --output /保存先フォルダー
@@ -268,3 +282,115 @@ python3 build_package.py --output /保存先フォルダー
 ```
 
 歌唱の書き起こしではなく、生成時に指定した歌詞です。試聴音声はnoteに掲載し、配布ZIPには同梱しません。
+
+## English setup guide
+
+Describe the song you want in Japanese. LM Studio creates Japanese lyrics and an English style prompt; YuE2 generates vocals and accompaniment. The LLM is unloaded before music generation so they use the GPU sequentially. This integration targets **YuE2-3B, not legacy YuE v1**.
+
+### Download and prerequisites
+
+Download the named `YuE2_Japanese_LMStudio_20260914063527.zip` asset from the Release linked above, and extract the entire ZIP. The workflow JSON alone is insufficient. The ZIP contains the workflow, custom nodes, installer, isolated runtime scripts, model manifest/downloader, integrity checker, documentation and licenses. It does not include weights, LM Studio, ComfyUI, generated songs or credentials. No paid external API key is required; initial software/model downloads need internet access.
+
+Use Windows with NVIDIA drivers, WSL2 Ubuntu, ComfyUI inside WSL and LM Studio on Windows. Keep tens of GB of disk space free for models, environments and downloads. The tested GPU is listed in the Japanese validation section: it is a measurement condition, not a universal minimum specification. Other GPUs and all song lengths have not been tested.
+
+### 1. Prepare WSL and ComfyUI
+
+If WSL ComfyUI already works, keep it and use its real folder in `--comfyui`; do not replace its Python/Torch just to match this guide. For a fresh setup, install the Windows NVIDIA driver and follow Microsoft's WSL instructions linked above. In administrator PowerShell:
+
+```powershell
+wsl --install -d Ubuntu-24.04
+```
+
+Restart/create the Linux user as prompted. Run subsequent Linux commands in the **Ubuntu terminal**, not PowerShell:
+
+```bash
+sudo apt update
+sudo apt install -y git python3.12-venv libsndfile1 unzip build-essential
+nvidia-smi
+```
+
+Confirm the GPU is visible. Do not install another Linux GPU display driver inside WSL. For a new ComfyUI installation only, follow the official ComfyUI guide linked above; the Japanese section includes a complete CUDA 12.8/PyTorch 2.10.0 command example. Check that your GPU/driver is supported. Open `http://127.0.0.1:8188` from Windows. After verifying a fresh installation, stop that terminal with Ctrl+C before installing these nodes.
+
+### 2. Install the complete package
+
+Save unsaved workflows and let the ComfyUI queue finish. Replace the Windows username and downloaded ZIP filename in this example:
+
+```bash
+mkdir -p ~/Codex/packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_20260914063527.zip -d ~/Codex/packages
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+python3 verify_package.py
+python3 install.py --comfyui ~/ComfyUI
+```
+
+The installer checks out a pinned official YuE2 commit and installs its dependencies into `~/Codex/work/yue2/.venv`, separate from ComfyUI. It installs nodes into `custom_nodes/comfyui-yue2-local`, and the workflow into `user/default/workflows/03_音声/17_音楽_YuE2`. Runtime paths are recorded in the generated `local_config.json`. Avoid an extra nested custom-node folder.
+
+If an incompatible existing YuE2 source is detected, use a separate `--runtime ~/Codex/work/yue2-music` directory; adapt later paths accordingly. Restart ComfyUI and reload the browser after installation. Preserve existing workflow backups when upgrading.
+
+### 3. Prepare LM Studio
+
+Install and launch LM Studio on Windows. Download **Qwen3.5 9B Q4_K_M** through the LM Studio model page linked above. The workflow guide also links to it. This LLM belongs in LM Studio, not ComfyUI's models folder.
+
+```bash
+(cd ~/Codex/work/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
+```
+
+The Windows CLI is discovered from LocalAppData. Only for a nonstandard installation, set `YUE2_LMS_CLI` to the actual WSL path of `lms.exe` in the shell that launches ComfyUI. Keep LM Studio open. The runtime loads a dedicated `yue2-planner` model with maximum GPU offload/context 4096, then unloads that model after planning. Other manually loaded large models can cause VRAM exhaustion.
+
+The current runtime connects to the Windows host via WSL's default gateway on port 1234 and starts the API through the CLI if necessary. Internet-facing port exposure is unnecessary. Mirrored networking, custom ports and authentication-required API configurations have not been validated. Inspect LM Studio's Developer screen and Windows firewall if connection fails.
+
+### 4. Download music models from the workflow
+
+Open `03_音声 → 17_音楽_YuE2` in the ComfyUI workflow browser. On node ②, click **必須モデル一式を取得 / Download models**. It fetches all 13 pinned files, verifies size and SHA256, and saves them under `ComfyUI/models/yue2/YuE2-3B/` and `YuE2-Vae/`. This includes configuration, tokenizer and licenses, not just the two weight files. Progress/errors appear on the button. Incomplete `.part` files are never treated as completed weights.
+
+The standard missing-model dialog also has download URLs, but depending on ComfyUI/browser version these may save to Downloads without placing files inside WSL. Prefer the integrated button or this equivalent command:
+
+```bash
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+python3 download_models.py --comfyui ~/ComfyUI
+python3 download_models.py --comfyui ~/ComfyUI --check-only
+```
+
+Valid existing files are reused. Mismatched files produce an error rather than being overwritten. Refresh model lists/restart ComfyUI and select the two model.safetensors entries in node ②.
+
+### 5. Generate, read lyrics and listen
+
+Enter a casual Japanese brief in node ① and run the workflow. Example: `雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。` This requests a bittersweet but cheerful song about going to a convenience store in the rain, with a female voice and automatic lyrics.
+
+The sequence is planning → LLM unload → YuE2 generation → audio preview. Node ④ shows **✅ 曲の生成が完了 / Completed**, title, actual duration, target, duration mode, generation/save time, multiline lyrics, style/voice/instruments and saved folder. The generation/save time excludes LM Studio planning. The original JSON output remains usable downstream.
+
+| Control | Meaning |
+|---|---|
+| brief | Japanese mood, scene, genre or voice request |
+| length | Legacy lyric amount: short 4 lines or normal 16 lines |
+| duration_mode | Legacy length, approximate 30/60/120 seconds, or numeric target |
+| target_seconds | Integer 10–240, used only in the numeric-target mode |
+| planner seed | Change the lyric/style candidate |
+| song seed | Change the music candidate for the same plan |
+| model / vae | Downloaded YuE2-3B and YuE2-Vae weights |
+
+A duration request in Japanese prose is an LLM instruction, not a separately parsed numeric constraint. Node duration controls take precedence. **Duration is approximate and currently inaccurate**: one 30-second target produced 62.1 seconds. The integration adjusts lyric amount/style; it does not trim a song to force an exact length. 60/120-second runs and the numeric maximum are untested. Listen and edit afterward when exact duration matters.
+
+### Output and troubleshooting
+
+Songs are saved to `ComfyUI/output/audio/YuE2/DATETIME_ID/`: `audio.flac`, `song_plan.json`, `score.abc` and `result.json`. Runtime `jobs/` logs contain prompts; do not publish personal logs. The note article linked below includes an actual 39.6-second listening sample and its supplied lyrics; sung words may differ.
+
+| Problem | Action |
+|---|---|
+| Missing red nodes | Check custom-node folder depth and startup logs; restart server and reload browser |
+| Missing config/tokenizer/weights | Download all 13 files and run `--check-only` |
+| CUDA/sm_120 error | Check WSL nvidia-smi and Torch in the YuE2 venv, not the ComfyUI venv |
+| CLI/model not found | Launch LM Studio, finish Qwen3.5 9B Q4_K_M download; set actual CLI path if nonstandard |
+| Connection refused | Check LM Studio Developer screen, port 1234 and host firewall |
+| Out of memory | Finish other image/video/LLM workloads and retry a short song |
+| Truncated planning | Music generation will not start; inspect logs/model settings and retry |
+| Slow cancellation | YuE2 subprocess can be stopped; LM Studio loading/API waits may take up to about 180 seconds |
+| Unexpected lyrics/duration | Inspect node ④ and listen; try another seed; duration is only a target |
+
+### Validation, rebuilding and licenses
+
+Existing live tests include 39.5587 seconds of audio in 166.211 seconds end to end, a 30-second target yielding 62.1187 seconds in 191.927 seconds, and the readable-lyrics update yielding 59.9587 seconds in 171.848 seconds. End-to-end values include model loading, planning, unloading, music generation and saving, but exclude downloads and earlier failed attempts; no cached node skipping. These are individual measurements, not speed guarantees. Audio playback progression and readable completion/metadata were observed in the actual browser. ASR mismatches remain; this is not a subjective music-quality pass or a fresh-other-PC installation test.
+
+For a reproducible build, clone the exact `yue2-20260914063527` tag linked above, run `python3 build_package.py --output /YOUR_OUTPUT_FOLDER`, extract into a new folder and run `python3 -B verify_package.py` there. The manifest covers every packaged file except itself and rejects extra files. Normal Python execution can create __pycache__, so verify the clean package before installation. Compare relative paths and SHA256 values with the Release ZIP.
+
+Integration code: Apache-2.0. YuE2 models: **CC BY-NC 4.0 (noncommercial)**. LM Studio, Qwen and ComfyUI have their own terms. See LICENSE, NOTICE.md and the downloaded model licenses. Software and models remain separate downloads.
