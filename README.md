@@ -2,7 +2,7 @@
 
 [日本語](#配布物と別途必要なもの) | [English setup guide](#english-setup-guide)
 
-[Download / ダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527)
+[Download / ダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914064818)
 
 ![日本語おまかせ作曲](docs/assets/note-thumbnail.png)
 
@@ -86,7 +86,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -141,7 +141,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -227,9 +227,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914064818)
 
-配布版：`20260914063527`、タグ：`yue2-20260914063527`。Releaseの `YuE2_Japanese_LMStudio_20260914063527.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`20260914064818`、タグ：`yue2-20260914064818`。Releaseの `YuE2_Japanese_LMStudio_20260914064818.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -237,7 +237,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch yue2-20260914063527 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch yue2-20260914064818 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 
@@ -289,7 +289,7 @@ Describe the song you want in Japanese. LM Studio creates Japanese lyrics and an
 
 ### Download and prerequisites
 
-Download the named `YuE2_Japanese_LMStudio_20260914063527.zip` asset from the Release linked above, and extract the entire ZIP. The workflow JSON alone is insufficient. The ZIP contains the workflow, custom nodes, installer, isolated runtime scripts, model manifest/downloader, integrity checker, documentation and licenses. It does not include weights, LM Studio, ComfyUI, generated songs or credentials. No paid external API key is required; initial software/model downloads need internet access.
+Download the named `YuE2_Japanese_LMStudio_20260914064818.zip` asset from the Release linked above, and extract the entire ZIP. The workflow JSON alone is insufficient. The ZIP contains the workflow, custom nodes, installer, isolated runtime scripts, model manifest/downloader, integrity checker, documentation and licenses. It does not include weights, LM Studio, ComfyUI, generated songs or credentials. No paid external API key is required; initial software/model downloads need internet access.
 
 Use Windows with NVIDIA drivers, WSL2 Ubuntu, ComfyUI inside WSL and LM Studio on Windows. Keep tens of GB of disk space free for models, environments and downloads. The tested GPU is listed in the Japanese validation section: it is a measurement condition, not a universal minimum specification. Other GPUs and all song lengths have not been tested.
 
@@ -317,8 +317,8 @@ Save unsaved workflows and let the ComfyUI queue finish. Replace the Windows use
 
 ```bash
 mkdir -p ~/Codex/packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_20260914063527.zip -d ~/Codex/packages
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_20260914064818.zip -d ~/Codex/packages
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -346,7 +346,7 @@ Open `03_音声 → 17_音楽_YuE2` in the ComfyUI workflow browser. On node ②
 The standard missing-model dialog also has download URLs, but depending on ComfyUI/browser version these may save to Downloads without placing files inside WSL. Prefer the integrated button or this equivalent command:
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -391,6 +391,6 @@ Songs are saved to `ComfyUI/output/audio/YuE2/DATETIME_ID/`: `audio.flac`, `song
 
 Existing live tests include 39.5587 seconds of audio in 166.211 seconds end to end, a 30-second target yielding 62.1187 seconds in 191.927 seconds, and the readable-lyrics update yielding 59.9587 seconds in 171.848 seconds. End-to-end values include model loading, planning, unloading, music generation and saving, but exclude downloads and earlier failed attempts; no cached node skipping. These are individual measurements, not speed guarantees. Audio playback progression and readable completion/metadata were observed in the actual browser. ASR mismatches remain; this is not a subjective music-quality pass or a fresh-other-PC installation test.
 
-For a reproducible build, clone the exact `yue2-20260914063527` tag linked above, run `python3 build_package.py --output /YOUR_OUTPUT_FOLDER`, extract into a new folder and run `python3 -B verify_package.py` there. The manifest covers every packaged file except itself and rejects extra files. Normal Python execution can create __pycache__, so verify the clean package before installation. Compare relative paths and SHA256 values with the Release ZIP.
+For a reproducible build, clone the exact `yue2-20260914064818` tag linked above, run `python3 build_package.py --output /YOUR_OUTPUT_FOLDER`, extract into a new folder and run `python3 -B verify_package.py` there. The manifest covers every packaged file except itself and rejects extra files. Normal Python execution can create __pycache__, so verify the clean package before installation. Compare relative paths and SHA256 values with the Release ZIP.
 
 Integration code: Apache-2.0. YuE2 models: **CC BY-NC 4.0 (noncommercial)**. LM Studio, Qwen and ComfyUI have their own terms. See LICENSE, NOTICE.md and the downloaded model licenses. Software and models remain separate downloads.

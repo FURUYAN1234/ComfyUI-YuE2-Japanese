@@ -47,6 +47,6 @@
     "tests": "Python 5 tests and JavaScript normal/malformed/unrelated cases passed",
     "limitations": "No subjective listening-quality approval; duration targets remain approximate"
   },
-  "documentation_release": "20260914063527",
+  "documentation_release": "20260914064818",
   "runtime_changed": false
 }

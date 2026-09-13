@@ -1,4 +1,4 @@
-# 20260914063527 / 公開導入ガイド更新 / Public setup guide update
+# 20260914064818 / 公開導入ガイド更新 / Public setup guide update
 
 - 読者向けサムネイル、英日README・Release、GitHub公開リンク。
 - Reader-focused thumbnail, bilingual README/Release, GitHub distribution links.

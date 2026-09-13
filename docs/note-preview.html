@@ -91,7 +91,7 @@ python3.12 -m venv .venv
 unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip -d ~/Codex/packages
 </code></pre>
 <p>展開されたフォルダーへ移動します。<code>README.md</code> と <code>install.py</code> が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。</p>
-<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 </code></pre>
@@ -124,7 +124,7 @@ python3 install.py --comfyui ~/ComfyUI
 <h2>5. ワークフローからモデルを取得</h2>
 <p>左側のワークフロー一覧で <code>03_音声 → 17_音楽_YuE2</code> を開きます。②のモデル選択欄と <code>properties.models</code> に、公式の固定リビジョンの取得先を設定しています。不足モデルの案内から取得先を開ける、ComfyUIで一般的な形式です。</p>
 <p><strong>重み2ファイルだけでは動きません。</strong> 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。<strong>②の「必須モデル一式を取得 / Download models」ボタン</strong>なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の <code>.part</code> は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。</p>
-<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914063527
+<pre><code class="language-bash">cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914064818
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 </code></pre>
@@ -273,11 +273,11 @@ python3 download_models.py --comfyui ~/ComfyUI --check-only
 </tbody>
 </table>
 <h2>バージョン管理と再構築</h2>
-<p><a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese">GitHubソース</a> / <a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914063527">この版のRelease</a></p>
-<p>配布版：<code>20260914063527</code>、タグ：<code>yue2-20260914063527</code>。Releaseの <code>YuE2_Japanese_LMStudio_20260914063527.zip</code> を使用してください。GitHub自動生成のSource code ZIPとは別です。</p>
+<p><a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese">GitHubソース</a> / <a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914064818">この版のRelease</a></p>
+<p>配布版：<code>20260914064818</code>、タグ：<code>yue2-20260914064818</code>。Releaseの <code>YuE2_Japanese_LMStudio_20260914064818.zip</code> を使用してください。GitHub自動生成のSource code ZIPとは別です。</p>
 <p>配布識別子は <code>VERSION</code>、変更点は <code>CHANGELOG.md</code> に記載しています。ソースはGitで管理し、改行変換を止める <code>.gitattributes</code> を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。</p>
 <p>タグ付きソースからの構築：</p>
-<pre><code class="language-bash">git clone --branch yue2-20260914063527 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+<pre><code class="language-bash">git clone --branch yue2-20260914064818 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 </code></pre>
 <pre><code class="language-bash">python3 build_package.py --output /保存先フォルダー
