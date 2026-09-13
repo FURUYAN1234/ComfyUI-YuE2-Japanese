@@ -84,5 +84,16 @@
       "7"
     ],
     "note": "Cached replay validates display only, not a new generation"
+  },
+  "v1.1.0": {
+    "python_tests": 11,
+    "switch_combinations_api": "3 valid passed; both OFF HTTP400",
+    "full_generation": {
+      "prompt_id": "91820035-6f8b-4450-9cf0-a86b3c5fdd75",
+      "audio_seconds": 54.958666666666666,
+      "end_to_end_seconds": 74.021,
+      "cached_nodes": [],
+      "quality": "not subjectively rated"
+    }
   }
 }

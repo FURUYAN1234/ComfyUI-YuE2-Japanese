@@ -13,3 +13,10 @@ const buttons=n.widgets.filter(w=>w.type==='button');assert.equal(buttons.length
 const outputs=[];
 for(const button of buttons){button.callback(); const values=Object.fromEntries(n.widgets.filter(w=>w.type!=='button').map(w=>[w.name,w.value]));assert.equal(values.mode,'プリセット');assert.equal(values.seconds,30);assert.equal(values.timing,'unchanged');assert.equal(button.options.serialize,false);outputs.push(values);}
 console.log(JSON.stringify(outputs));
+function SwitchNode(){this.widgets=['use_presets','use_manual','voice','genre','mood','instruments','bpm','timing','seconds'].map(name=>({name,value:name==='use_manual'?true:false}));}
+SwitchNode.prototype.addWidget=Node.prototype.addWidget;
+SwitchNode.prototype.setDirtyCanvas=Node.prototype.setDirtyCanvas;
+extension.beforeRegisterNodeDef(SwitchNode,{name:'YuE2SongSwitches'});
+const sn=new SwitchNode();sn.onNodeCreated();
+for(const w of sn.widgets.filter(w=>w.type==='button')){w.callback();assert.equal(sn.widgets.find(w=>w.name==='use_presets').value,true);assert.equal(sn.widgets.find(w=>w.name==='use_manual').value,true);}
+console.log('New preset buttons preserve manual ON: PASS');

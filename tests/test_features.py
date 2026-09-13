@@ -16,6 +16,20 @@ class SongFeatures(unittest.TestCase):
   for args in [{'seconds':9},{'seconds':241},{'seconds':True},{'bpm':20},{'voice':'invalid'}]:
    with self.assertRaises(ValueError):o.settings(**args)
   with self.assertRaises(ValueError):o.prepare('',options,{'lyrics':''})
+ def test_switch_combinations(self):
+  manual={'lyrics':'この歌を届けよう','style':'light reverb','title':'切替確認'}
+  for presets,hand in [(True,False),(False,True),(True,True)]:
+   settings=o.settings(use_presets=presets,use_manual=hand,voice='男性・やわらかい',genre='ロック')
+   chosen,plan,prompt=o.prepare('朝の歌',settings,manual)
+   self.assertEqual(plan is not None,hand)
+   if hand:
+    self.assertIn('light reverb',plan['style'])
+    self.assertEqual('male' in plan['style'],presets)
+    self.assertEqual('rock' in plan['style'],presets)
+   else:
+    self.assertIn('rock',prompt);self.assertNotIn('light reverb',prompt)
+  with self.assertRaisesRegex(ValueError,'両方OFF'):o.settings(use_presets=False,use_manual=False)
+  with self.assertRaises(ValueError):o.prepare('',o.settings(use_presets=False,use_manual=True),{'lyrics':'歌詞','style':''})
  def test_exact_trim_pad_and_original(self):
   for duration,method in [(12,'trim_and_fade'),(8,'fade_and_silence_pad'),(10,'fade_only')]:
    with tempfile.TemporaryDirectory() as t:

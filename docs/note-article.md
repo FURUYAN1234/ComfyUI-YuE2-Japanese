@@ -14,20 +14,22 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 ## ワークフローの入手
 
-- [導入ZIP v1.0.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio_v1.0.0.zip)
-- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio.json)
+- [導入ZIP v1.1.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.0/YuE2_Japanese_LMStudio_v1.1.0.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.0/YuE2_Japanese_LMStudio.json)
 
 初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
 
-![プリセットと自由入力に対応したワークフロー](assets/workflow-v1.png)
+![プリセットと自由入力に対応したワークフロー](assets/workflow-v1.1.png)
 
 ## ボタンで選ぶ・日本語で任せる・自由入力する
 
-![プリセットボタンと時間設定](assets/presets-v1.png)
+![プリセットボタンと時間設定](assets/switches-v1.1.png)
 
 設定ノードには「明るいポップ」「穏やかアコースティック」「切ないバラード」「元気なロック」「幻想的エレクトロ」のボタンがあります。押すと声・曲調・雰囲気・楽器・BPMがまとめて入り、個別の選択欄で調整できます。音声の特徴を指示するもので、特定の歌手の声を再現する音声クローン機能ではありません。
 
-「おまかせ」では日本語の希望を入力し、LM Studioに歌詞を任せます。「手動」は自由入力の意味です。別ノードに曲名・歌詞・曲調を入力すると、作詞LLMを呼ばずに曲を生成します。
+「プリセットを使う」「手動入力を使う」のON/OFFスイッチがあります。プリセットだけONなら、日本語の希望と選択設定からLM Studioが作詞します。手動だけONなら、入力した曲名・歌詞・曲調だけを使います（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加します。両方OFFは実行前にエラーになります。
+
+プリセットボタンを押しても手動ONは維持されます。曲調の矛盾は自動調整しないため、声や楽器を変更するときはプリセット側も合わせるか、その項目をおまかせにしてください。
 
 時間は設定ノードの選択肢と秒数で設定します。「可変尺」は自然に生成された長さを保ち、「目標尺」は指定秒数を目安に作詞します。「ぴったり尺」は生成後の音声をフェード・カット、または無音補完で指定秒数へ編集します。元の曲は audio_original.flac に残します。歌詞やフレーズの途中で切れる場合があり、モデルが自然な終わり方で秒数を守るという意味ではありません。
 
@@ -113,7 +115,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -168,7 +170,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -208,7 +210,7 @@ ComfyUI/models/yue2/
 |---|---|
 |`brief`|日本語の希望。ジャンル、雰囲気、声、場面など|
 |`length`|従来モードで使う歌詞量。短い試作4行／通常16行|
-|設定ノード `mode`|おまかせ・プリセット・手動（自由入力）|
+|設定ノード `use_presets` / `use_manual`|個別ON/OFF。片方だけ・両方ONに対応。両方OFFは不可|
 |設定ノード `timing`|可変尺・目標尺・ぴったり尺（編集）|
 |設定ノード `seconds`|目標尺・ぴったり尺で使う10～240の整数|
 |声・曲調・楽器・BPM|ボタンで一括設定した後、個別に調整可能|
@@ -256,9 +258,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.0.0)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.0)
 
-配布版：`v1.0.0`、タグ：`v1.0.0`。Releaseの `YuE2_Japanese_LMStudio_v1.0.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`v1.1.0`、タグ：`v1.1.0`。Releaseの `YuE2_Japanese_LMStudio_v1.1.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -266,7 +268,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch v1.0.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.1.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 
@@ -311,3 +313,11 @@ python3 build_package.py --output /保存先フォルダー
 ```
 
 歌唱の書き起こしではなく、生成時に指定した歌詞です。試聴音声はnoteに掲載し、配布ZIPには同梱しません。
+
+## プリセットと手動入力を個別にON/OFF
+
+プリセットON・手動OFFなら、選択した設定を使ってLM Studioが作詞します。プリセットOFF・手動ONなら、自由入力の曲名・歌詞・曲調だけを使います（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加できます。両方OFFは実行前にエラーになります。
+
+プリセットボタンを押しても手動スイッチは維持されます。曲調の矛盾は自動解消しないため、声や楽器を変更したい場合はプリセット側も合わせるか、その項目をおまかせにしてください。
+
+v1.1.0の両方ONも実機で確認しました。54.959秒の音声を、実行開始から保存完了まで74.021秒で生成（キャッシュ省略なし）。曲生成・保存は73.8秒です。歌唱品質は別途試聴して確認してください。

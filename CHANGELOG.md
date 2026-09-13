@@ -1,3 +1,7 @@
+# v1.1.0
+
+Independent preset/manual switches; both-OFF validation; visible usage notes. / プリセット・手動の個別切替、両方OFFの拒否、ノード内の使用説明を追加。
+
 # Changelog / 変更履歴
 
 ## v1.0.0

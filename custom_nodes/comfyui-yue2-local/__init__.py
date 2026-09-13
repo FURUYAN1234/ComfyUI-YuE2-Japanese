@@ -30,6 +30,19 @@ class YuE2SongOptions:
     RETURN_TYPES=('YUE2_OPTIONS',);RETURN_NAMES=('Settings / 設定',);FUNCTION='create';CATEGORY='audio/YuE2'
     def create(self,**kwargs):return (runtime_module('song_options').settings(**kwargs),)
 
+class YuE2SongSwitches(YuE2SongOptions):
+    @classmethod
+    def INPUT_TYPES(cls):
+        fields=super().INPUT_TYPES()['required'];fields.pop('mode')
+        return {'required':{
+            'use_presets':('BOOLEAN',{'default':True,'label_on':'ON / 使用','label_off':'OFF / 不使用','tooltip':'Use presets / プリセットを使用。手動と両方OFFは不可。'}),
+            'use_manual':('BOOLEAN',{'default':False,'label_on':'ON / 使用','label_off':'OFF / 不使用','tooltip':'Use manual lyrics/style / 手動歌詞・曲調を使用。両方ONなら曲調を追加。'}),**fields}}
+    @classmethod
+    def VALIDATE_INPUTS(cls,use_presets,use_manual):
+        return True if use_presets or use_manual else 'プリセットと手動入力を両方OFFにはできません。どちらかをONにしてください。'
+    def create(self,use_presets,use_manual,**kwargs):
+        return super().create(mode='手動' if use_manual else 'プリセット',use_presets=use_presets,use_manual=use_manual,**kwargs)
+
 class YuE2ManualLyrics:
     @classmethod
     def INPUT_TYPES(cls):
@@ -132,8 +145,8 @@ class YuE2LocalSong:
         (output/'details.json').write_text(json.dumps(details,ensure_ascii=False,indent=2))
         return ({'waveform':torch.from_numpy(wave.T.copy()).unsqueeze(0),'sample_rate':sr},json.dumps(details,ensure_ascii=False,indent=2))
 
-NODE_CLASS_MAPPINGS={'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
-NODE_DISPLAY_NAME_MAPPINGS={'YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
+NODE_CLASS_MAPPINGS={'YuE2SongSwitches':YuE2SongSwitches,'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
+NODE_DISPLAY_NAME_MAPPINGS={'YuE2SongSwitches':'Preset / Manual switches / プリセット・手動切替','YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
 
 # Fixed official manifest only: the browser cannot choose URLs or destination paths.
 import asyncio, sys
