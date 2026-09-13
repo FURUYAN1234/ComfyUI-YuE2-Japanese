@@ -1,1 +1,461 @@
-{"id":"90faf78b-117e-43f0-bd40-3fb44fa5a837","revision":0,"last_node_id":5,"last_link_id":3,"nodes":[{"id":1,"type":"MarkdownNote","pos":[0,0],"size":[710,800],"flags":{},"order":0,"mode":0,"inputs":[],"outputs":[],"title":"説明 / Guide","properties":{"Node name for S&R":"MarkdownNote","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["# 日本語おまかせ作曲 / YuE2\n日本語の一言 → LM Studioが作詞・曲調作成 → YuE2が歌と伴奏 → 再生。\nJapanese brief → lyrics/style → vocals/music → listen.\n\n## 初回導入 / First-time setup\n**JSONだけでは動きません。ZIP一式と同梱READMEを用意してください。**\n1. WindowsのNVIDIAドライバー＋WSL2 Ubuntu 24.04を準備。Ubuntuで `nvidia-smi` がRTXを表示することを確認 / Check GPU in WSL.\n2. [ComfyUI公式手順](https://docs.comfy.org/installation/manual_install)でWSL内にComfyUIを準備。Python 3.12のvenvを使用 / Use a WSL ComfyUI environment.\n3. 配布フォルダーで `python3 verify_package.py`、続けて `python3 install.py --comfyui ~/ComfyUI` を実行。専用venv・ノード1パッケージ・JSONを配置 / Install isolated runtime and nodes.\n4. Windowsに[LM Studio](https://lmstudio.ai/download)を導入し、[Qwen3.5 9Bを開く](https://lmstudio.ai/models/qwen/qwen3.5-9b)から **Q4_K_M** を取得。LM Studioを起動した状態にする / Download in LM Studio.\n5. ComfyUIを再起動し、保存後にブラウザーを再読込。②の「必須モデル一式を取得」ボタンを押す / Restart, then download missing files.\n\n## 必須ファイル / Required models\n[YuE2-3B](https://huggingface.co/m-a-p/YuE2-3B)＋[YuE2-Vae](https://huggingface.co/m-a-p/YuE2-Vae)：約7.8GB。\n標準の不足モデル案内で重みの取得先を開けます。②の **必須モデル一式を取得** ボタンなら設定・トークナイザー等を含む13ファイルを保存・SHA256確認します。\n配置 / Place under: `ComfyUI/models/yue2/YuE2-3B/` と `YuE2-Vae/`。\nボタンが使えない場合は、配布フォルダーから `python3 download_models.py --comfyui ~/ComfyUI` を実行。\n\n## 使い方・時間 / Controls\n①に「雨の日の帰り道、切ないけど明るい曲」などを入力して実行。\n**duration_mode**：従来の歌詞量／30秒／60秒／120秒／数値指定。\n**target_seconds**：数値指定時の目標（10～240秒）。秒数モードが本文より優先。\n従来モードは **length** の4行／16行を使用。秒数の精度は低く、30秒指定で62.1秒の実測あり。曲は機械的に切りません。④に「✅曲の生成が完了」、曲名・長さ・歌詞・曲調・保存先を表示。実際の長さは④に表示 / Target is approximate; no automatic trimming.\n①②の **seed**：変更すると別の候補。固定すると同じ条件 / Seed controls variations.\n\n## GPUと保存 / Processing & output\nLM Studio GPU → LLM解放 → YuE2 GPU。重い生成は同じGPUで順番に実行。\nRuntime: `~/Codex/work/yue2`。Nodes: `custom_nodes/comfyui-yue2-local`。\n保存 / Output: `ComfyUI/output/audio/YuE2/日時_ID/`。\n`audio.flac`、`song_plan.json`（歌詞・曲調・元の指示）、`score.abc`、実行設定を保存。\n\n## 検証とライセンス / Validation & license\nRTX 5080 16GBで日本語入力から実生成・再生。従来4行の実測：39.6秒の曲、全工程166.2秒（LLM読込を含む）。\nASR結果にはばらつきがあり、発音・音楽品質は試聴が必要です / Listen to each take.\nYuE2モデル **CC BY-NC 4.0（非商用）**／コード Apache-2.0。その他の取得物は各配布元の条件に従います。\n詳しい環境構築・エラー対処・変更履歴は同梱README / See README for full setup and troubleshooting.\n"],"widgets_values_named":{"text":"# 日本語おまかせ作曲 / YuE2\n日本語の一言 → LM Studioが作詞・曲調作成 → YuE2が歌と伴奏 → 再生。\nJapanese brief → lyrics/style → vocals/music → listen.\n\n## 初回導入 / First-time setup\n**JSONだけでは動きません。ZIP一式と同梱READMEを用意してください。**\n1. WindowsのNVIDIAドライバー＋WSL2 Ubuntu 24.04を準備。Ubuntuで `nvidia-smi` がRTXを表示することを確認 / Check GPU in WSL.\n2. [ComfyUI公式手順](https://docs.comfy.org/installation/manual_install)でWSL内にComfyUIを準備。Python 3.12のvenvを使用 / Use a WSL ComfyUI environment.\n3. 配布フォルダーで `python3 verify_package.py`、続けて `python3 install.py --comfyui ~/ComfyUI` を実行。専用venv・ノード1パッケージ・JSONを配置 / Install isolated runtime and nodes.\n4. Windowsに[LM Studio](https://lmstudio.ai/download)を導入し、[Qwen3.5 9Bを開く](https://lmstudio.ai/models/qwen/qwen3.5-9b)から **Q4_K_M** を取得。LM Studioを起動した状態にする / Download in LM Studio.\n5. ComfyUIを再起動し、保存後にブラウザーを再読込。②の「必須モデル一式を取得」ボタンを押す / Restart, then download missing files.\n\n## 必須ファイル / Required models\n[YuE2-3B](https://huggingface.co/m-a-p/YuE2-3B)＋[YuE2-Vae](https://huggingface.co/m-a-p/YuE2-Vae)：約7.8GB。\n標準の不足モデル案内で重みの取得先を開けます。②の **必須モデル一式を取得** ボタンなら設定・トークナイザー等を含む13ファイルを保存・SHA256確認します。\n配置 / Place under: `ComfyUI/models/yue2/YuE2-3B/` と `YuE2-Vae/`。\nボタンが使えない場合は、配布フォルダーから `python3 download_models.py --comfyui ~/ComfyUI` を実行。\n\n## 使い方・時間 / Controls\n①に「雨の日の帰り道、切ないけど明るい曲」などを入力して実行。\n**duration_mode**：従来の歌詞量／30秒／60秒／120秒／数値指定。\n**target_seconds**：数値指定時の目標（10～240秒）。秒数モードが本文より優先。\n従来モードは **length** の4行／16行を使用。秒数の精度は低く、30秒指定で62.1秒の実測あり。曲は機械的に切りません。④に「✅曲の生成が完了」、曲名・長さ・歌詞・曲調・保存先を表示。実際の長さは④に表示 / Target is approximate; no automatic trimming.\n①②の **seed**：変更すると別の候補。固定すると同じ条件 / Seed controls variations.\n\n## GPUと保存 / Processing & output\nLM Studio GPU → LLM解放 → YuE2 GPU。重い生成は同じGPUで順番に実行。\nRuntime: `~/Codex/work/yue2`。Nodes: `custom_nodes/comfyui-yue2-local`。\n保存 / Output: `ComfyUI/output/audio/YuE2/日時_ID/`。\n`audio.flac`、`song_plan.json`（歌詞・曲調・元の指示）、`score.abc`、実行設定を保存。\n\n## 検証とライセンス / Validation & license\nRTX 5080 16GBで日本語入力から実生成・再生。従来4行の実測：39.6秒の曲、全工程166.2秒（LLM読込を含む）。\nASR結果にはばらつきがあり、発音・音楽品質は試聴が必要です / Listen to each take.\nYuE2モデル **CC BY-NC 4.0（非商用）**／コード Apache-2.0。その他の取得物は各配布元の条件に従います。\n詳しい環境構築・エラー対処・変更履歴は同梱README / See README for full setup and troubleshooting.\n"},"color":"#432","bgcolor":"#653"},{"id":5,"type":"PreviewAny","pos":[790,510],"size":[460,290],"flags":{},"order":4,"mode":0,"inputs":[{"localized_name":"ソース","name":"source","type":"*","link":3}],"outputs":[{"localized_name":"文字列","name":"STRING","type":"STRING","links":null}],"title":"④ 歌詞・曲調・保存先 / Details","properties":{"cnr_id":"comfy-core","ver":"0.35.0","Node name for S&R":"PreviewAny","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":[],"widgets_values_named":{}},{"id":4,"type":"PreviewAudio","pos":[1340,400],"size":[460,230],"flags":{},"order":3,"mode":0,"inputs":[{"localized_name":"オーディオ","name":"audio","type":"AUDIO","link":2},{"localized_name":"audioUI","name":"audioUI","type":"AUDIO_UI","widget":{"name":"audioUI"},"link":null}],"outputs":[{"localized_name":"audio","name":"audio","type":"AUDIO","links":null}],"title":"③ 完成曲を再生 / Listen","properties":{"cnr_id":"comfy-core","ver":"0.35.0","Node name for S&R":"PreviewAudio","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":[],"widgets_values_named":{}},{"id":2,"type":"YuE2JapanesePlanner","pos":[790,0],"size":[460,410],"flags":{},"order":1,"mode":0,"inputs":[{"localized_name":"brief","name":"brief","type":"STRING","widget":{"name":"brief"},"link":null},{"localized_name":"length","name":"length","type":"COMBO","widget":{"name":"length"},"link":null},{"localized_name":"seed","name":"seed","type":"INT","widget":{"name":"seed"},"link":null},{"localized_name":"duration_mode","name":"duration_mode","type":"COMBO","widget":{"name":"duration_mode"},"link":null},{"localized_name":"target_seconds","name":"target_seconds","type":"INT","widget":{"name":"target_seconds"},"link":null}],"outputs":[{"localized_name":"曲の企画JSON / Song plan","name":"曲の企画JSON / Song plan","type":"YUE2_PLAN","links":[1]}],"title":"① 日本語おまかせ → 作詞 / LM Studio GPU","properties":{"Node name for S&R":"YuE2JapanesePlanner","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}}},"widgets_values":["雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。","短い試作（4行）",593931419,"randomize","歌詞量で指定（従来）",30],"widgets_values_named":{"brief":"雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。","length":"短い試作（4行）","seed":593931419,"control_after_generate":"randomize","duration_mode":"歌詞量で指定（従来）","target_seconds":30}},{"id":3,"type":"YuE2LocalSong","pos":[1340,0],"size":[460,300],"flags":{},"order":2,"mode":0,"inputs":[{"localized_name":"song_plan","name":"song_plan","type":"YUE2_PLAN","link":1},{"localized_name":"seed","name":"seed","type":"INT","widget":{"name":"seed"},"link":null},{"localized_name":"model","name":"model","type":"COMBO","widget":{"name":"model"},"link":null},{"localized_name":"vae","name":"vae","type":"COMBO","widget":{"name":"vae"},"link":null}],"outputs":[{"localized_name":"曲 / Audio","name":"曲 / Audio","type":"AUDIO","links":[2]},{"localized_name":"生成記録 / Details","name":"生成記録 / Details","type":"STRING","links":[3]}],"title":"② 歌と伴奏を生成 / YuE2 GPU","properties":{"Node name for S&R":"YuE2LocalSong","ue_properties":{"widget_ue_connectable":{},"version":"7.8","input_ue_unconnectable":{}},"models":[{"name":"YuE2-3B/LICENSE","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/LICENSE","sha256":"060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0","size":20309,"hash":"060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0","hash_type":"SHA256"},{"name":"YuE2-3B/THIRD_PARTY_NOTICES.md","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/THIRD_PARTY_NOTICES.md","sha256":"14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3","size":793,"hash":"14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3","hash_type":"SHA256"},{"name":"YuE2-3B/config.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/config.json","sha256":"ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329","size":959,"hash":"ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329","hash_type":"SHA256"},{"name":"YuE2-3B/generation_config.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/generation_config.json","sha256":"ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170","size":204,"hash":"ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170","hash_type":"SHA256"},{"name":"YuE2-3B/model.safetensors","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/model.safetensors","sha256":"1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9","size":7261441640,"hash":"1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9","hash_type":"SHA256"},{"name":"YuE2-3B/qwen.tiktoken","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/qwen.tiktoken","sha256":"b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186","size":2561218,"hash":"b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186","hash_type":"SHA256"},{"name":"YuE2-3B/weights_manifest.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/weights_manifest.json","sha256":"2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93","size":179,"hash":"2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93","hash_type":"SHA256"},{"name":"YuE2-3B/yue2_generation_config.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/yue2_generation_config.json","sha256":"203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61","size":466,"hash":"203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61","hash_type":"SHA256"},{"name":"YuE2-Vae/LICENSE","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/LICENSE","sha256":"060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0","size":20309,"hash":"060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0","hash_type":"SHA256"},{"name":"YuE2-Vae/THIRD_PARTY_NOTICES.md","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/THIRD_PARTY_NOTICES.md","sha256":"14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3","size":793,"hash":"14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3","hash_type":"SHA256"},{"name":"YuE2-Vae/config.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/config.json","sha256":"f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970","size":1378,"hash":"f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970","hash_type":"SHA256"},{"name":"YuE2-Vae/model.safetensors","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/model.safetensors","sha256":"807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346","size":530512720,"hash":"807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346","hash_type":"SHA256"},{"name":"YuE2-Vae/weights_manifest.json","directory":"yue2","url":"https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/weights_manifest.json","sha256":"017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026","size":178,"hash":"017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026","hash_type":"SHA256"}]},"widgets_values":[831001,"randomize","YuE2-3B/model.safetensors","YuE2-Vae/model.safetensors",null],"widgets_values_named":{"seed":831001,"control_after_generate":"randomize","model":"YuE2-3B/model.safetensors","vae":"YuE2-Vae/model.safetensors","取得・検査完了 / Models ready":null}}],"links":[[1,2,0,3,0,"YUE2_PLAN"],[2,3,0,4,0,"AUDIO"],[3,3,1,5,0,"STRING"]],"groups":[],"config":{},"extra":{"ds":{"scale":1.2712941176470582,"offset":[316.7129372570796,181.66666666666674]},"comfyui_mcp":{"workflow_uuid":"a5b0be11-723b-4df8-b0ed-75ffcaa14827"},"ue_links":[],"links_added_by_ue":[]},"version":0.4}
+{
+  "id": "90faf78b-117e-43f0-bd40-3fb44fa5a837",
+  "revision": 0,
+  "last_node_id": 7,
+  "last_link_id": 5,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "MarkdownNote",
+      "pos": [
+        0,
+        0
+      ],
+      "size": [
+        680,
+        1280
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "title": "Guide / 説明",
+      "properties": {
+        "Node name for S&R": "MarkdownNote"
+      },
+      "widgets_values": [
+        "# Japanese Song Creation / 日本語おまかせ作曲\nJapanese brief → lyrics/style → vocals/music → listen. / 日本語の希望→歌詞・曲調→歌と伴奏→再生。\n\n## Download and install / 取得と導入\n[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio_v1.0.0.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)\n1. Prepare WSL2 Ubuntu, NVIDIA drivers and ComfyUI; check `nvidia-smi`. / WSL2 Ubuntu・NVIDIAドライバー・ComfyUIを準備し `nvidia-smi` で確認。\n2. Extract the full ZIP; run `python3 verify_package.py` then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。\n3. Launch [LM Studio](https://lmstudio.ai/download) on Windows and download [Qwen3.5 9B Q4_K_M](https://lmstudio.ai/models/qwen/qwen3.5-9b). / WindowsでLM Studioを起動し、指定の作詞モデルを取得。\n4. Restart ComfyUI and open this JSON by Open or drag-and-drop. / ComfyUIを再起動し、「開く」かドラッグ＆ドロップでこのJSONを読込。\n\n## Music models / 曲生成モデル\nUse node ②’s Download models button for all 13 files with SHA256 checks. / ②の「必須モデル一式を取得」で全13ファイルを取得・SHA256検査。\n[YuE2-3B](https://huggingface.co/m-a-p/YuE2-3B) + [YuE2-Vae](https://huggingface.co/m-a-p/YuE2-Vae): about 7.8GB. / 合計約7.8GB。\nFiles go under your `ComfyUI/models/yue2/`; weights alone are insufficient. / 自分のComfyUIの `models/yue2/` 配下へ配置し、重み以外の設定等も必要。\nCLI alternative: `python3 download_models.py --comfyui YOUR_COMFYUI_PATH`. / ボタンが使えない場合は左記コマンド。\n\n## Controls and results / 設定と結果\nPress a preset button, then adjust voice, genre, mood, instruments or BPM if desired. / プリセットボタンを押し、必要なら声・曲調・雰囲気・楽器・BPMを調整。\nAutomatic mode expands your Japanese brief; Manual uses your own lyrics and style. / おまかせは日本語の希望を補完し、手動は自由入力の歌詞・曲調を使用。\nNatural length keeps the song; Target is approximate; Exact edits the output to the selected seconds. / 可変尺は曲を維持、目標尺は目安、ぴったり尺は指定秒数へ編集。\nExact mode fades and cuts or pads silence, preserving audio_original.flac. / ぴったり尺はフェード・カットまたは無音補完を行い、元音声を保存。\nSettings-node timing takes precedence over the planner's legacy timing controls. / 時間は設定ノードを優先し、作詞ノードの旧時間設定は使いません。\n④ shows completion, title, duration, lyrics, style and saved folder. / ④に完了・曲名・長さ・歌詞・曲調・保存先を表示。\n\n## Processing and files / 処理と保存\nLM Studio GPU → unload LLM → YuE2 GPU, sequentially. / 作詞LLMを解放してから曲生成し、GPUを順番に使用。\nRuntime location is chosen during installation; nodes: `custom_nodes/comfyui-yue2-local`. / 専用環境の場所は導入時に選択し、ノードは左記へ配置。\nOutput: `ComfyUI/output/audio/YuE2/`; FLAC, lyrics/style JSON, ABC score, run details. / 左記へ音声・歌詞曲調JSON・楽譜・生成記録を保存。\n\n## Validation and license / 検証とライセンス\nTested: 16GB VRAM, 39.6s audio in 166.2s including LLM loading. / 検証例はVRAM 16GB、39.6秒の音声、LLM読込込み166.2秒。\nPreset generation produced 68.3s; manual input produced 53.5s, edited to exactly 10s. / プリセット生成は68.3秒、自由入力は53.5秒から10秒への編集を確認。\nOther PCs and musical quality are not guaranteed; listen to each result. / 他PCの動作と音楽品質は保証せず、結果を試聴してください。\nModels: CC BY-NC 4.0, noncommercial; bridge code: Apache-2.0. / モデルは非商用、連携コードはApache-2.0。"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 2,
+      "type": "YuE2JapanesePlanner",
+      "pos": [
+        1350,
+        0
+      ],
+      "size": [
+        500,
+        450
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "settings",
+          "shape": 7,
+          "type": "YUE2_OPTIONS",
+          "link": 4
+        },
+        {
+          "name": "manual",
+          "shape": 7,
+          "type": "YUE2_MANUAL",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "曲の企画JSON / Song plan",
+          "type": "YUE2_PLAN",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "title": "① 日本語おまかせ → 作詞 / LM Studio GPU",
+      "properties": {
+        "Node name for S&R": "YuE2JapanesePlanner"
+      },
+      "widgets_values": [
+        "雨上がりの街を歩く、少し切ない日本語の歌。歌詞はおまかせ。",
+        "短い試作（4行）",
+        593931419,
+        "fixed",
+        "歌詞量で指定（従来）",
+        30
+      ]
+    },
+    {
+      "id": 3,
+      "type": "YuE2LocalSong",
+      "pos": [
+        1940,
+        0
+      ],
+      "size": [
+        500,
+        350
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "song_plan",
+          "type": "YUE2_PLAN",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "曲 / Audio",
+          "type": "AUDIO",
+          "links": [
+            2
+          ]
+        },
+        {
+          "name": "生成記録 / Details",
+          "type": "STRING",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "title": "② 歌と伴奏を生成 / YuE2 GPU",
+      "properties": {
+        "Node name for S&R": "YuE2LocalSong",
+        "models": [
+          {
+            "name": "YuE2-3B/LICENSE",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/LICENSE",
+            "sha256": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+            "size": 20309,
+            "hash": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/THIRD_PARTY_NOTICES.md",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/THIRD_PARTY_NOTICES.md",
+            "sha256": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+            "size": 793,
+            "hash": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/config.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/config.json",
+            "sha256": "ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329",
+            "size": 959,
+            "hash": "ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/generation_config.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/generation_config.json",
+            "sha256": "ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170",
+            "size": 204,
+            "hash": "ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/model.safetensors",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/model.safetensors",
+            "sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+            "size": 7261441640,
+            "hash": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/qwen.tiktoken",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/qwen.tiktoken",
+            "sha256": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186",
+            "size": 2561218,
+            "hash": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/weights_manifest.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/weights_manifest.json",
+            "sha256": "2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93",
+            "size": 179,
+            "hash": "2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-3B/yue2_generation_config.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/yue2_generation_config.json",
+            "sha256": "203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61",
+            "size": 466,
+            "hash": "203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-Vae/LICENSE",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/LICENSE",
+            "sha256": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+            "size": 20309,
+            "hash": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-Vae/THIRD_PARTY_NOTICES.md",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/THIRD_PARTY_NOTICES.md",
+            "sha256": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+            "size": 793,
+            "hash": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-Vae/config.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/config.json",
+            "sha256": "f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970",
+            "size": 1378,
+            "hash": "f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-Vae/model.safetensors",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/model.safetensors",
+            "sha256": "807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346",
+            "size": 530512720,
+            "hash": "807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346",
+            "hash_type": "SHA256"
+          },
+          {
+            "name": "YuE2-Vae/weights_manifest.json",
+            "directory": "yue2",
+            "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/weights_manifest.json",
+            "sha256": "017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026",
+            "size": 178,
+            "hash": "017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026",
+            "hash_type": "SHA256"
+          }
+        ]
+      },
+      "widgets_values": [
+        831001,
+        "fixed",
+        "YuE2-3B/model.safetensors",
+        "YuE2-Vae/model.safetensors"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "PreviewAudio",
+      "pos": [
+        1940,
+        450
+      ],
+      "size": [
+        500,
+        230
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "title": "③ 完成曲を再生 / Listen",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.35.0",
+        "Node name for S&R": "PreviewAudio"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 5,
+      "type": "PreviewAny",
+      "pos": [
+        1350,
+        740
+      ],
+      "size": [
+        1090,
+        540
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "title": "④ 歌詞・曲調・保存先 / Details",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.35.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "YuE2SongOptions",
+      "pos": [
+        750,
+        0
+      ],
+      "size": [
+        520,
+        440
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "Settings / 設定",
+          "type": "YUE2_OPTIONS",
+          "links": [
+            4
+          ]
+        }
+      ],
+      "title": "Presets & duration / プリセット・時間",
+      "properties": {
+        "Node name for S&R": "YuE2SongOptions"
+      },
+      "widgets_values": [
+        "プリセット",
+        "男性・やわらかい",
+        "バラード",
+        "切ない",
+        "ピアノ中心",
+        75,
+        "可変尺（自然な長さ）",
+        30
+      ]
+    },
+    {
+      "id": 7,
+      "type": "YuE2ManualLyrics",
+      "pos": [
+        750,
+        570
+      ],
+      "size": [
+        520,
+        710
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "Manual lyrics / 手動歌詞",
+          "type": "YUE2_MANUAL",
+          "links": [
+            5
+          ]
+        }
+      ],
+      "title": "Manual only / 手動モード用の歌詞・曲調",
+      "properties": {
+        "Node name for S&R": "YuE2ManualLyrics"
+      },
+      "widgets_values": [
+        "手動入力の曲",
+        "[Verse]\n雨上がりの道を歩く\n小さな光を探して\n\n[Chorus]\n今日も君に会いに行こう\n明日の歌を口ずさむ",
+        "Warm Japanese pop with a gentle piano accompaniment."
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      2,
+      0,
+      3,
+      0,
+      "YUE2_PLAN"
+    ],
+    [
+      2,
+      3,
+      0,
+      4,
+      0,
+      "AUDIO"
+    ],
+    [
+      3,
+      3,
+      1,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      4,
+      6,
+      0,
+      2,
+      0,
+      "YUE2_OPTIONS"
+    ],
+    [
+      5,
+      7,
+      0,
+      2,
+      1,
+      "YUE2_MANUAL"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.62,
+      "offset": [
+        420,
+        580
+      ]
+    },
+    "ue_links": [],
+    "links_added_by_ue": [],
+    "frontendVersion": "1.51.10",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4,
+  "seed_widgets": {
+    "2": 2,
+    "3": 0
+  }
+}

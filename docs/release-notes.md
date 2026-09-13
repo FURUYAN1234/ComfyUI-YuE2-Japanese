@@ -1,36 +1,23 @@
-# Japanese Song Creation / 日本語おまかせ作曲 — 20260914065948
+# Japanese Song Creation / 日本語おまかせ作曲 — v1.0.0
 
-The README and these release notes now pair each English sentence with Japanese after a slash, instead of separating languages into sections. / READMEとこのリリース説明を、言語ごとの別セクションではなく、各英文の後にスラッシュで日本語を併記する形式へ修正しました。
+Choose automatic lyrics, click presets, or enter lyrics and musical style freely. / 歌詞おまかせ・プリセット選択・歌詞と曲調の自由入力を選べます。
 
-Installation commands, configuration details, limitations, lyrics, images and existing runtime functionality are preserved. / 導入コマンド・設定の説明・制約・歌詞・画像・既存の実行機能を維持しています。
+Select voice, genre, mood, instruments and tempo from the workflow. / ワークフローで声・ジャンル・雰囲気・楽器・テンポを選択できます。
 
-## Features / 機能
+Use natural length, an approximate target, or exact-duration postprocessing with original audio preserved. / 可変尺・目標尺・元音声を残すぴったり尺編集を選べます。
 
-- LM Studio turns a casual Japanese request into lyrics and musical style, then YuE2 generates vocals and accompaniment. / 日本語の気軽な希望からLM Studioが歌詞と曲調を作り、YuE2が歌と伴奏を生成します。
-- Download all 13 required model files from the workflow with SHA256 verification. / ワークフローから必須モデル13ファイルを取得し、SHA256を検査できます。
-- Use duration presets or numeric targets, seeds, audio playback, readable lyrics, song information and a completion indicator. / 目標時間の選択・数値入力、seed、音声再生、読みやすい歌詞・曲情報・完了表示を利用できます。
-- Use LM Studio on Windows with ComfyUI in WSL2 and an isolated YuE2 Python environment. / WindowsのLM Studio、WSL2のComfyUI、独立したYuE2 Python環境を組み合わせます。
+Exact editing uses a final fade, trimming or silence padding; it does not guarantee a natural musical ending. / ぴったり尺は末尾フェード・カット・無音補完を使い、自然な曲の終わり方を保証しません。
 
-## Download and install / 取得と導入
+[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio_v1.0.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio.json)
 
-Download `YuE2_Japanese_LMStudio_20260914065948.zip` from this Release, rather than GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、このReleaseの `YuE2_Japanese_LMStudio_20260914065948.zip` を取得してください。
+Install the complete ZIP first, then open the JSON in ComfyUI. / 初回はZIP一式を導入してから、ComfyUIでJSONを開いてください。
 
-Extract the entire ZIP and follow the sentence-by-sentence bilingual README for setup. / ZIP全体を展開し、文ごとに英日併記したREADMEに従って環境を構築してください。
+The installer uses portable paths and retains an existing configured runtime on upgrade. / インストーラーは汎用パスを使用し、更新時は既存設定の専用環境を維持します。
 
-Weights, generated songs and credentials are excluded from the ZIP. / モデルの重み・生成曲・認証情報はZIPに含みません。
+Models and credentials are not bundled; the workflow downloads all 13 required model files with SHA256 checks. / モデルと認証情報は同梱せず、ワークフローから必須13ファイルをSHA256検査付きで取得します。
 
-## Validation and limits / 検証と制約
-
-Runtime code is unchanged from the version verified through actual generation and browser lyrics/completion display. / 実生成とブラウザーでの歌詞・完了表示を確認した版から、実行コードは変更していません。
-
-This revision is checked for inline English/Japanese pairing, retained setup content, package integrity and identical rebuilding from a clean public tag. / 今回は文ごとの英日対応、導入内容の保持、配布整合性、クリーンな公開タグからの再構築一致を検査します。
-
-Duration is approximate: a 30-second target produced 62.1 seconds in one test. / 時間は目安であり、30秒指定から62.1秒になった実測があります。
-
-60/120-second runs and a fresh installation on another PC are untested. / 60秒・120秒の実生成と、他PCへの新規導入は未検証です。
-
-Listen to each result because sung words can differ from the supplied lyrics. / 指定した歌詞と歌唱が異なる場合があるため、結果ごとに試聴してください。
+See README for measured validation results and installation instructions. / 実測の検証結果と導入手順はREADMEを参照してください。
 
 Integration code: Apache-2.0; YuE2 models: CC BY-NC 4.0, noncommercial. / 連携コードはApache-2.0、YuE2モデルは非商用のCC BY-NC 4.0です。
 
-Version: `20260914065948`; tag: `yue2-20260914065948`. / 配布版は `20260914065948`、タグは `yue2-20260914065948` です。
+Tag: `v1.0.0`; VERSION: `1.0.0`. / Gitタグは `v1.0.0`、VERSIONは `1.0.0` です。

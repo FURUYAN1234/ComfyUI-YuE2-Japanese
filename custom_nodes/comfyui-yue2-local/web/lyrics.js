@@ -13,12 +13,14 @@ export function readableLyrics(value) {
     "✅ 曲の生成が完了 / Completed",
     `曲名 / Title：${data.title}`,
     `曲の長さ / Duration：${seconds(data.audio_seconds)}`,
-    `目標時間 / Target：${data.target_seconds == null ? "指定なし" : seconds(data.target_seconds)}（目安）`,
+    `目標時間 / Target：${data.target_seconds == null ? "指定なし" : seconds(data.target_seconds)}${data.duration_mode === "ぴったり尺（編集）" ? "（編集で調整）" : "（目安）"}`,
+    `作成方法 / Creation：${data.creation_mode || "おまかせ"}`,
+    `元の曲の長さ / Original：${seconds(data.postprocess?.original_seconds ?? data.audio_seconds)}`,
     `時間設定 / Mode：${data.duration_mode || "歌詞量で指定（従来）"}`,
     `曲生成・保存 / Generation：${seconds(data.song_generation_seconds)}（作詞時間を除く）`,
     "", "歌詞 / Lyrics", data.lyrics,
     "", "曲調・声・楽器 / Style", data.style,
-    "", "保存先 / Saved folder", data.folder,
+    "", "保存先 / Saved folder", "ComfyUI/output/audio/YuE2/" + data.folder.split("/audio/YuE2/")[1],
     "", data.duration_note || "目標秒数は目安です。",
     data.note || "日本語歌唱の品質は試聴して確認してください。"
   ].join("\n");

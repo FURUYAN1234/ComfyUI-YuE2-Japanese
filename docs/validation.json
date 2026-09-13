@@ -1,8 +1,7 @@
 {
   "date": "2026-09-13T23:42:04.494913+09:00",
   "hardware": "RTX 5080 16GB",
-  "node_tests": "5 focused tests passed",
-  "provided_image_identical": true,
+  "node_tests": "10 Python tests passed",
   "native_missing_models_ui": "Missing model detected and download action + correct yue2 directory displayed for controlled workflow; large duplicate weight not downloaded",
   "workflow_download_button": "Actual small missing file downloaded from pinned official URL; all 13 file sizes and SHA256 verified; browser success message observed",
   "duration_test": {
@@ -21,12 +20,11 @@
   "limitations": [
     "Other PCs not tested",
     "ASR has mismatches; song quality requires listening",
-    "60/120 second generation not tested",
-    "No note or GitHub publishing performed"
+    "60/120 second generation not tested"
   ],
   "package_verifier_tests": "normal + modified/missing/extra all passed",
   "live_download_endpoint_negative": "foreign Origin returns HTTP403 before download",
-  "version": "20260913234820",
+  "version": "1.0.0",
   "workflow_reload": "Saved view, seeds, model selection and button verified after reload",
   "lyrics_display_update": {
     "version": "20260914045244",
@@ -47,6 +45,44 @@
     "tests": "Python 5 tests and JavaScript normal/malformed/unrelated cases passed",
     "limitations": "No subjective listening-quality approval; duration targets remain approximate"
   },
-  "documentation_release": "20260914065948",
-  "runtime_changed": false
+  "documentation_release": "v1.0.0",
+  "runtime_changed": true,
+  "preset_buttons": "Five visible buttons added; Ballad click, save/reload and actual queued parameters verified",
+  "preset_generation": {
+    "prompt_id": "bd1eb9f0-d5f6-4309-9a10-60b5735b3c70",
+    "audio_seconds": 68.2786666667,
+    "mode": "natural",
+    "status": "success"
+  },
+  "manual_exact": {
+    "prompt_id": "1479ae8d-c363-47da-af0a-fb491c219fa1",
+    "llm_called": false,
+    "lyrics_unchanged": true,
+    "original_frames": 2566976,
+    "final_frames": 480000,
+    "sample_rate": 48000,
+    "seconds": 10,
+    "method": "trim_and_fade",
+    "original_retained": true
+  },
+  "button_live_run": {
+    "id": "0b355b27-6368-4c60-9337-d90caa966a88",
+    "status": "success",
+    "audio_seconds": 69.4,
+    "end_to_end_seconds": 205.047,
+    "cached_nodes": []
+  },
+  "final_ui_replay": {
+    "id": "7de3cf3b-43ae-4cd2-b725-f0053f5cee86",
+    "status": "success",
+    "cached_nodes": [
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "note": "Cached replay validates display only, not a new generation"
+  }
 }

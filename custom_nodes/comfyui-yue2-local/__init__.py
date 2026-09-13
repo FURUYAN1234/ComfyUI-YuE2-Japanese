@@ -10,30 +10,59 @@ import folder_paths
 import comfy.model_management as mm
 from comfy.utils import ProgressBar
 
-RUNTIME=Path(os.environ.get('COMFYUI_YUE2_HOME',str(Path.home()/'Codex/work/yue2')))
+RUNTIME=Path(os.environ.get('COMFYUI_YUE2_HOME',str(Path.home()/'.local/share/yue2')))
 local_config=Path(__file__).with_name('local_config.json')
 if local_config.is_file():RUNTIME=Path(json.loads(local_config.read_text())['runtime'])
 MODEL_ROOT=Path(folder_paths.models_dir)/'yue2'
 folder_paths.add_model_folder_path('yue2',str(MODEL_ROOT))
 folder_paths.folder_names_and_paths['yue2'][1].update({'.safetensors','.json','.tiktoken','.md',''})
-def planner_module():
-    spec=importlib.util.spec_from_file_location('yue2_local_planner',RUNTIME/'planner.py')
+def runtime_module(name):
+    spec=importlib.util.spec_from_file_location('yue2_local_'+name,RUNTIME/(name+'.py'))
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+
+def planner_module():return runtime_module('planner')
+
+class YuE2SongOptions:
+    @classmethod
+    def INPUT_TYPES(cls):
+        o=runtime_module('song_options')
+        return {'required':{'mode':(o.MODES,),'voice':(list(o.VOICES),),'genre':(list(o.GENRES),),'mood':(list(o.MOODS),),'instruments':(list(o.INSTRUMENTS),),'bpm':('INT',{'default':0,'min':0,'max':220,'tooltip':'0=おまかせ。指定は40〜220。'}),'timing':(o.TIMING,),'seconds':('INT',{'default':30,'min':10,'max':240})}}
+    RETURN_TYPES=('YUE2_OPTIONS',);RETURN_NAMES=('Settings / 設定',);FUNCTION='create';CATEGORY='audio/YuE2'
+    def create(self,**kwargs):return (runtime_module('song_options').settings(**kwargs),)
+
+class YuE2ManualLyrics:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {'required':{'title':('STRING',{'default':'手動入力の曲'}),'lyrics':('STRING',{'multiline':True,'default':''}),'style':('STRING',{'multiline':True,'default':''})}}
+    RETURN_TYPES=('YUE2_MANUAL',);RETURN_NAMES=('Manual lyrics / 手動歌詞',);FUNCTION='create';CATEGORY='audio/YuE2'
+    def create(self,title,lyrics,style):return ({'title':title,'lyrics':lyrics,'style':style},)
 
 class YuE2JapanesePlanner:
     @classmethod
     def INPUT_TYPES(cls):
-        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})}}
+        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})},'optional':{'settings':('YUE2_OPTIONS',),'manual':('YUE2_MANUAL',)}}
     RETURN_TYPES=('YUE2_PLAN',);RETURN_NAMES=('曲の企画JSON / Song plan',);FUNCTION='create';CATEGORY='audio/YuE2'
-    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30):
+    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30,settings=None,manual=None):
         mm.throw_exception_if_processing_interrupted()
+        chosen=None; manual_plan=None; original_brief=brief
+        if settings is not None:
+            chosen,manual_plan,brief=runtime_module('song_options').prepare(brief,settings,manual)
+            duration_mode='歌詞量で指定（従来）' if chosen['timing']=='可変尺（自然な長さ）' else '秒数を指定（目安）'
+            target_seconds=chosen['seconds']
+        if manual_plan is not None:
+            plan=planner_module().validate(manual_plan)
+            report={'model':None,'mode':'manual','llm_called':False,'duration':planner_module().duration_plan(length.startswith('短い'),duration_mode,target_seconds),'settings':chosen}
+            return (json.dumps({'brief':original_brief,'plan':plan,'report':report,'settings':chosen},ensure_ascii=False,indent=2),)
         mm.unload_all_models();mm.soft_empty_cache()
         bar=ProgressBar(4);n=0
         def progress(message):
             nonlocal n
             print('[YuE2 Planner] '+message,flush=True);n+=1;bar.update_absolute(min(n,4),4)
         plan,report=planner_module().plan_song(brief,short=length.startswith('短い'),seed=seed,progress=progress,duration_mode=duration_mode,target_seconds=target_seconds)
-        return (json.dumps({'brief':brief,'plan':plan,'report':report},ensure_ascii=False,indent=2),)
+        if chosen:
+            report['settings']=chosen
+            if chosen['style']:plan['style']=chosen['style']+', '+plan['style']
+        return (json.dumps({'brief':original_brief,'plan':plan,'report':report,'settings':chosen},ensure_ascii=False,indent=2),)
 
 class YuE2LocalSong:
     @classmethod
@@ -86,15 +115,25 @@ class YuE2LocalSong:
                     state.update(status='interrupted',ended_at=datetime.now().astimezone().isoformat());state_path.write_text(json.dumps(state,ensure_ascii=False,indent=2))
         result=json.loads((output/'result.json').read_text())
         if any(result['truncated'].values()):raise RuntimeError('生成が途中で打ち切られました。音声は検証用として保存しています: '+str(output))
+        chosen=data.get('settings')
+        finish=None
+        if chosen:
+            finish=runtime_module('audio_finish').finish_audio(output,chosen['timing'],chosen['seconds'])
+            result['generated_audio_seconds']=result['audio_seconds'];result['audio_seconds']=finish['output_seconds'];result['postprocess']=finish
+            (output/'result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
         wave,sr=sf.read(output/'audio.flac',dtype='float32',always_2d=True)
         if sr!=48000 or len(wave)<sr or not np.isfinite(wave).all() or np.max(np.abs(wave))<1e-5:raise RuntimeError('生成音声の形式または波形が不正です。')
         (output/'song_plan.json').write_text(song_plan)
         bar.update_absolute(5,5)
         details={'title':plan['title'],'folder':str(output),'audio_seconds':result['audio_seconds'],'lyrics':plan['lyrics'],'style':plan['style'],'target_seconds':data.get('report',{}).get('duration',{}).get('target_seconds'),'duration_mode':data.get('report',{}).get('duration',{}).get('mode','歌詞量で指定（従来）'),'song_generation_seconds':round(time.monotonic()-start,2),'duration_note':'目標秒数は目安です。実際の秒数はaudio_secondsを確認してください。','note':'日本語歌唱の品質は試聴して確認してください。モデルはCC BY-NC 4.0。'}
+        if chosen:
+            details.update(creation_mode=chosen['mode'],settings=chosen,duration_mode=chosen['timing'],target_seconds=None if chosen['timing']=='可変尺（自然な長さ）' else chosen['seconds'],postprocess=finish)
+            if chosen['timing']=='ぴったり尺（編集）':details['duration_note']='指定尺へ編集済み。末尾フェード・カット／無音補完を使用。元音声はaudio_original.flacに保存。'
+        (output/'details.json').write_text(json.dumps(details,ensure_ascii=False,indent=2))
         return ({'waveform':torch.from_numpy(wave.T.copy()).unsqueeze(0),'sample_rate':sr},json.dumps(details,ensure_ascii=False,indent=2))
 
-NODE_CLASS_MAPPINGS={'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
-NODE_DISPLAY_NAME_MAPPINGS={'YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
+NODE_CLASS_MAPPINGS={'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
+NODE_DISPLAY_NAME_MAPPINGS={'YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
 
 # Fixed official manifest only: the browser cannot choose URLs or destination paths.
 import asyncio, sys

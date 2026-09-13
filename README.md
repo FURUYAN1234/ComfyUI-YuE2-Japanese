@@ -1,6 +1,10 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914065948)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.0.0)
+
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio_v1.0.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio.json)
+
+Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
 ![Japanese song creation / 日本語おまかせ作曲](docs/assets/note-thumbnail.png)
 
@@ -12,23 +16,21 @@ This local setup combines LM Studio on Windows with ComfyUI and an isolated YuE2
 
 YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official repository](https://github.com/multimodal-art-projection/YuE) and model licenses. / YuE2モデルはCC BY-NC 4.0の非商用ライセンスなので、[公式リポジトリ](https://github.com/multimodal-art-projection/YuE)と各モデルの条件を確認してください。
 
-![Provided workflow screenshot / 提供されたワークフロー画像](docs/assets/workflow-user-provided.png)
+![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.png)
 
-The original supplied image is preserved and shows the workflow that generated a 39.6-second song. / 提供された元画像をそのまま掲載しており、39.6秒の曲を生成した時点の画面です。
-
-The distributed JSON adds duration targets and model selectors; see the [current layout](docs/assets/workflow-current.png). / 配布JSONには時間の目標設定とモデル選択欄を追加しており、[現在の配置](docs/assets/workflow-current.png)で確認できます。
+This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
 
 ## Package contents and separate requirements / 配布物と別途必要なもの
 
 | Item / 同梱物 | Purpose / 用途 |
 |---|---|
-| `workflows/*.json` | ComfyUI workflow with one guide panel and execution nodes / 説明1枠と実行ノードのComfyUIワークフロー |
-| `custom_nodes/comfyui-yue2-local/` | One package containing planning and song-generation nodes / 作詞・曲生成の2ノードを含む1パッケージ |
+| `workflows/*.json` | ComfyUI workflow with one guide, presets, free input and execution nodes / 説明1枠・プリセット・自由入力・実行ノードのComfyUIワークフロー |
+| `custom_nodes/comfyui-yue2-local/` | One package containing preset, free-input, planning and generation nodes / プリセット・自由入力・作詞・曲生成の4ノードを含む1パッケージ |
 | `runtime/` | LM Studio integration and YuE2 subprocess code / LM Studio連携とYuE2子プロセスの実行コード |
 | `install.py` | Install the isolated environment, nodes and workflow / 専用環境・ノード・ワークフローの配置 |
 | `models.json`, `download_models.py` | Pinned downloads and SHA256 checks for 13 files / 13ファイルの固定取得先とSHA256検査付き取得 |
 | `verify_package.py`, `SHA256SUMS.json` | Detect missing, changed and extra package files / 配布内容の欠落・変更・余分なファイルを検出 |
-| `docs/note-article.md`, `docs/assets/` | Article draft, supplied screenshot and thumbnail / 記事原稿・提供画像・サムネイル |
+| `docs/note-article.md`, `docs/assets/` | Article draft, workflow screenshot and thumbnail / 記事原稿・ワークフロー画像・サムネイル |
 
 **Loading the JSON alone is insufficient; extract and install the entire ZIP. / JSONだけを読み込んでも動かないため、ZIP全体を展開して導入してください。**
 
@@ -102,13 +104,13 @@ YuE2 dependencies go into a separate venv, so do not add them to ComfyUI's requi
 
 ## 3. Extract and install the package / 配布ZIPを展開して導入
 
-Download the named ZIP asset from the Release linked above and extract it into a WSL-accessible working folder such as `~/Codex/packages/`. / 冒頭のReleaseから名前付きZIPを取得し、`~/Codex/packages/` などUbuntuから使える作業フォルダーへ展開してください。
+Download the named ZIP asset from the Release linked above and extract it into a WSL-accessible working folder such as `~/Downloads/yue2-packages/`. / 冒頭のReleaseから名前付きZIPを取得し、`~/Downloads/yue2-packages/` などUbuntuから使える作業フォルダーへ展開してください。
 
 Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downloaded ZIP filename. / `YOUR_WINDOWS_USER` はWindowsのユーザー名へ置き換え、取得した実際のZIP名を指定してください。
 
 ```bash
-mkdir -p ~/Codex/packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_20260914065948.zip -d ~/Codex/packages
+mkdir -p ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.0.0.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -116,35 +118,41 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
 
-The installer checks out a pinned official YuE2 commit and installs PyTorch and YuE2 into `~/Codex/work/yue2/.venv`. / インストーラーは公式YuE2ソースを固定コミットで取得し、`~/Codex/work/yue2/.venv` にPyTorchとYuE2を導入します。
+The installer uses `~/.local/share/yue2` for a new runtime, preserves an existing configured runtime when upgrading, and accepts `--runtime` to choose another directory. / 新規の専用環境は `~/.local/share/yue2` に作成し、更新時は既存設定の環境を維持し、`--runtime` で別の配置先も選べます。
 
-It stops instead of overwriting an incompatible existing YuE2 source; use a separate directory such as `--runtime ~/Codex/work/yue2-music` in that case. / 既存の異なるYuE2ソースには上書きせず停止するため、その場合は `--runtime ~/Codex/work/yue2-music` など別フォルダーを指定してください。
+The installer checks out the pinned official source and installs dependencies into that runtime’s `.venv`. / インストーラーは固定した公式ソースを取得し、その専用環境の `.venv` に依存物を導入します。
+
+It stops instead of overwriting an incompatible existing YuE2 source; use a separate directory such as `--runtime ~/.local/share/yue2-music` in that case. / 既存の異なるYuE2ソースには上書きせず停止するため、その場合は `--runtime ~/.local/share/yue2-music` など別フォルダーを指定してください。
 
 If you change the extraction or runtime folder, adapt later paths accordingly. / ZIPの展開先や専用環境のフォルダーを変更した場合は、以降のパスもその指定先へ読み替えてください。
 
 The installed layout is shown below; `.venv` is YuE2's Python environment and `repo` contains the pinned official source. / 配置結果は以下のとおりで、`.venv` はYuE2専用Python環境、`repo` は固定した公式ソースです。
 
 ```text
-~/Codex/work/yue2/
+~/.local/share/yue2/
   .venv/
   repo/
   planner.py / run_song.py
 ~/ComfyUI/
   custom_nodes/comfyui-yue2-local/__init__.py
   custom_nodes/comfyui-yue2-local/local_config.json
-  user/default/workflows/03_音声/17_音楽_YuE2/
+  user/default/workflows/YuE2/
     YuE2_日本語おまかせ_LMStudio_GPU.json
   models/yue2/
 ```
 
 For manual copying, avoid the extra nesting `custom_nodes/comfyui-yue2-local/comfyui-yue2-local/__init__.py`. / 手動コピーでも `custom_nodes/comfyui-yue2-local/comfyui-yue2-local/__init__.py` のようなフォルダーの二重入れを避けてください。
 
-The installer records runtime paths in `local_config.json`. / 専用環境の位置はインストーラーが `local_config.json` に記録します。
+The installer records your runtime path in local-only `local_config.json`; this file is never distributed. / 専用環境の位置はローカル専用の `local_config.json` に記録し、このファイルは配布しません。
+
+The default workflow folder is `ComfyUI/user/default/workflows/YuE2`; `--workflow-dir` selects another folder. / ワークフローの標準配置先は `ComfyUI/user/default/workflows/YuE2` で、`--workflow-dir` で別フォルダーも指定できます。
+
+Backups are stored under the selected runtime’s `backups` folder. / バックアップは選択した専用環境の `backups` フォルダーへ保存します。
 
 Restart ComfyUI and reload the saved workflow in the browser after installation. / 導入後はComfyUIを再起動し、保存済みワークフローをブラウザーで再読込してください。
 
@@ -159,7 +167,7 @@ The lyric model belongs in LM Studio, not ComfyUI's models folder. / 作詞モ�
 Check that Ubuntu can find the Windows CLI. / UbuntuからWindows側CLIが見えることを確認してください。
 
 ```bash
-(cd ~/Codex/work/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
+(cd ~/.local/share/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
 ```
 
 The runtime automatically discovers a standard LM Studio CLI installation under Windows LocalAppData. / 通常インストールのLM Studio CLIはWindowsのLocalAppDataから自動検出します。
@@ -184,7 +192,7 @@ If connection fails, inspect LM Studio's Developer screen and the Windows firewa
 
 ## 5. Download models from the workflow / ワークフローからモデルを取得
 
-Open `03_音声 → 17_音楽_YuE2` in the ComfyUI workflow browser. / ComfyUI左側のワークフロー一覧で `03_音声 → 17_音楽_YuE2` を開いてください。
+Open the downloaded JSON using ComfyUI’s Open command or drag it onto the canvas. / ComfyUIの「開く」またはキャンバスへのドラッグ＆ドロップで、取得したJSONを開いてください。
 
 Node ②'s model selectors and `properties.models` contain pinned official download URLs for ComfyUI's standard missing-model dialog. / ②のモデル選択欄と `properties.models` には、ComfyUI標準の不足モデル案内で使える公式固定リビジョンの取得先を登録しています。
 
@@ -199,7 +207,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -229,37 +237,55 @@ Valid existing files are reused; mismatched files produce an error rather than b
 
 After downloading, refresh model lists or restart ComfyUI and select the two `model.safetensors` entries on node ②. / 取得後はモデル一覧を更新するかComfyUIを再起動し、②で2つの `model.safetensors` を選択してください。
 
-## 6. Enter Japanese instructions and generate / 日本語で入力して生成
+## 6. Choose presets or enter freely / プリセット選択・自由入力
 
-Enter a request in node ① and run the workflow; this example asks for a bittersweet but cheerful rainy-day convenience-store song with a female voice and automatic lyrics. / ①に希望を入力して実行し、例えば次の文章なら、雨の日のコンビニを題材に少し切ないけれど明るい女性ボーカルの曲を歌詞おまかせで依頼できます。
+Choose the creation mode in the Presets & duration node. / プリセット・時間ノードで作成方法を選びます。
 
-```text
-雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。
-```
-
-The sequence is planning → LLM unload → YuE2 generation → audio playback, using the GPU sequentially. / 処理は作詞と曲調作成→作詞LLM解放→YuE2生成→音声再生の順で、GPUを順番に使います。
-
-You do not need to write an English musical-style prompt yourself. / 英語の曲調を自分で書く必要はありません。
-
-| Control / 設定 | Meaning / 意味 |
+| Mode / 方法 | Operation / 操作 |
 |---|---|
-| `brief` | Japanese genre, mood, voice or scene request / 日本語のジャンル・雰囲気・声・場面などの希望 |
-| `length` | Legacy lyric amount: short 4 lines or normal 16 lines / 従来モードの歌詞量で、短い試作4行・通常16行 |
-| `duration_mode` | Legacy lyric length, experimental 30/60/120-second targets, or numeric target / 従来の歌詞量・試験的な目標30秒・60秒・120秒・数値指定 |
-| `target_seconds` | Integer 10–240 used in numeric-target mode / 秒数指定モードで使う10～240の整数 |
-| Node ① `seed` / ①の `seed` | Change the lyric and style candidate / 歌詞と曲調の候補を変更 |
-| Node ② `seed` / ②の `seed` | Change the music candidate for the same plan / 同じ歌詞・曲調から曲の候補を変更 |
-| `model`, `vae` | Downloaded YuE2-3B and YuE2-Vae weights / 取得済みYuE2-3BとYuE2-Vaeの重み |
+| Automatic / おまかせ | Write a Japanese brief; LM Studio supplies lyrics and style / 日本語の希望を書き、LM Studioに歌詞と曲調を任せる |
+| Presets / プリセット | Click voice, genre, mood, instrument arrangement and tempo choices; a brief is optional / 声・ジャンル・雰囲気・楽器編成・テンポを選び、本文の希望は任意 |
+| Manual free input / 手動・自由入力 | Enter your title, lyrics and style in the separate manual node; LM Studio is not called / 別の手動ノードへ曲名・歌詞・曲調を自由入力し、作詞LLMは呼ばない |
 
-You can write a duration such as “30秒くらい” in the Japanese brief, but it is an LLM request without a dedicated numeric parser. / 本文に「30秒くらい」と日本語で書けますが、LLMへの希望であり、数値として検証する専用パーサーはありません。
+Preset choices also work with automatic and manual modes; unselected fields are left open. / プリセットはおまかせ・手動モードでも併用でき、未選択の項目は指定なしとして扱います。
 
-Use node duration settings for an explicit target; they take precedence over prose and adjust lyric amount and style instructions. / 明確な目標にはノードの時間設定を使い、その設定は本文より優先して歌詞量と曲調への指示を調整します。
+Voice choices describe vocal characteristics; this version does not clone a voice from a reference audio file. / 声の選択は声質の指示であり、この版は参照音声から声を複製する機能ではありません。
 
-**Duration controls are experimental and inaccurate: a 30-second target produced 62.1 seconds in one test. / 時間設定は試験的で精度が低く、30秒指定でも62.1秒になった実測があります。**
+Instrument choices are arrangement presets, not separately rendered or editable stems. / 楽器の選択は編成のプリセットであり、楽器ごとの分離音源を生成・編集する機能ではありません。
 
-The normal YuE2 request has no exact output-duration argument, and this integration does not force length by cutting vocals or adding silence. / YuE2の通常リクエストには正確な出力秒数を固定する引数がなく、この連携でも歌を途中で切ったり無音を追加したりして秒数を強制しません。
+BPM 0 means automatic; explicit tempo accepts 40–220 BPM. / BPMの0はおまかせで、指定する場合は40～220です。
 
-Listen and edit the result separately when exact length matters; 60/120-second runs and the numeric maximum remain untested. / 正確な尺が必要な場合は完成曲を試聴して別途編集し、60秒・120秒・数値上限の実生成は未検証である点に注意してください。
+Manual lyrics can contain sections such as `[Verse]` and `[Chorus]`; if none exist, a Verse label is added without rewriting the lyrics. / 自由入力の歌詞には `[Verse]`・`[Chorus]` などを使え、タグがない場合は歌詞を書き換えずVerseタグを補います。
+
+Empty manual lyrics or a missing style and preset produce an error before generation. / 手動歌詞が空欄、または曲調とプリセットが両方未指定なら、生成前にエラーを表示します。
+
+The manual node is ignored outside manual mode, so its default example does not replace automatic lyrics. / 手動以外のモードでは手動ノードの内容を使わず、初期例が自動作詞へ混ざることはありません。
+
+## Duration modes / 時間の指定方法
+
+| Mode / 方法 | Result / 結果 |
+|---|---|
+| Natural length / 可変尺 | Keep the song's generated duration unchanged / 生成された曲の長さをそのまま保持 |
+| Approximate target / 目標尺 | Adjust planning toward the target; exact duration is not guaranteed / 目標に合わせて作詞を調整するが、正確な秒数は保証しない |
+| Exact edited length / ぴったり尺 | Edit the generated audio to the selected number of seconds / 生成後の音声を指定秒数へ編集 |
+
+The target is an integer from 10 to 240 seconds. / 目標秒数は10～240の整数です。
+
+Exact editing fades the final half-second, trims longer audio and pads shorter audio with silence. / ぴったり尺は末尾0.5秒をフェードし、長い音声はカット、短い音声は無音で補います。
+
+This can cut a lyric line or leave a silent tail, so it does not guarantee a musically natural ending. / 歌詞の途中で切れたり末尾が無音になったりするため、音楽的に自然な終わり方を保証する処理ではありません。
+
+The original is retained as `audio_original.flac`; the final `audio.flac` is checked by sample count. / 元音声を `audio_original.flac` に残し、完成版の `audio.flac` はサンプル数で秒数を検査します。
+
+Song information records original length, final length and the finishing method. / 曲情報には元の長さ・完成後の長さ・尺調整の方法を記録します。
+
+Natural and approximate modes do not alter the generated audio. / 可変尺・目標尺では生成音声を編集しません。
+
+Without the new settings node, existing workflows retain their original lyric-length and approximate-duration controls. / 新しい設定ノードを接続しない既存ワークフローでは、従来の歌詞量・目標時間設定を維持します。
+
+A Japanese prose request such as “30秒くらい” is still an LLM instruction; the settings node takes precedence when connected. / 本文の「30秒くらい」はLLMへの指示として扱い、設定ノードが接続されていればノード指定を優先します。
+
+A previous approximate 30-second target yielded 62.1 seconds; exact editing is a separate postprocessing operation. / 従来の目標30秒では62.1秒になった実測があり、ぴったり尺はこれとは別の生成後編集です。
 
 ## Lyrics, song information and completion / 歌詞・曲情報と完了表示
 
@@ -267,7 +293,7 @@ Node ④ begins with a completion message and shows title, actual length, target
 
 The existing UI message is “✅ 曲の生成が完了 / Completed”. / 現在の画面の完了メッセージは「✅ 曲の生成が完了 / Completed」です。
 
-The original generation-record JSON remains available to downstream nodes. / 後続ノードへ渡す元の生成記録JSONは維持しています。
+The generation-record JSON remains available to downstream nodes, with preset and finishing metadata added. / 後続ノードへ渡す生成記録JSONを維持し、プリセットと尺調整の情報を追加しています。
 
 Displayed generation/save time excludes LM Studio lyric planning. / 表示する曲生成・保存時間にはLM Studioでの作詞時間を含みません。
 
@@ -295,7 +321,7 @@ The listening sample is hosted on note and is not included in the distribution Z
 
 Finished songs are saved under `ComfyUI/output/audio/YuE2/日時_ID/`, separately from the player's temporary audio. / 完成音声は再生ノードの一時音声とは別に、`ComfyUI/output/audio/YuE2/日時_ID/` へ保存します。
 
-Main files are `audio.flac`, `song_plan.json`, `score.abc` and `result.json`. / 主なファイルは `audio.flac`、`song_plan.json`、`score.abc`、`result.json` です。
+Main files are `audio.flac`, `song_plan.json`, `score.abc`, `result.json` and `details.json`. / 主なファイルは `audio.flac`、`song_plan.json`、`score.abc`、`result.json`、`details.json` です。
 
 Original instructions, lyrics, style and seeds remain available for comparing candidates. / 元の指示・歌詞・曲調・seedなどを残すため、別候補との比較に使えます。
 
@@ -342,22 +368,22 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 | Out of VRAM / VRAM不足 | Finish other image, video or LLM workloads and retry a short song / 他の画像・動画・LLM処理を終え、短い試作で再実行 |
 | Truncated lyrics planning / 作詞が途中終了 | Music generation will not start; inspect logs and model settings before retrying / 曲生成は開始しないため、ログとモデル設定を確認して再実行 |
 | Slow cancellation / 中止の反映が遅い | YuE2 has subprocess cancellation, but LM Studio loading or API waits can take up to about 180 seconds / YuE2子プロセスは停止処理があるが、LM Studioロード・API応答中は最大約180秒の待ちが残る場合あり |
-| Unexpected length or lyrics / 秒数・歌詞が期待と違う | Inspect node ④, listen, and change the seed; duration is only a target / ④と音声を確認しseedで別候補を作成、時間は目標値 |
+| Unexpected length or lyrics / 秒数・歌詞が期待と違う | Inspect node ④, listen, and change the seed; use exact-edit mode only when a fixed duration matters / ④と音声を確認しseedで別候補を作成、固定尺にはぴったり尺の編集を使用 |
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914065948)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.0.0)
 
-Version: `20260914065948`; tag: `yue2-20260914065948`. / 配布版は `20260914065948`、タグは `yue2-20260914065948` です。
+Version: `v1.0.0`; tag: `v1.0.0`. / 配布版は `v1.0.0`、タグは `v1.0.0` です。
 
-Use the named `YuE2_Japanese_LMStudio_20260914065948.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_20260914065948.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.0.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.0.0.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch yue2-20260914065948 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.0.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -383,3 +409,11 @@ Qwen, LM Studio and ComfyUI have their own terms; see `LICENSE`, `NOTICE.md` and
 - [YuE2-Vae model / YuE2-Vaeモデル](https://huggingface.co/m-a-p/YuE2-Vae)
 - [Qwen3.5 9B in LM Studio / LM StudioのQwen3.5 9B](https://lmstudio.ai/models/qwen/qwen3.5-9b)
 - [Reference article / 導入検討時の参考記事](https://note.com/humble_bobcat51/n/n977c99a109eb)
+
+Press one of the five preset buttons to fill voice, genre, mood, instruments and BPM, then fine-tune the selection fields. / 5種類のプリセットボタンで声・曲調・雰囲気・楽器・BPMを一括設定し、選択欄で調整できます。
+
+![Preset buttons / プリセットボタン](docs/assets/presets-v1.png)
+
+Verified through the actual Run button: the Ballad preset produced 69.4 seconds of audio in 205.047 seconds end to end, including lyric planning and model switching; song generation and saving took 82.3 seconds. / 実際の実行ボタンから、バラード設定で69.4秒の音声を生成し、作詞・モデル切替を含む全工程205.047秒、曲生成・保存82.3秒を確認しました。
+
+Manual free input skipped the LLM and produced an original 53.479-second track; exact editing created 480,000 frames at 48 kHz (10 seconds) and retained the original. / 自由入力ではLLMを呼ばず53.479秒の元音声を生成し、48 kHz・480,000フレーム（10秒）へ編集して元音声を保持しました。

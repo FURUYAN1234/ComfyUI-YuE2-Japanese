@@ -12,11 +12,26 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 試した環境では、4行の日本語歌詞から39.6秒の曲ができました。ComfyUIの実行開始から保存完了までは166.2秒。モデルの読み込みも含む時間です。ただし日本語の発音や歌詞の再現には確認が必要で、今回の結果を「毎回そのまま完成曲として使える」とは扱っていません。
 
-![実生成した画面](assets/workflow-user-provided.png)
+## ワークフローの入手
 
-この画像は実生成時の提供スクリーンショットです。現在の配布版では、時間の目標設定とモデル取得ボタンを追加しています。更新後の配置はこちらです。
+- [導入ZIP v1.0.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio_v1.0.0.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.0.0/YuE2_Japanese_LMStudio.json)
 
-![現在のワークフロー](assets/workflow-current.png)
+初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
+
+![プリセットと自由入力に対応したワークフロー](assets/workflow-v1.png)
+
+## ボタンで選ぶ・日本語で任せる・自由入力する
+
+![プリセットボタンと時間設定](assets/presets-v1.png)
+
+設定ノードには「明るいポップ」「穏やかアコースティック」「切ないバラード」「元気なロック」「幻想的エレクトロ」のボタンがあります。押すと声・曲調・雰囲気・楽器・BPMがまとめて入り、個別の選択欄で調整できます。音声の特徴を指示するもので、特定の歌手の声を再現する音声クローン機能ではありません。
+
+「おまかせ」では日本語の希望を入力し、LM Studioに歌詞を任せます。「手動」は自由入力の意味です。別ノードに曲名・歌詞・曲調を入力すると、作詞LLMを呼ばずに曲を生成します。
+
+時間は設定ノードの選択肢と秒数で設定します。「可変尺」は自然に生成された長さを保ち、「目標尺」は指定秒数を目安に作詞します。「ぴったり尺」は生成後の音声をフェード・カット、または無音補完で指定秒数へ編集します。元の曲は audio_original.flac に残します。歌詞やフレーズの途中で切れる場合があり、モデルが自然な終わり方で秒数を守るという意味ではありません。
+
+実検証では、プリセットから68.3秒の曲を生成しました。自由入力では53.5秒の元音声を生成し、10秒へ編集できました。完成欄には曲名・長さ・作成方法・歌詞・曲調を表示します。
 
 ## 最初に知っておいてほしいこと
 
@@ -31,12 +46,12 @@ YuE2単体でも日本語の歌詞・曲調で生成する実験は通りまし�
 |同梱物|用途|
 |---|---|
 |`workflows/*.json`|説明1枠＋実行ノードのComfyUIワークフロー|
-|`custom_nodes/comfyui-yue2-local/`|カスタムノード1パッケージ。作詞・曲生成の2ノード|
+|`custom_nodes/comfyui-yue2-local/`|カスタムノード1パッケージ。設定・自由入力・作詞・曲生成の4ノード|
 |`runtime/`|LM Studio連携とYuE2子プロセスの実行コード|
 |`install.py`|専用Python環境とノード、JSONの配置|
 |`models.json` / `download_models.py`|13ファイルの固定取得先とSHA256確認付き取得|
 |`verify_package.py` / `SHA256SUMS.json`|配布内容の欠落・変更・余分なファイル検出|
-|`docs/note-article.md` / `assets/`|note用原稿、提供画像、サムネイル|
+|`docs/note-article.md` / `assets/`|note用原稿、ワークフロー画像、サムネイル|
 
 **JSONだけを読み込んでも動きません。** ZIPを全部展開して導入してください。モデル、LM Studio、ComfyUI、生成曲、APIキーは同梱していません。外部の有料APIキーは不要です。初回のソフト・モデル取得にはインターネット接続を使います。
 
@@ -88,36 +103,36 @@ Windowsのブラウザーで `http://127.0.0.1:8188` を開きます。新規導
 
 ## 3. 配布ZIPを展開し、YuE2を導入
 
-ZIPはUbuntuから使える作業フォルダーへ展開します。例：`~/Codex/packages/` 配下。ZIP名は受け取った実ファイル名を指定します。
+ZIPはUbuntuから使える作業フォルダーへ展開します。例：`~/Downloads/yue2-packages/` 配下。ZIP名は受け取った実ファイル名を指定します。
 
 ```bash
-mkdir -p ~/Codex/packages
-unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip -d ~/Codex/packages
+mkdir -p ~/Downloads/yue2-packages
+unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip -d ~/Downloads/yue2-packages
 ```
 
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
 
-インストーラーは公式YuE2ソースを固定コミットで取得し、`~/Codex/work/yue2/.venv` にPyTorchとYuE2を入れます。既存の異なるYuE2ソースへ勝手に上書きせず停止します。その場合は `--runtime ~/Codex/work/yue2-music` のように別フォルダーを指定できます。
+インストーラーは公式YuE2ソースを固定コミットで取得します。新規環境は `~/.local/share/yue2/.venv` に作成し、更新時は既存の `local_config.json` にある専用環境を維持します。既存の異なるYuE2ソースへ勝手に上書きせず停止します。その場合は `--runtime ~/.local/share/yue2-music` のように別フォルダーを指定できます。
 
 配布ZIPを別の場所へ展開した場合は、上記の `cd` のパスを読み替えてください。`--runtime` を変更した場合は、以降の専用環境のパスもその指定先へ読み替えます。
 
 配置結果：
 
 ```text
-~/Codex/work/yue2/
+~/.local/share/yue2/
   .venv/                  YuE2専用Python
   repo/                   固定した公式YuE2ソース
   planner.py / run_song.py
 ~/ComfyUI/
   custom_nodes/comfyui-yue2-local/__init__.py
   custom_nodes/comfyui-yue2-local/local_config.json
-  user/default/workflows/03_音声/17_音楽_YuE2/
+  user/default/workflows/YuE2/
     YuE2_日本語おまかせ_LMStudio_GPU.json
   models/yue2/
 ```
@@ -133,7 +148,7 @@ Windowsに[LM Studio](https://lmstudio.ai/download)をインストールして�
 UbuntuからWindows側CLIが見えることを確認します。
 
 ```bash
-(cd ~/Codex/work/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
+(cd ~/.local/share/yue2 && python3 -c "import planner; print(planner.cli('ls'))")
 ```
 
 通常インストールのLM Studio CLIはWindowsのLocalAppDataから自動検出します。独自配置で見つからない場合のみ、ComfyUIを起動するUbuntuシェルで `YUE2_LMS_CLI` に実在する `lms.exe` のWSL形式パスを設定します。
@@ -148,12 +163,12 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 
 ## 5. ワークフローからモデルを取得
 
-左側のワークフロー一覧で `03_音声 → 17_音楽_YuE2` を開きます。②のモデル選択欄と `properties.models` に、公式の固定リビジョンの取得先を設定しています。不足モデルの案内から取得先を開ける、ComfyUIで一般的な形式です。
+取得したワークフローJSONをComfyUIの「開く」、またはキャンバスへのドラッグ＆ドロップで読み込みます。②のモデル選択欄と `properties.models` に、公式の固定リビジョンの取得先を設定しています。不足モデルの案内から取得先を開ける、ComfyUIで一般的な形式です。
 
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Codex/packages/YuE2_Japanese_LMStudio_20260914065948
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.0.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -193,19 +208,21 @@ ComfyUI/models/yue2/
 |---|---|
 |`brief`|日本語の希望。ジャンル、雰囲気、声、場面など|
 |`length`|従来モードで使う歌詞量。短い試作4行／通常16行|
-|`duration_mode`|従来の歌詞量、目標30／60／120秒（試験的）、数値指定|
-|`target_seconds`|「秒数を指定（目安）」の時に使う10～240の整数|
+|設定ノード `mode`|おまかせ・プリセット・手動（自由入力）|
+|設定ノード `timing`|可変尺・目標尺・ぴったり尺（編集）|
+|設定ノード `seconds`|目標尺・ぴったり尺で使う10～240の整数|
+|声・曲調・楽器・BPM|ボタンで一括設定した後、個別に調整可能|
 |①`seed`|作詞候補を変える種|
 |②`seed`|同じ歌詞・曲調から曲の候補を変える種|
 |`model` / `vae`|取得済みYuE2-3B / YuE2-Vaeの重み|
 
 時間は本文に「30秒くらい」と日本語で書くこともできます。ただし本文だけの秒数はLLMへの希望で、数値として検証する専用パーサーはありません。明確に渡したい場合はノードの時間設定を使います。ノードの秒数モードは本文より優先し、歌詞量と曲調への指示を調整します。
 
-**時間設定は試験的で、精度は低いです。30秒指定でも62.1秒になった実測があります。** YuE2の通常リクエストには正確な出力秒数を固定する引数がありません。長い無音や歌の途中を切って指定秒数に合わせる処理も入れていません。完成尺が必須の用途では、完成曲を試聴してから別途編集してください。60／120秒・数値上限の実生成は未検証です。
+**目標尺は目安です。** 旧版の30秒指定では62.1秒となった実測があります。正確なファイル長が必要なら「ぴったり尺（編集）」を選びます。生成後のカット・フェード・無音補完なので、自然なフレーズ終端は保証しません。60／120秒・数値上限の実生成は未検証です。
 
 ## 出力先と記録
 
-`ComfyUI/output/audio/YuE2/日時_ID/` へ保存します。主なファイルは `audio.flac`、`song_plan.json`、`score.abc`、`result.json` です。元の指示、生成歌詞・曲調、seedなどを残すため、別候補との比較に使えます。再生ノードの一時音声とは別に、完成音声をoutputへ保存します。
+`ComfyUI/output/audio/YuE2/日時_ID/` へ保存します。主なファイルは `audio.flac`、`song_plan.json`、`score.abc`、`result.json`、`details.json` です。元の指示、生成歌詞・曲調、seedなどを残すため、別候補との比較に使えます。再生ノードの一時音声とは別に、完成音声をoutputへ保存します。
 
 実行ログは専用環境の `jobs/` にあります。ログには入力した文章が含まれるため、公開配布へそのまま混ぜないでください。
 
@@ -239,9 +256,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/yue2-20260914065948)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.0.0)
 
-配布版：`20260914065948`、タグ：`yue2-20260914065948`。Releaseの `YuE2_Japanese_LMStudio_20260914065948.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`v1.0.0`、タグ：`v1.0.0`。Releaseの `YuE2_Japanese_LMStudio_v1.0.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -249,7 +266,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch yue2-20260914065948 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.0.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 

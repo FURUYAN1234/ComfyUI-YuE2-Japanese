@@ -15,10 +15,14 @@ def copy_with_backup(source,target,backup):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--comfyui',type=Path,required=True)
-    parser.add_argument('--runtime',type=Path,default=Path.home()/'Codex/work/yue2')
+    parser.add_argument('--runtime',type=Path,help='YuE2 environment directory; preserves an existing local_config.json by default')
+    parser.add_argument('--workflow-dir',type=Path,help='Optional workflow destination; default: COMFYUI/user/default/workflows/YuE2')
     parser.add_argument('--python',default='python3.12')
     parser.add_argument('--skip-environment',action='store_true',help='Only deploy files into an already verified YuE2 environment')
-    a=parser.parse_args();comfy=a.comfyui.expanduser().resolve();runtime=a.runtime.expanduser().resolve()
+    a=parser.parse_args();comfy=a.comfyui.expanduser().resolve()
+    existing_config=comfy/'custom_nodes/comfyui-yue2-local/local_config.json'
+    configured=json.loads(existing_config.read_text()).get('runtime') if existing_config.is_file() else None
+    runtime=(a.runtime or (Path(configured) if configured else Path.home()/'.local/share/yue2')).expanduser().resolve()
     if sys.platform!='linux':raise SystemExit('Run this installer inside WSL Ubuntu/Linux, not Windows Python.')
     if not (comfy/'main.py').is_file():raise SystemExit('The specified folder is not ComfyUI.')
     try:
@@ -54,9 +58,9 @@ def main():
     if config.exists():
         (backup/'node').mkdir(parents=True,exist_ok=True);shutil.copy2(config,backup/'node'/'local_config.json')
     config.write_text(json.dumps({'runtime':str(runtime)},indent=2))
-    workflow_dir=comfy/'user/default/workflows/03_音声/17_音楽_YuE2'
+    workflow_dir=(a.workflow_dir.expanduser().resolve() if a.workflow_dir else comfy/'user/default/workflows/YuE2')
     for source in (ROOT/'workflows').glob('*.json'):
-        copy_with_backup(source,workflow_dir/source.name,comfy/'user/default/workflows/90_バックアップ/YuE2'/stamp/source.name)
+        copy_with_backup(source,workflow_dir/source.name,backup/'workflows'/source.name)
     (comfy/'models/yue2').mkdir(parents=True,exist_ok=True)
     print('Installed. Restart ComfyUI, reload the workflow, and download missing models from its model links.')
     print('Runtime:',runtime,'\nWorkflow folder:',workflow_dir)
