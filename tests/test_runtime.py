@@ -1,0 +1,39 @@
+import importlib.util,unittest,json
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+spec=importlib.util.spec_from_file_location('planner',ROOT/'runtime/planner.py');planner=importlib.util.module_from_spec(spec);spec.loader.exec_module(planner)
+class RuntimeContract(unittest.TestCase):
+    def test_duration_selection_and_boundaries(self):
+        self.assertEqual(planner.duration_plan(True,'歌詞量で指定（従来）',30)['lyric_lines'],4)
+        self.assertEqual(planner.duration_plan(False,'歌詞量で指定（従来）',30)['lyric_lines'],16)
+        for mode,seconds in [('目標30秒（試験的）',30),('目標60秒（試験的）',60),('目標120秒（試験的）',120),('秒数を指定（目安）',45)]:
+            plan=planner.duration_plan(True,mode,45);self.assertEqual(plan['target_seconds'],seconds)
+            self.assertFalse(plan['exact_duration']);self.assertGreaterEqual(plan['lyric_lines'],2)
+        for invalid in [9,241,30.5,'30',True]:
+            with self.assertRaises(ValueError):planner.duration_plan(True,'秒数を指定（目安）',invalid)
+        with self.assertRaises(ValueError):planner.duration_plan(True,'unknown',30)
+    def test_structured_lyrics_normal_and_abnormal(self):
+        raw={'title':'雨','style':'J-pop','lyrics':{'verse':['雨の道','街の灯り'],'chorus':['明日へ行こう','君と歩く']}}
+        plan=planner.compile_plan(raw,True);self.assertEqual(plan['lyrics'].count('\n'),6)
+        self.assertTrue(plan['style'].startswith('Japanese vocals'))
+        for bad in ({'verse':['一行'],'chorus':['三行','四行']},{'verse':['一行\n二行','三行'],'chorus':['四行','五行']}):
+            with self.assertRaises(ValueError):planner.compile_plan(dict(raw,lyrics=bad),True)
+        for total in (2,4,6,12,24):
+            counts=planner.section_counts(True,total)
+            candidate=dict(raw,lyrics={k:['歌の言葉']*n for k,n in counts.items()})
+            result=planner.compile_plan(candidate,True,total)
+            self.assertEqual(len([l for l in result['lyrics'].splitlines() if l and not l.startswith('[')]),total)
+    def test_public_validation(self):
+        good={'title':'雨','style':'Japanese pop','lyrics':'[Verse]\n雨の道'}
+        self.assertEqual(planner.validate(good),good)
+        for bad in (dict(good,title=''),dict(good,extra='x'),dict(good,lyrics='no section'),dict(good,lyrics='[Verse]<think>x'),dict(good,style='x'*3001)):
+            with self.assertRaises(ValueError):planner.validate(bad)
+    def test_workflow_models_and_connection(self):
+        w=json.loads(next((ROOT/'workflows').glob('*.json')).read_text());nodes={n['id']:n for n in w['nodes']}
+        self.assertEqual(w['links'][0],[1,2,0,3,0,'YUE2_PLAN'])
+        self.assertEqual(nodes[3]['properties']['models'],json.loads((ROOT/'models.json').read_text()))
+        self.assertIsInstance(nodes[3]['widgets_values'][0],int)
+        self.assertEqual(nodes[3]['widgets_values'][2:4],['YuE2-3B/model.safetensors','YuE2-Vae/model.safetensors'])
+        self.assertEqual(sum(n['type']=='MarkdownNote' for n in w['nodes']),1)
+        self.assertLess(nodes[1]['pos'][0]+nodes[1]['size'][0],nodes[2]['pos'][0])
+if __name__=='__main__':unittest.main()

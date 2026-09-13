@@ -1,0 +1,119 @@
+[
+  {
+    "name": "YuE2-3B/LICENSE",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/LICENSE",
+    "sha256": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+    "size": 20309,
+    "hash": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/THIRD_PARTY_NOTICES.md",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/THIRD_PARTY_NOTICES.md",
+    "sha256": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+    "size": 793,
+    "hash": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/config.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/config.json",
+    "sha256": "ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329",
+    "size": 959,
+    "hash": "ad3477bbef890bf98ae196c1e4b44779494a6231c4ab66f32708eabadf265329",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/generation_config.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/generation_config.json",
+    "sha256": "ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170",
+    "size": 204,
+    "hash": "ccc842772f029049fadf9b288393bcdd9f79271b361c0f1875ec1218e4ba5170",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/model.safetensors",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/model.safetensors",
+    "sha256": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+    "size": 7261441640,
+    "hash": "1d55c42c1a9875c34f5d736e15078449992b044e807ce2a138e6cf289a1e59e9",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/qwen.tiktoken",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/qwen.tiktoken",
+    "sha256": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186",
+    "size": 2561218,
+    "hash": "b2b1b8dfb5cc5f024bafc373121c6aba3f66f9a5a0269e243470a1de16a33186",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/weights_manifest.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/weights_manifest.json",
+    "sha256": "2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93",
+    "size": 179,
+    "hash": "2296f82c29dcb11aeefde07e216403a32fc86c8f6da2ec15a70102abfd936a93",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-3B/yue2_generation_config.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-3B/resolve/29b3558dd46954a0cd9021dc76d5c91864a0f1c7/yue2_generation_config.json",
+    "sha256": "203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61",
+    "size": 466,
+    "hash": "203830cebde6e3644eb291925362990d198e66c3b6006cd11f1aaa21904bcc61",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-Vae/LICENSE",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/LICENSE",
+    "sha256": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+    "size": 20309,
+    "hash": "060985741d20e70613b4c189c7de106cabd3fb2109fbbfb6d705c9d619417dd0",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-Vae/THIRD_PARTY_NOTICES.md",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/THIRD_PARTY_NOTICES.md",
+    "sha256": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+    "size": 793,
+    "hash": "14d3fd9f6fee86b4260b69b0979735b99ffec8c6b4db254567047a4215cd9af3",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-Vae/config.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/config.json",
+    "sha256": "f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970",
+    "size": 1378,
+    "hash": "f0191bb9694009956de44e0c361a6f1334760be4c8f848e599bde242a54a0970",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-Vae/model.safetensors",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/model.safetensors",
+    "sha256": "807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346",
+    "size": 530512720,
+    "hash": "807ce9d5149fa27c5ad3e6582058469852e908f6c5acc8c8aa338e7ab7751346",
+    "hash_type": "SHA256"
+  },
+  {
+    "name": "YuE2-Vae/weights_manifest.json",
+    "directory": "yue2",
+    "url": "https://huggingface.co/m-a-p/YuE2-Vae/resolve/9a94e1d0ea9f8087e98f77fa88df4a4068104d2a/weights_manifest.json",
+    "sha256": "017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026",
+    "size": 178,
+    "hash": "017d64a4d288217a43fcac3866a0e1d55f796fa891d4dfb6de0bd170ab750026",
+    "hash_type": "SHA256"
+  }
+]

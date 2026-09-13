@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-13T23:42:04.494913+09:00",
+  "hardware": "RTX 5080 16GB",
+  "node_tests": "5 focused tests passed",
+  "provided_image_identical": true,
+  "native_missing_models_ui": "Missing model detected and download action + correct yue2 directory displayed for controlled workflow; large duplicate weight not downloaded",
+  "workflow_download_button": "Actual small missing file downloaded from pinned official URL; all 13 file sizes and SHA256 verified; browser success message observed",
+  "duration_test": {
+    "requested": 30,
+    "actual": 62.1186666667,
+    "elapsed_comfy_seconds": 191.927,
+    "result": "generation passed; duration accuracy not passed"
+  },
+  "baseline_test": {
+    "lyrics": 4,
+    "actual": 39.5586666667,
+    "elapsed_comfy_seconds": 166.211,
+    "playback": "time advanced in browser"
+  },
+  "installer": "Full existing-environment installer path passed using existing uv; fresh empty-PC install not performed",
+  "limitations": [
+    "Other PCs not tested",
+    "ASR has mismatches; song quality requires listening",
+    "60/120 second generation not tested",
+    "No note or GitHub publishing performed"
+  ],
+  "package_verifier_tests": "normal + modified/missing/extra all passed",
+  "live_download_endpoint_negative": "foreign Origin returns HTTP403 before download",
+  "version": "20260913234404"
+}
