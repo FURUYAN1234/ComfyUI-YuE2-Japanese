@@ -423,3 +423,11 @@ Some files exist only after their corresponding stage completes. These JSON file
 To reopen the node layout and inputs, save/export the workflow from ComfyUI after generation. Keep the corresponding audio/MIDI folder too: a saved workflow can retain player references, but it does not embed the media. Moving or deleting the files can break playback. / ノード配置と入力を再度開くには、生成後にComfyUIでワークフローを保存・エクスポートしてください。再生参照は保持できますが音声・MIDI本体は埋め込まれないため、曲フォルダーも一緒に保管してください。移動・削除すると再生できなくなる場合があります。
 
 Records can include your prompts, lyrics and local paths; they are excluded from the public distribution. / 記録には入力文章・歌詞・ローカルパスが含まれるため、公開配布には含めません。
+
+## 更新履歴
+
+- **v1.5.2（2026年9月14日）**：曲ごとのJSONの用途、ワークフローへの読込・復元非対応、再開用ワークフローと音声・MIDI本体の保管方法、FLACとMIDIの違いを追記。曲生成の動作は変更なし。
+- **v1.5.1（2026年9月14日）**：番数選択を削除し、従来の標準構成（2番までを含む1曲完走）へ復帰。README・説明欄・記事・設定画像・配布リンクを修正。
+- **v1.5.0についての訂正**：旧記事の「1〜3番を選択できる」は現在の仕様ではありません。最新版は標準構成のみで、手動歌詞は入力どおり使用します。
+
+詳細と過去の配布物は [GitHub Releases](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases) を参照してください。
