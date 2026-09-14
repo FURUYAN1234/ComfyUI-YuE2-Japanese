@@ -24,13 +24,14 @@ function show(item){
  const dictionaryOption=add('label');Object.assign(dictionaryOption.style,{display:'flex',gap:'8px',alignItems:'center',margin:'14px 0'});
  const remember=add('input','',dictionaryOption);remember.type='checkbox';remember.checked=item.action==='記憶・更新 / Remember';add('span','手で修正した読みを発音辞書へ登録する',dictionaryOption);
  const details=add('details');add('summary','記憶した読みを確認 / Remembered readings',details);add('pre',Object.entries(item.remembered||{}).map(([k,v])=>k+'='+v).join('\n')||'登録なし / Empty',details);
- const error=add('p');error.setAttribute('role','status');error.style.color='#fbbf24';
+ const error=add('p','',dialog);error.setAttribute('role','status');error.style.color='#fbbf24';
  const buttons=add('div','',dialog);Object.assign(buttons.style,{display:'flex',flex:'0 0 auto',justifyContent:'flex-end',gap:'12px',paddingTop:'14px',borderTop:'1px solid #555'});
  async function request(op,cancelled=false){const r=await api.fetchApi('/yue2/reading-review/'+op,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({request_id:item.request_id,action:remember.checked?'記憶・更新 / Remember':'今回だけ / Once',corrections:item.action==='登録を削除 / Delete'?'':item.corrections,readings:readingFields.map(t=>t.value),cancelled})});const data=await r.json();if(!r.ok)throw Error(data.error||r.statusText);return data;}
+ for(const input of readingFields)input.addEventListener('input',()=>{error.textContent='';});
  const close=()=>{dialog.close();dialog.remove();opened.delete(item.request_id);};
  const button=(text,fn)=>{const b=add('button',text,buttons);b.style.padding='10px 16px';b.onclick=async()=>{b.disabled=true;error.textContent='';try{await fn();}catch(e){error.textContent=e.message;}finally{b.disabled=false;}};return b;};
- button('この読みで曲を生成',async()=>{await request('submit');close();});
  button('今回の生成を中止',async()=>{await request('submit',true);close();});
+ button('この読みで曲を生成',async()=>{await request('submit');close();});
  dialog.addEventListener('cancel',e=>{e.preventDefault();error.textContent='中止する場合は「生成を中止」を押してください。';});
  document.body.append(dialog);dialog.showModal();dialog.style.display='flex';dialog.style.flexDirection='column';
 }

@@ -72,7 +72,11 @@ def hiragana_plan(plan_text):
     lines=[]
     for line in data['plan']['lyrics'].split('\n'):
         if line.lstrip().startswith('['):lines.append(line)
-        else:lines.append(''.join(part['hira'] for part in converter.convert(line)))
+        else:
+            # Uppercase initialisms have explicit letter readings (AI, CPU, etc.).
+            letters=dict(zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ',['えー','びー','しー','でぃー','いー','えふ','じー','えいち','あい','じぇー','けー','える','えむ','えぬ','おー','ぴー','きゅー','あーる','えす','てぃー','ゆー','ぶい','だぶりゅー','えっくす','わい','ぜっと']))
+            line=re.sub(r'(?<![A-Za-z])[A-Z]{2,}(?![A-Za-z])',lambda m:''.join(letters[c] for c in m.group()),line)
+            lines.append(''.join(part['hira'] for part in converter.convert(line)))
     sung='\n'.join(lines);data['plan']['lyrics']=sung
     data.setdefault('pronunciation',{})['singing_lyrics']=sung
     return json.dumps(data,ensure_ascii=False,indent=2)
