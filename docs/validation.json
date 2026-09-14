@@ -1,6 +1,6 @@
 {
   "date": "2026-09-13T23:42:04.494913+09:00",
-  "hardware": "RTX 5080 16GB",
+  "hardware": "NVIDIA GPU, 16GB VRAM",
   "node_tests": "10 Python tests passed",
   "native_missing_models_ui": "Missing model detected and download action + correct yue2 directory displayed for controlled workflow; large duplicate weight not downloaded",
   "workflow_download_button": "Actual small missing file downloaded from pinned official URL; all 13 file sizes and SHA256 verified; browser success message observed",
@@ -116,5 +116,19 @@
       "generation_seconds": 51.18,
       "cached_nodes": []
     }
+  },
+  "v1.4.0": {
+    "python_tests": 19,
+    "javascript_suites": [
+      "llm_status",
+      "lyrics",
+      "presets",
+      "song_status"
+    ],
+    "artwork_audio_seconds": 214.4786667,
+    "artwork_outputs": "Audio and MIDI completed",
+    "playback_restore": "Saved player properties restored after save and browser reload",
+    "download_issue": "Chrome blocked Windows destination downloads in one environment; WSL destination succeeded; cause unresolved",
+    "vocaloid_editor_singing": "not tested"
   }
 }
