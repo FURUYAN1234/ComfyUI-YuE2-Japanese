@@ -97,15 +97,16 @@ class YuE2JapanesePlanner:
         return (json.dumps({'brief':original_brief,'plan':plan,'report':report,'settings':chosen},ensure_ascii=False,indent=2),)
 
 class YuE2LyricPlanner(YuE2JapanesePlanner):
+    LINE_PRESETS={'短い試作（4行）':4,'8行':8,'12行':12,'通常（16行）':16,'24行':24,'32行':32}
     @classmethod
     def INPUT_TYPES(cls):
         fields=super().INPUT_TYPES()
         return {'required':{'brief':fields['required']['brief'],
-            'lyric_length':(['短い試作（4行）','通常（16行）','自由に指定'],{'tooltip':'LLMが作詞する歌詞の行数。曲の秒数は入力切替ノードで設定します。'}),
+            'lyric_length':([*cls.LINE_PRESETS,'自由に指定'],{'tooltip':'LLMが作詞する歌詞の行数。曲の秒数は入力切替ノードで設定します。'}),
             'lyric_lines':('INT',{'default':8,'min':1,'max':64,'tooltip':'自由に指定を選んだときの行数。空行や[Verse]などの見出しを除く1〜64行。'}),
             'seed':fields['required']['seed']},'optional':fields['optional']}
     def create(self,brief,lyric_length,lyric_lines,seed,settings=None,manual=None,switches=None):
-        counts={'短い試作（4行）':4,'通常（16行）':16,'自由に指定':lyric_lines}
+        counts={**self.LINE_PRESETS,'自由に指定':lyric_lines}
         if lyric_length not in counts:raise ValueError('歌詞の行数の選択が不正です。')
         if type(lyric_lines) is not int or not 1<=lyric_lines<=64:raise ValueError('自由指定の歌詞は1〜64行です。')
         return super().create(brief,'短い試作（4行）',seed,settings=settings,manual=manual,switches=switches,lyric_lines=counts[lyric_length])

@@ -2,7 +2,7 @@
 Japanese brief → lyrics/style → vocals/music → listen. / 日本語の希望→歌詞・曲調→歌と伴奏→再生。
 
 ## Download and install / 取得と導入
-[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.2.0/YuE2_Japanese_LMStudio_v1.2.0.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
+[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.2.1/YuE2_Japanese_LMStudio_v1.2.1.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
 1. Prepare WSL2 Ubuntu, NVIDIA drivers and ComfyUI; check `nvidia-smi`. / WSL2 Ubuntu・NVIDIAドライバー・ComfyUIを準備し `nvidia-smi` で確認。
 2. Extract the full ZIP; run `python3 verify_package.py` then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。
 3. Launch [LM Studio](https://lmstudio.ai/download) on Windows and download [Qwen3.5 9B Q4_K_M](https://lmstudio.ai/models/qwen/qwen3.5-9b). / WindowsでLM Studioを起動し、指定の作詞モデルを取得。
@@ -20,7 +20,7 @@ At least one input stays ON; OFF inputs are dimmed and read-only. / 最低1つ�
 Both ON: manual title/lyrics; preset style + manual additions; no automatic conflict priority. / 両方ON：曲名・歌詞は自由入力、曲調はプリセット＋追記。矛盾の自動優先処理なし。
 Natural length keeps the song; Target is approximate; Exact edits the output to the selected seconds. / 可変尺は曲を維持、目標尺は目安、ぴったり尺は指定秒数へ編集。
 Exact mode fades and cuts or pads silence, preserving audio_original.flac. / ぴったり尺はフェード・カットまたは無音補完を行い、元音声を保存。
-Lyrics: 4 / 16 / Custom 1–64 lines; manual ON uses your lyrics and disables line controls. / 歌詞は4行・16行・自由指定1〜64行。手動ONは入力歌詞を使い行数設定を無効化。
+Lyrics: 4 / 8 / 12 / 16 / 24 / 32 / Custom 1–64 lines; manual ON uses your lyrics and disables line controls. / 歌詞は4・8・12・16・24・32行・自由指定1〜64行。手動ONは入力歌詞を使い行数設定を無効化。
 
 Song duration and seconds are set only in Input switches. / 曲の長さ・秒数は入力切替ノードで設定。
 ④ shows completion, title, duration, lyrics, style and saved folder. / ④に完了・曲名・長さ・歌詞・曲調・保存先を表示。

@@ -1,4 +1,4 @@
-import importlib.util,unittest,json
+import importlib.util,unittest,json,ast
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('planner',ROOT/'runtime/planner.py');planner=importlib.util.module_from_spec(spec);spec.loader.exec_module(planner)
@@ -12,6 +12,22 @@ class RuntimeContract(unittest.TestCase):
         for invalid in [9,241,30.5,'30',True]:
             with self.assertRaises(ValueError):planner.duration_plan(True,'秒数を指定（目安）',invalid)
         with self.assertRaises(ValueError):planner.duration_plan(True,'unknown',30)
+    def test_lyric_preset_route(self):
+        # Execute the real class with a capture-only parent, avoiding GPU loading.
+        source=ast.parse((ROOT/'custom_nodes/comfyui-yue2-local/__init__.py').read_text())
+        node=next(n for n in source.body if isinstance(n,ast.ClassDef) and n.name=='YuE2LyricPlanner')
+        class Parent:
+            @classmethod
+            def INPUT_TYPES(cls):return {'required':{'brief':('STRING',),'seed':('INT',)},'optional':{}}
+            def create(self,*args,**kwargs):return kwargs
+        scope={'YuE2JapanesePlanner':Parent};exec(compile(ast.Module(body=[node],type_ignores=[]),'actual-node','exec'),scope)
+        cls=scope['YuE2LyricPlanner'];choices=cls.INPUT_TYPES()['required']['lyric_length'][0]
+        self.assertEqual(list(cls.LINE_PRESETS.values()),[4,8,12,16,24,32])
+        self.assertEqual(choices,[*cls.LINE_PRESETS,'自由に指定'])
+        for label,count in cls.LINE_PRESETS.items():
+            self.assertEqual(cls().create('歌',label,7,123)['lyric_lines'],count)
+        self.assertEqual(cls().create('歌','自由に指定',7,123)['lyric_lines'],7)
+        with self.assertRaises(ValueError):cls().create('歌','unknown',7,123)
     def test_explicit_lyric_lines(self):
         for total in (1,4,7,16,64):
             d=planner.duration_plan(True,'秒数を指定（目安）',30,total)
