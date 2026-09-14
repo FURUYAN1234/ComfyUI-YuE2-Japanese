@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.1)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.2)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.1/YuE2_Japanese_LMStudio_v1.5.1.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.1/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio_v1.5.2.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -44,7 +44,7 @@ Normal text, preset, free-lyrics, line-count and seconds controls become inactiv
 
 Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
 
-All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.1_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.1_年月日時分秒.flac` と `.mid` で同じ日時を使います。
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.2_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.2_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -172,7 +172,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.1.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.2.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -408,6 +408,30 @@ Original instructions, lyrics, style and seeds remain available for comparing ca
 
 Runtime logs are in the dedicated environment's `jobs/` folder and contain prompts, so do not include personal logs in public distributions. / 実行ログは専用環境の `jobs/` にあり入力文章を含むため、個人のログを公開配布へ混ぜないでください。
 
+
+FLAC stores the finished vocals and accompaniment using lossless audio compression; it is generally larger than MP3. MIDI stores note/lyric events rather than the finished recording. / FLACは歌声と伴奏が入った完成音声を、音質を落とさず圧縮する形式で、一般にMP3より容量は大きめです。MIDIは完成音声ではなく音符・歌詞などの演奏データです。
+
+### Record JSON versus workflow JSON / 記録JSONとワークフローJSONの違い
+
+The dated folders hold records for each generated song, not ComfyUI workflow backups. This workflow has no file-import node for restoring these records. Dragging them onto ComfyUI does not restore nodes or settings. / 日時付きフォルダーは曲ごとの生成記録です。ワークフローのバックアップではなく、これらを読み込んで復元する専用ノードもありません。ComfyUIへドラッグしてもノードや設定は復元できません。
+
+| File / ファイル | Purpose / 用途 |
+|---|---|
+| `song_plan.json` | Original request, AI song plan, lyrics/style and reading information / 元の希望・AIの曲企画・歌詞・曲調・読み情報 |
+| `request.json` | Lyrics, style and seed passed to the song model / 作曲モデルへ渡した歌詞・曲調・seed |
+| `config.json` | Generation and runtime settings / 生成・実行環境の設定 |
+| `plan.json`, `plan_manifest.json` | Intermediate score plan and its file hashes / 中間の楽譜計画と関連ファイルのハッシュ |
+| `result.json` | Completion state, duration, timing and output information / 完了状態・音声の長さ・処理時間・出力情報 |
+| `details.json` | Song title, display lyrics, style and saved-file location for the player / 再生欄で使う曲名・表示歌詞・曲調・保存先 |
+| `midi_export.json` | MIDI conversion results and lyric alignment information; present after MIDI export / MIDI変換結果・歌詞割当情報。MIDI出力時に作成 |
+| `日時_ID.state.json` (next to the folder / フォルダーの隣) | Job progress/completion/error record / 処理の進行・完了・エラー記録 |
+
+Some files exist only after their corresponding stage completes. These JSON files are readable records for checking or manually copying lyrics/settings; they do not guarantee identical regeneration. / 処理段階によって存在するファイルは異なります。JSONは確認や歌詞・設定の手動転記に使う記録で、同じ曲の再生成を保証するものではありません。
+
+To reopen the node layout and inputs, save/export the workflow from ComfyUI after generation. Keep the corresponding audio/MIDI folder too: a saved workflow can retain player references, but it does not embed the media. Moving or deleting the files can break playback. / ノード配置と入力を再度開くには、生成後にComfyUIでワークフローを保存・エクスポートしてください。再生参照は保持できますが音声・MIDI本体は埋め込まれないため、曲フォルダーも一緒に保管してください。移動・削除すると再生できなくなる場合があります。
+
+Records can include your prompts, lyrics and local paths; they are excluded from the public distribution. / 記録には入力文章・歌詞・ローカルパスが含まれるため、公開配布には含めません。
+
 ## Measurements and validation scope / 実測と確認範囲
 
 | Condition / 条件 | Audio duration / 音声の長さ | End-to-end time / 全工程時間 |
@@ -453,11 +477,11 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.1)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.2)
 
 Version: `v1.5.1`; tag: `v1.5.1`. / 配布版は `v1.5.1`、タグは `v1.5.1` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.5.1.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.1.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.5.2.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.2.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 

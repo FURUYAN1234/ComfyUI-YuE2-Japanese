@@ -1,7 +1,7 @@
-# v1.5.1 Standard full songs / 標準の1曲完走
+# v1.5.2 Output record guide / 生成記録の説明
 
-Remove the unintended verse-count selector and restore the original two-verse full-song structure for both text and image input. / 残っていた番数選択を取り除き、日本語入力・画像入力とも従来の標準構成（2番まで）の1曲完走へ戻しました。
-Keep manual lyrics, reading review and private pronunciation memory, audio/MIDI playback and lyric scrolling. / 手動歌詞、読み確認と個人辞書、音声・MIDI再生、歌詞スクロールは維持しています。
-Update README, workflow guidance and the note article to match. / README・ワークフロー説明・note記事を実装に合わせて訂正しました。
+Document each output JSON and distinguish records from importable ComfyUI workflows. / 出力JSONごとの用途と、読込用ワークフローJSONとの違いを明記。
 
-Install the complete ZIP and restart ComfyUI, then reload the browser; save your current workflow first. / ZIP全体を導入し、ComfyUI再起動後にブラウザーを再読込してください。編集中のワークフローは先に保存してください。
+Keep the audio/MIDI folder with a saved workflow to preserve player references. / 保存したワークフローと音声・MIDIの曲フォルダーを一緒に保管する手順を追加。
+
+Song generation behavior is unchanged. / 曲生成の動作は変更していません。

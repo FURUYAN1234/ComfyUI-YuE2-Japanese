@@ -24,8 +24,8 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 ## ワークフローの入手
 
-- [導入ZIP v1.5.1](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.1/YuE2_Japanese_LMStudio_v1.5.1.zip)
-- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.1/YuE2_Japanese_LMStudio.json)
+- [導入ZIP v1.5.1](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio_v1.5.2.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio.json)
 
 初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
 
@@ -39,7 +39,7 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 読み取った内容は詳細欄にも表示します。文字が小さい漫画や特殊なコマ割りには読み違いがあるため、セリフとオチを確認して使ってください。
 
-曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.5.1_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
+曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.5.2_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
 
 ## ボタンで選ぶ・日本語で任せる・自由入力する
 
@@ -297,9 +297,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.1)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.2)
 
-配布版：`v1.5.1`、タグ：`v1.5.1`。Releaseの `YuE2_Japanese_LMStudio_v1.5.1.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`v1.5.1`、タグ：`v1.5.1`。Releaseの `YuE2_Japanese_LMStudio_v1.5.2.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -399,3 +399,27 @@ Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked brow
 ## v1.5.1：標準の1曲完走に統一
 
 1曲完走は従来の標準構成（器楽イントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロ）です。番数選択はありません。手動歌詞はそのまま使用します。v1.5.0で残っていた番数選択を取り除きました。
+
+
+FLAC stores the finished vocals and accompaniment using lossless audio compression; it is generally larger than MP3. MIDI stores note/lyric events rather than the finished recording. / FLACは歌声と伴奏が入った完成音声を、音質を落とさず圧縮する形式で、一般にMP3より容量は大きめです。MIDIは完成音声ではなく音符・歌詞などの演奏データです。
+
+### Record JSON versus workflow JSON / 記録JSONとワークフローJSONの違い
+
+The dated folders hold records for each generated song, not ComfyUI workflow backups. This workflow has no file-import node for restoring these records. Dragging them onto ComfyUI does not restore nodes or settings. / 日時付きフォルダーは曲ごとの生成記録です。ワークフローのバックアップではなく、これらを読み込んで復元する専用ノードもありません。ComfyUIへドラッグしてもノードや設定は復元できません。
+
+| File / ファイル | Purpose / 用途 |
+|---|---|
+| `song_plan.json` | Original request, AI song plan, lyrics/style and reading information / 元の希望・AIの曲企画・歌詞・曲調・読み情報 |
+| `request.json` | Lyrics, style and seed passed to the song model / 作曲モデルへ渡した歌詞・曲調・seed |
+| `config.json` | Generation and runtime settings / 生成・実行環境の設定 |
+| `plan.json`, `plan_manifest.json` | Intermediate score plan and its file hashes / 中間の楽譜計画と関連ファイルのハッシュ |
+| `result.json` | Completion state, duration, timing and output information / 完了状態・音声の長さ・処理時間・出力情報 |
+| `details.json` | Song title, display lyrics, style and saved-file location for the player / 再生欄で使う曲名・表示歌詞・曲調・保存先 |
+| `midi_export.json` | MIDI conversion results and lyric alignment information; present after MIDI export / MIDI変換結果・歌詞割当情報。MIDI出力時に作成 |
+| `日時_ID.state.json` (next to the folder / フォルダーの隣) | Job progress/completion/error record / 処理の進行・完了・エラー記録 |
+
+Some files exist only after their corresponding stage completes. These JSON files are readable records for checking or manually copying lyrics/settings; they do not guarantee identical regeneration. / 処理段階によって存在するファイルは異なります。JSONは確認や歌詞・設定の手動転記に使う記録で、同じ曲の再生成を保証するものではありません。
+
+To reopen the node layout and inputs, save/export the workflow from ComfyUI after generation. Keep the corresponding audio/MIDI folder too: a saved workflow can retain player references, but it does not embed the media. Moving or deleting the files can break playback. / ノード配置と入力を再度開くには、生成後にComfyUIでワークフローを保存・エクスポートしてください。再生参照は保持できますが音声・MIDI本体は埋め込まれないため、曲フォルダーも一緒に保管してください。移動・削除すると再生できなくなる場合があります。
+
+Records can include your prompts, lyrics and local paths; they are excluded from the public distribution. / 記録には入力文章・歌詞・ローカルパスが含まれるため、公開配布には含めません。

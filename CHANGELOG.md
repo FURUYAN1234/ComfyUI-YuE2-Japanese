@@ -1,3 +1,7 @@
+# v1.5.2
+
+Explain per-song JSON records, their lack of workflow import, and how to preserve playback when saving a workflow. / 曲ごとのJSONの用途、ワークフローへの読込非対応、再生を保持する保存方法を説明。
+
 # v1.5.1 / 標準の1曲完走へ復帰
 
 Remove selectable verse counts and restore the original standard two-verse planner; preserve reading review and lyric scrolling. / 番数選択を削除し、従来の標準構成（2番まで）へ復帰。読み確認と歌詞スクロールは維持。
