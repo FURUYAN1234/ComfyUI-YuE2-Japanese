@@ -14,7 +14,7 @@ def parse(text, delete=False):
         else:
             if "=" not in line: raise ValueError(f"読み修正 {number}行目: 単語=よみ の形式で入力してください。")
             key,value=(x.strip() for x in line.split("=",1))
-            if not re.fullmatch(r"[ぁ-ゖァ-ヺー ・、。！？!?]+",value): raise ValueError(f"読み修正 {number}行目: 読みはひらがな・カタカナで入力してください。")
+            if not value or any(c in value for c in "[]=<>\r\n"): raise ValueError(f"読み修正 {number}行目: 読みが不正です。")
         if not key or len(key)>100 or len(value)>200 or any(c in key for c in "[]=\r\n"):
             raise ValueError(f"読み修正 {number}行目: 単語または読みが不正です。")
         if key in result: raise ValueError(f"読み修正: 単語が重複しています: {key}")

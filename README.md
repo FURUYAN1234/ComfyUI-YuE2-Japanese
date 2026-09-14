@@ -560,3 +560,8 @@ The review output shows singing lyrics and remembered entries after execution; d
 Longer phrases win; replacements are literal and context independent. Register a longer phrase for ambiguous readings. / 長い語句を優先する文字列置換です。文脈で読みが違う場合は長い語句で登録してください。
 The private dictionary is stored under the configured runtime in `private/lyric_readings.json`, outside the distribution. / 個人辞書は設定済み実行環境の `private/lyric_readings.json` に保存し、配布には含めません。
 Regeneration can change melody and vocals; kana does not guarantee correct singing. / 再生成でメロディーや歌い方が変わる場合があり、かな指定でも正しい歌唱を保証しません。
+
+A review window opens after lyric planning and waits for Preview / Generate song or Cancel; pending review recovers after reload. / 作詞後に確認窓が開き、プレビュー・曲生成・中止を選べます。確認待ちはリロード後に復帰します。
+Review is enabled by default; every execution reopens it even with fixed seeds. / 確認窓は既定でON。同じseedでも実行ごとに開きます。
+
+The review window pairs each original lyric line above its editable reading below. Changed lines can be remembered as phrase readings. / 確認窓は1行ごとに上段へ元の歌詞、下段へ編集可能な読みを表示します。修正した行は語句の読みとして記憶できます。

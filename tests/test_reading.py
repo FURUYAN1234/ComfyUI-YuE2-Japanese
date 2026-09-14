@@ -13,7 +13,7 @@ class Readings(unittest.TestCase):
    m.apply(original,True,'登録を削除 / Delete','今日',path);self.assertNotIn('今日',m.load(path))
    out,_=m.apply(original,True,'今回だけ / Once','',path);self.assertIn('今日ときょうじゅう',out)
  def test_invalid(self):
-  for text in ['今日','今日=今日','[Verse]=ばーす','今日=きょう\n今日=こんにち']:
+  for text in ['今日','今日=<script>','[Verse]=ばーす','今日=きょう\n今日=こんにち']:
    with self.assertRaises(ValueError):m.parse(text)
  def test_bad_dictionary_preserved(self):
   with tempfile.TemporaryDirectory() as d:

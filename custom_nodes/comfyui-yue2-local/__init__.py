@@ -165,17 +165,20 @@ class YuE2Pronunciation:
     def INPUT_TYPES(cls):
         return {'required':{'song_plan':('YUE2_PLAN',),'enabled':('BOOLEAN',{'default':True}),
             'action':(['今回だけ / Once','記憶・更新 / Remember','登録を削除 / Delete'],),
-            'corrections':('STRING',{'multiline':True,'default':'','tooltip':'単語=よみ を1行ずつ入力。同じ単語の登録で更新。削除時は単語だけ。長い語句を優先。'})}}
+            'corrections':('STRING',{'multiline':True,'default':'','tooltip':'単語=よみ を1行ずつ入力。同じ単語の登録で更新。削除時は単語だけ。長い語句を優先。'})},'optional':{'review_window':('BOOLEAN',{'default':True,'label_on':'確認窓を開く / Review','label_off':'確認なし / Skip'})}}
     RETURN_TYPES=('YUE2_PLAN','STRING');RETURN_NAMES=('Readings applied / 読み適用済み','Review / 読み・辞書の確認')
     FUNCTION='correct';CATEGORY='audio/YuE2'
     @classmethod
     def IS_CHANGED(cls,**kwargs):
+        if kwargs.get('enabled',True) and kwargs.get('review_window',True):return float('nan')
         # Dictionary changes made by another workflow must invalidate cached results.
         import hashlib
         path=RUNTIME/'private'/'lyric_readings.json'
         return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else 'empty'
-    def correct(self,song_plan,enabled,action,corrections):
+    def correct(self,song_plan,enabled,action,corrections,review_window=True):
         from .reading import apply
+        if enabled and review_window:
+            action,corrections=wait_for_reading_review(song_plan,action,corrections)
         return apply(song_plan,enabled,action,corrections,RUNTIME/'private'/'lyric_readings.json')
 
 class YuE2LocalSong:
@@ -319,3 +322,84 @@ async def download_required_models(request):
         print('[YuE2 models] '+message,flush=True)
         if child.returncode:return web.json_response({'error':message},status=500)
         return web.json_response({'message':'必須13ファイルの取得・SHA256確認が完了しました。モデル一覧を更新、またはComfyUIを再起動してください。'})
+
+
+_reading_sessions={}
+_reading_lock=threading.RLock()
+def wait_for_reading_review(song_plan,action,corrections):
+    from .reading import apply,load
+    request_id=uuid.uuid4().hex
+    path=RUNTIME/'private'/'lyric_readings.json'
+    preview,_=apply(song_plan,True,'今回だけ / Once',corrections if action!='登録を削除 / Delete' else '',path)
+    data=json.loads(preview)
+    payload={'request_id':request_id,'title':data['plan']['title'],'lyrics':data.get('display_lyrics',data['plan']['lyrics']),'singing_lyrics':data['plan']['lyrics'],'corrections':corrections,'action':action,'remembered':load(path)}
+    session={'payload':payload,'plan':song_plan,'event':threading.Event(),'result':None}
+    with _reading_lock:_reading_sessions[request_id]=session
+    server=PromptServer.instance
+    server.send_sync('yue2.reading_review',payload,server.client_id)
+    try:
+        deadline=time.monotonic()+1800
+        while time.monotonic()<deadline:
+            mm.throw_exception_if_processing_interrupted()
+            if session['event'].wait(.25):break
+        else:raise RuntimeError('読み確認が30分以内に完了しなかったため生成を中止しました。')
+        mm.throw_exception_if_processing_interrupted()
+        result=session['result']
+        if not result or result.get('cancelled'):raise RuntimeError('読み確認で生成を中止しました。')
+        return result['action'],result['corrections']
+    finally:
+        with _reading_lock:_reading_sessions.pop(request_id,None)
+
+@PromptServer.instance.routes.get('/yue2/reading-review/pending')
+async def reading_review_pending(request):
+    with _reading_lock:pending=[v['payload'] for v in _reading_sessions.values() if v['result'] is None]
+    return web.json_response({'pending':pending},headers={'Cache-Control':'no-store'})
+
+@PromptServer.instance.routes.post('/yue2/reading-review/{operation}')
+async def reading_review_submit(request):
+    from .reading import apply,parse
+    if request.headers.get('Origin') and request.headers['Origin'].split('://',1)[-1]!=request.host:
+        return web.json_response({'error':'Cross-origin request rejected'},status=403)
+    body=await request.json()
+    with _reading_lock:session=_reading_sessions.get(body.get('request_id'))
+    if not session or session['result'] is not None:return web.json_response({'error':'確認は終了済みです。'},status=404)
+    operation=request.match_info['operation']
+    if operation not in ('preview','submit'):return web.json_response({'error':'Unknown operation'},status=404)
+    if body.get('cancelled') and operation=='submit':
+        session['result']={'cancelled':True};session['event'].set();return web.json_response({'ok':True})
+    action=body.get('action','今回だけ / Once');corrections=body.get('corrections','')
+    try:
+        if not isinstance(corrections,str) or len(corrections)>100000:raise ValueError('修正入力が長すぎます。')
+        if action not in ('今回だけ / Once','記憶・更新 / Remember','登録を削除 / Delete'):raise ValueError('操作が不正です。')
+        parse(corrections,action=='登録を削除 / Delete')
+        readings=body.get('readings')
+        if readings is not None:
+            original=json.loads(session['plan']).get('display_lyrics',json.loads(session['plan'])['plan']['lyrics']).split('\n')
+            rows=[line for line in original if line.strip() and not line.lstrip().startswith('[')]
+            if not isinstance(readings,list) or len(readings)!=len(rows):raise ValueError('歌詞の行数が一致しません。')
+            pairs=[]
+            for text,reading in zip(rows,readings):
+                if not isinstance(reading,str) or not reading.strip() or len(reading)>200 or any(c in reading for c in '\n\r[]=<>'):raise ValueError('読みは空欄にせず、1行ずつ入力してください。')
+                if reading!=text:pairs.append(text+'='+reading)
+            if action!='登録を削除 / Delete':
+                # Exact line corrections take priority over shorter word entries.
+                merged=parse(corrections)
+                for pair in pairs:
+                    key,value=pair.split('=',1);merged[key]=value
+                corrections='\n'.join(k+'='+v for k,v in merged.items())
+        # Preview must never change persistent memory.
+        if action=='登録を削除 / Delete':
+            from .reading import load
+            entries=load(RUNTIME/'private'/'lyric_readings.json')
+            for key in parse(corrections,True):entries.pop(key,None)
+            import tempfile
+            with tempfile.TemporaryDirectory() as d:
+                temp=Path(d)/'dictionary.json';temp.write_text(json.dumps(entries,ensure_ascii=False))
+                preview,_=apply(session['plan'],True,'今回だけ / Once','',temp)
+        else:preview,_=apply(session['plan'],True,'今回だけ / Once',corrections,RUNTIME/'private'/'lyric_readings.json')
+    except (ValueError,TypeError) as e:return web.json_response({'error':str(e)},status=400)
+    if operation=='submit':
+        with _reading_lock:
+            if session['result'] is not None:return web.json_response({'error':'確認は終了済みです。'},status=409)
+            session['result']={'action':action,'corrections':corrections};session['event'].set()
+    return web.json_response({'ok':True,'singing_lyrics':json.loads(preview)['plan']['lyrics']})

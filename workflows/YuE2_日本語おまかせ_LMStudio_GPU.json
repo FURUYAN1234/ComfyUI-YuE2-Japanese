@@ -589,7 +589,8 @@
       "widgets_values": [
         true,
         "今回だけ / Once",
-        ""
+        "",
+        true
       ]
     },
     {
