@@ -2,7 +2,7 @@
 Japanese brief → lyrics/style → vocals/music → listen. / 日本語の希望→歌詞・曲調→歌と伴奏→再生。
 
 ## Download and install / 取得と導入
-[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.0/YuE2_Japanese_LMStudio_v1.1.0.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
+[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.1/YuE2_Japanese_LMStudio_v1.1.1.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
 1. Prepare WSL2 Ubuntu, NVIDIA drivers and ComfyUI; check `nvidia-smi`. / WSL2 Ubuntu・NVIDIAドライバー・ComfyUIを準備し `nvidia-smi` で確認。
 2. Extract the full ZIP; run `python3 verify_package.py` then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。
 3. Launch [LM Studio](https://lmstudio.ai/download) on Windows and download [Qwen3.5 9B Q4_K_M](https://lmstudio.ai/models/qwen/qwen3.5-9b). / WindowsでLM Studioを起動し、指定の作詞モデルを取得。

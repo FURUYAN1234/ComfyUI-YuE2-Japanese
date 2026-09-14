@@ -43,6 +43,22 @@ class YuE2SongSwitches(YuE2SongOptions):
     def create(self,use_presets,use_manual,**kwargs):
         return super().create(mode='手動' if use_manual else 'プリセット',use_presets=use_presets,use_manual=use_manual,**kwargs)
 
+class YuE2InputSwitches(YuE2SongSwitches):
+    @classmethod
+    def INPUT_TYPES(cls):
+        fields=super().INPUT_TYPES()['required']
+        return {'required':{k:fields[k] for k in ('use_presets','use_manual','timing','seconds')}}
+    RETURN_TYPES=('YUE2_SWITCHES',);RETURN_NAMES=('Input control / 入力制御',)
+    def create(self,use_presets,use_manual,timing,seconds):
+        values=runtime_module('song_options').settings(use_presets=use_presets,use_manual=use_manual,timing=timing,seconds=seconds)
+        return ({k:values[k] for k in ('use_presets','use_manual','timing','seconds')},)
+
+class YuE2PresetOptions(YuE2SongOptions):
+    @classmethod
+    def INPUT_TYPES(cls):
+        fields=super().INPUT_TYPES()['required']
+        return {'required':{k:v for k,v in fields.items() if k not in ('mode','timing','seconds')}}
+
 class YuE2ManualLyrics:
     @classmethod
     def INPUT_TYPES(cls):
@@ -53,11 +69,14 @@ class YuE2ManualLyrics:
 class YuE2JapanesePlanner:
     @classmethod
     def INPUT_TYPES(cls):
-        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})},'optional':{'settings':('YUE2_OPTIONS',),'manual':('YUE2_MANUAL',)}}
+        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})},'optional':{'settings':('YUE2_OPTIONS',),'manual':('YUE2_MANUAL',),'switches':('YUE2_SWITCHES',)}}
     RETURN_TYPES=('YUE2_PLAN',);RETURN_NAMES=('曲の企画JSON / Song plan',);FUNCTION='create';CATEGORY='audio/YuE2'
-    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30,settings=None,manual=None):
+    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30,settings=None,manual=None,switches=None):
         mm.throw_exception_if_processing_interrupted()
         chosen=None; manual_plan=None; original_brief=brief
+        if switches is not None:
+            settings={**(settings or runtime_module('song_options').settings()),**switches}
+            settings['mode']='手動' if settings['use_manual'] else 'プリセット'
         if settings is not None:
             chosen,manual_plan,brief=runtime_module('song_options').prepare(brief,settings,manual)
             duration_mode='歌詞量で指定（従来）' if chosen['timing']=='可変尺（自然な長さ）' else '秒数を指定（目安）'
@@ -145,8 +164,8 @@ class YuE2LocalSong:
         (output/'details.json').write_text(json.dumps(details,ensure_ascii=False,indent=2))
         return ({'waveform':torch.from_numpy(wave.T.copy()).unsqueeze(0),'sample_rate':sr},json.dumps(details,ensure_ascii=False,indent=2))
 
-NODE_CLASS_MAPPINGS={'YuE2SongSwitches':YuE2SongSwitches,'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
-NODE_DISPLAY_NAME_MAPPINGS={'YuE2SongSwitches':'Preset / Manual switches / プリセット・手動切替','YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
+NODE_CLASS_MAPPINGS={'YuE2InputSwitches':YuE2InputSwitches,'YuE2PresetOptions':YuE2PresetOptions,'YuE2SongSwitches':YuE2SongSwitches,'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
+NODE_DISPLAY_NAME_MAPPINGS={'YuE2InputSwitches':'Input switches / 入力切り替え','YuE2PresetOptions':'Music presets / 音楽プリセット','YuE2SongSwitches':'Preset / Manual switches / プリセット・手動切替','YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
 
 # Fixed official manifest only: the browser cannot choose URLs or destination paths.
 import asyncio, sys

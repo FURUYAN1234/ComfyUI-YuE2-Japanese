@@ -95,5 +95,26 @@
       "cached_nodes": [],
       "quality": "not subjectively rated"
     }
+  },
+  "v1.1.1": {
+    "python_tests": 11,
+    "preset_buttons": 11,
+    "ui": "Last ON protected in both directions; OFF input dimmed/read-only and values retained on re-enable; external controller usage and priority text visible",
+    "api": "Three valid combinations succeeded; both OFF HTTP400",
+    "full_generation": {
+      "prompt_id": "d70de8d3-39d4-469b-89b5-f46d67065e41",
+      "audio_seconds": 59.038666666666664,
+      "end_to_end_seconds": 81.695,
+      "cached_nodes": [],
+      "quality": "not subjectively rated"
+    },
+    "eleven_presets_api": "All 11 button parameter sets accepted by actual YuE2PresetOptions API with matching fields; not a musical quality rating of every genre",
+    "jazz_button_run": {
+      "prompt_id": "1840f8b3-f6a3-4556-8b83-6c4f567f5582",
+      "audio_seconds": 38.678666666666665,
+      "end_to_end_seconds": 51.354,
+      "generation_seconds": 51.18,
+      "cached_nodes": []
+    }
   }
 }

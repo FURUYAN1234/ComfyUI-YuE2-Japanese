@@ -1,3 +1,10 @@
+# v1.1.1
+
+Separate input controller, dimmed OFF inputs, visible combined-input rules and eleven presets. / 入力切替を独立ノードに分離し、OFF入力のグレー表示、両方ON時の規則表示、11種類のプリセットを追加。
+
+
+Prevent switching the last enabled input OFF in the UI; restore invalid saved states with presets ON. / 画面上で最後のONをOFFにできないよう修正し、不正な保存状態はプリセットONで復元。
+
 # v1.1.0
 
 Independent preset/manual switches; both-OFF validation; visible usage notes. / プリセット・手動の個別切替、両方OFFの拒否、ノード内の使用説明を追加。

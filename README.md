@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.0)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.1)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.0/YuE2_Japanese_LMStudio_v1.1.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.0/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.1/YuE2_Japanese_LMStudio_v1.1.1.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.1/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -16,7 +16,7 @@ This local setup combines LM Studio on Windows with ComfyUI and an isolated YuE2
 
 YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official repository](https://github.com/multimodal-art-projection/YuE) and model licenses. / YuE2モデルはCC BY-NC 4.0の非商用ライセンスなので、[公式リポジトリ](https://github.com/multimodal-art-projection/YuE)と各モデルの条件を確認してください。
 
-![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.1.png)
+![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.1.1.png)
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
 
@@ -25,7 +25,7 @@ This image is captured from the final workflow in ComfyUI, with no personal path
 | Item / 同梱物 | Purpose / 用途 |
 |---|---|
 | `workflows/*.json` | ComfyUI workflow with one guide, presets, free input and execution nodes / 説明1枠・プリセット・自由入力・実行ノードのComfyUIワークフロー |
-| `custom_nodes/comfyui-yue2-local/` | One package containing preset, free-input, planning and generation nodes / プリセット・自由入力・作詞・曲生成の4ノードを含む1パッケージ |
+| `custom_nodes/comfyui-yue2-local/` | One package containing input control, preset, free-input, planning and generation nodes / 入力切替・プリセット・自由入力・作詞・曲生成のノードを含む1パッケージ |
 | `runtime/` | LM Studio integration and YuE2 subprocess code / LM Studio連携とYuE2子プロセスの実行コード |
 | `install.py` | Install the isolated environment, nodes and workflow / 専用環境・ノード・ワークフローの配置 |
 | `models.json`, `download_models.py` | Pinned downloads and SHA256 checks for 13 files / 13ファイルの固定取得先とSHA256検査付き取得 |
@@ -110,7 +110,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.1.0.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.1.1.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -118,7 +118,7 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.1
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -207,7 +207,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.1
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -247,9 +247,9 @@ Presets OFF + Manual ON: use only your title, lyrics and style; lyrics and style
 
 Both ON: use your lyrics and add your style to the selected presets. / 両方ON：手動歌詞を使い、プリセットに手動曲調を追加します。
 
-Both OFF is rejected before execution. / 両方OFFは実行前にエラーで拒否します。
+The last enabled switch stays ON when clicked OFF; enable the other switch first to change sides. / 最後のONをOFFにしようとしてもONを維持します。切り替える場合は先にもう片方をONにしてください。
 
-Preset buttons enable presets and preserve the manual switch. / プリセットボタンはプリセットをONにし、手動スイッチは維持します。
+Preset buttons are usable when the preset input is enabled. / プリセットボタンはプリセット入力がONのときに使用できます。
 
 Conflicting instructions are not resolved automatically; match voice/instrument selections or leave those preset fields automatic. / 矛盾する指定は自動調整しないため、声・楽器を合わせるか該当プリセットをおまかせにしてください。
 
@@ -377,18 +377,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.0)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.1)
 
-Version: `v1.1.0`; tag: `v1.1.0`. / 配布版は `v1.1.0`、タグは `v1.1.0` です。
+Version: `v1.1.1`; tag: `v1.1.1`. / 配布版は `v1.1.1`、タグは `v1.1.1` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.1.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.1.0.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.1.1.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.1.1.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.1.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.1.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -415,9 +415,9 @@ Qwen, LM Studio and ComfyUI have their own terms; see `LICENSE`, `NOTICE.md` and
 - [Qwen3.5 9B in LM Studio / LM StudioのQwen3.5 9B](https://lmstudio.ai/models/qwen/qwen3.5-9b)
 - [Reference article / 導入検討時の参考記事](https://note.com/humble_bobcat51/n/n977c99a109eb)
 
-Press one of the five preset buttons to fill voice, genre, mood, instruments and BPM, then fine-tune the selection fields. / 5種類のプリセットボタンで声・曲調・雰囲気・楽器・BPMを一括設定し、選択欄で調整できます。
+Press one of the eleven preset buttons to fill voice, genre, mood, instruments and BPM, then fine-tune the selection fields. / 11種類のプリセットボタンで声・曲調・雰囲気・楽器・BPMを一括設定し、選択欄で調整できます。
 
-![Preset buttons / プリセットボタン](docs/assets/switches-v1.1.png)
+![Preset buttons / プリセットボタン](docs/assets/switches-v1.1.1.png)
 
 Verified through the actual Run button: the Ballad preset produced 69.4 seconds of audio in 205.047 seconds end to end, including lyric planning and model switching; song generation and saving took 82.3 seconds. / 実際の実行ボタンから、バラード設定で69.4秒の音声を生成し、作詞・モデル切替を含む全工程205.047秒、曲生成・保存82.3秒を確認しました。
 
@@ -427,4 +427,20 @@ Manual free input skipped the LLM and produced an original 53.479-second track; 
 
 Switch validation: all three valid combinations passed the actual ComfyUI planning API; both OFF returned HTTP 400 before execution. / 切替検証：有効な3通りは実ComfyUIの作詞APIで成功し、両方OFFは実行前にHTTP 400で拒否しました。
 
-Both switches ON produced 54.959 seconds of audio in 74.021 seconds from Run to saved completion, with no cached nodes; song generation/saving took 73.8 seconds. / 両方ONで54.959秒の音声を生成し、実行開始から保存完了まで74.021秒（キャッシュ省略なし）、曲生成・保存73.8秒を確認しました。
+The separate controller with both inputs ON produced 59.039 seconds of audio in 81.695 seconds from Run to saved completion, with no cached nodes; song generation/saving took 81.45 seconds. / 独立した切替ノードで両方ONにして59.039秒の音声を生成し、実行開始から保存完了まで81.695秒（キャッシュ省略なし）、曲生成・保存81.45秒を確認しました。
+
+
+### Separate input control / 独立した入力切り替え
+
+The Input switches node controls separate Presets and Free input nodes; timing stays in the controller. / 入力切替ノードで独立したプリセット・自由入力ノードを制御し、時間も切替ノードで設定します。
+
+OFF inputs are dimmed and cannot be edited; existing values are retained and restored when enabled. / OFF側はグレー表示・編集不可となり、入力内容は消さずにONへ戻したときに再利用します。
+
+With both ON, title and lyrics come from free input; style combines presets and free text without overwriting. / 両方ONでは曲名と歌詞は自由入力を使い、曲調はプリセットと自由入力を上書きせず併用します。
+
+No automatic priority resolves contradictory styles; use free input alone to exclude all preset style. / 矛盾する曲調の自動優先処理はなく、プリセットの曲調を外したい場合は自由入力のみONにしてください。
+
+Additional presets: Night jazz, Lo-fi, Dance, Orchestral, Japanese folk and Lullaby. / 夜のジャズ・ゆったりLo-fi・軽快なダンス・壮大なオーケストラ・しっとり和風・穏やかな子守歌を追加し、計11種類から選べます。
+
+
+All 11 button settings passed the live API. The new Jazz button with free lyrics generated 38.679 seconds of audio in 51.354 seconds end to end, without cached nodes; genre quality was not rated for every preset. / 全11ボタンの設定は実APIで確認済みです。追加したジャズと自由入力歌詞では38.679秒の音声を全工程51.354秒・キャッシュ省略なしで生成しました。全プリセットの曲調再現品質を評価したものではありません。

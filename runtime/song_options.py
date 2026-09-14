@@ -2,9 +2,9 @@
 MODES=['おまかせ','プリセット','手動']
 TIMING=['可変尺（自然な長さ）','目標尺（目安）','ぴったり尺（編集）']
 VOICES={'おまかせ':'','女性・やわらかい':'soft female vocals','女性・力強い':'powerful female vocals','男性・やわらかい':'soft male vocals','男性・力強い':'powerful male vocals','中性的・透明感':'clear androgynous vocals'}
-GENRES={'おまかせ':'','ポップ':'pop','ロック':'rock','アコースティック':'acoustic pop','ジャズ':'jazz pop','エレクトロ':'electronic pop','バラード':'ballad','シティポップ':'city pop'}
+GENRES={'おまかせ':'','ポップ':'pop','ロック':'rock','アコースティック':'acoustic pop','ジャズ':'jazz pop','エレクトロ':'electronic pop','バラード':'ballad','シティポップ':'city pop','Lo-fi':'lo-fi pop','ダンス':'dance pop','オーケストラ':'orchestral pop','和風':'Japanese folk pop','子守歌':'lullaby'}
 MOODS={'おまかせ':'','明るい':'bright and cheerful','切ない':'bittersweet','落ち着いた':'calm and gentle','元気':'energetic','幻想的':'dreamy','壮大':'cinematic and grand'}
-INSTRUMENTS={'おまかせ':'','ピアノ中心':'piano-led arrangement','アコギ中心':'acoustic guitar-led arrangement','バンド':'electric guitar, bass and drums','シンセ中心':'synthesizers and electronic drums','弦楽器中心':'orchestral strings and piano','ジャズトリオ':'piano, upright bass and brushed drums'}
+INSTRUMENTS={'おまかせ':'','ピアノ中心':'piano-led arrangement','アコギ中心':'acoustic guitar-led arrangement','バンド':'electric guitar, bass and drums','シンセ中心':'synthesizers and electronic drums','弦楽器中心':'orchestral strings and piano','ジャズトリオ':'piano, upright bass and brushed drums','Lo-fiビート':'soft piano, mellow bass and dusty drums','和楽器中心':'koto, shamisen and shakuhachi'}
 def settings(mode='おまかせ',voice='おまかせ',genre='おまかせ',mood='おまかせ',instruments='おまかせ',bpm=0,timing='可変尺（自然な長さ）',seconds=30,use_presets=None,use_manual=None):
  if mode not in MODES or timing not in TIMING:raise ValueError('作成方法または時間モードが不正です。')
  if type(bpm) is not int or not (bpm==0 or 40<=bpm<=220):raise ValueError('BPMは0（おまかせ）または40〜220です。')
