@@ -6,7 +6,8 @@ VOICES={'おまかせ':'','女性・やわらかい':'soft female vocals','女�
 GENRES={'おまかせ':'','ポップ':'pop','ロック':'rock','アコースティック':'acoustic pop','ジャズ':'jazz pop','エレクトロ':'electronic pop','バラード':'ballad','シティポップ':'city pop','Lo-fi':'lo-fi pop','ダンス':'dance pop','オーケストラ':'orchestral pop','和風':'Japanese folk pop','子守歌':'lullaby'}
 MOODS={'おまかせ':'','明るい':'bright and cheerful','切ない':'bittersweet','落ち着いた':'calm and gentle','元気':'energetic','幻想的':'dreamy','壮大':'cinematic and grand'}
 INSTRUMENTS={'おまかせ':'','ピアノ中心':'piano-led arrangement','アコギ中心':'acoustic guitar-led arrangement','バンド':'electric guitar, bass and drums','シンセ中心':'synthesizers and electronic drums','弦楽器中心':'orchestral strings and piano','ジャズトリオ':'piano, upright bass and brushed drums','Lo-fiビート':'soft piano, mellow bass and dusty drums','和楽器中心':'koto, shamisen and shakuhachi'}
-def settings(mode='おまかせ',voice='おまかせ',genre='おまかせ',mood='おまかせ',instruments='おまかせ',bpm=0,timing='可変尺（自然な長さ）',seconds=30,use_presets=None,use_manual=None):
+def settings(mode='おまかせ',voice='おまかせ',genre='おまかせ',mood='おまかせ',instruments='おまかせ',bpm=0,timing=FULL_SONG,seconds=30,use_presets=None,use_manual=None,verse_count=2):
+ if type(verse_count) is not int or verse_count not in (1,2,3):raise ValueError('何番まで作るかは1〜3で指定してください。')
  if mode not in MODES or timing not in TIMING:raise ValueError('作成方法または時間モードが不正です。')
  if type(bpm) is not int or not (bpm==0 or 40<=bpm<=220):raise ValueError('BPMは0（おまかせ）または40〜220です。')
  if type(seconds) is not int or not 10<=seconds<=240:raise ValueError('秒数は10〜240の整数です。')
@@ -22,9 +23,9 @@ def settings(mode='おまかせ',voice='おまかせ',genre='おまかせ',mood=
   if table[value]:parts.append(table[value])
  if bpm:parts.append(str(bpm)+' BPM')
  if not use_presets:parts=[]
- return {'use_presets':use_presets,'use_manual':use_manual,'mode':mode,'voice':voice,'genre':genre,'mood':mood,'instruments':instruments,'bpm':bpm,'timing':timing,'seconds':seconds,'style':', '.join(parts)}
+ return {'verse_count':verse_count,'use_presets':use_presets,'use_manual':use_manual,'mode':mode,'voice':voice,'genre':genre,'mood':mood,'instruments':instruments,'bpm':bpm,'timing':timing,'seconds':seconds,'style':', '.join(parts)}
 def prepare(brief,options,manual=None):
- o=settings(**{k:options[k] for k in ['mode','voice','genre','mood','instruments','bpm','timing','seconds','use_presets','use_manual'] if k in options})
+ o=settings(**{k:options[k] for k in ['mode','voice','genre','mood','instruments','bpm','timing','seconds','use_presets','use_manual','verse_count'] if k in options})
  style=o['style']
  if o['use_manual']:
   if not isinstance(manual,dict):raise ValueError('手動モードでは手動歌詞ノードを接続してください。')

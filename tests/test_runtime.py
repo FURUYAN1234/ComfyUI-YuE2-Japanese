@@ -7,7 +7,7 @@ class RuntimeContract(unittest.TestCase):
         d=planner.duration_plan(True,planner.FULL_SONG,30,7)
         self.assertIsNone(d['target_seconds']);self.assertTrue(d['full_song'])
         counts=planner.section_counts(True,7,True)
-        raw={'title':'雨のあと','style':'Japanese pop','lyrics':{k:['歌の言葉']*(1 if k=='outro' else 2) for k in counts}}
+        raw={'title':'雨のあと','style':'Japanese pop','lyrics':{k:[k+'歌の言葉'+str(i) for i in range(1 if k=='outro' else 2)] for k in counts}}
         plan=planner.compile_plan(raw,True,7,True)
         self.assertTrue(plan['lyrics'].startswith('[Intro]'))
         self.assertIn('[Bridge]',plan['lyrics']);self.assertIn('[Outro]',plan['lyrics'])
@@ -107,7 +107,8 @@ class RuntimeContract(unittest.TestCase):
             with self.assertRaises(ValueError):planner.validate(bad)
     def test_workflow_models_and_connection(self):
         w=json.loads(next((ROOT/'workflows').glob('*.json')).read_text());nodes={n['id']:n for n in w['nodes']}
-        self.assertEqual(w['links'][0],[1,2,0,3,0,'YUE2_PLAN'])
+        self.assertEqual(w['links'][0],[1,2,0,12,0,'YUE2_PLAN'])
+        self.assertTrue(any(x[1:6]==[12,0,3,0,'YUE2_PLAN'] for x in w['links']))
         self.assertEqual(nodes[3]['properties']['models'],json.loads((ROOT/'models.json').read_text()))
         self.assertIsInstance(nodes[3]['widgets_values'][0],int)
         self.assertEqual(nodes[3]['widgets_values'][2:4],['YuE2-3B/model.safetensors','YuE2-Vae/model.safetensors'])

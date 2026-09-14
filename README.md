@@ -570,3 +570,9 @@ Readings are converted to hiragana before review using the existing MIDI reading
 Automatic readings are suggestions, not verified pronunciation. / 自動変換は読み候補であり、正しい発音を検証したものではありません。
 
 Before generation, a confirmation explains that lyrics/readings cannot be edited during that run and regenerating may change the song; Cancel returns to editing without saving or starting. / 生成前に、その回の歌詞・読みは開始後に修正できず、再生成で曲が変わる可能性があることを確認します。キャンセルでは保存・生成せず編集へ戻ります。
+
+### Verse count / 何番まで作るか
+Select 1–3 verses in Input switches; default 2, used in full-song mode. / 入力切替ノードで1〜3番を指定。初期値2、1曲完走で使用します。
+Manual lyrics stay unchanged. Set the count before enabling image mode. / 手動歌詞は維持。画像モードはON前に番数を設定します。
+Duplicate verse lines trigger one rewriting attempt; chorus hooks may repeat. / 各番の歌詞行の重複は再作詞を1回実施。サビのフックは反復可能です。
+Local trials produced 189.9s (2 verses) and 202.3s (3 verses), without model truncation; speech recognition found the later verses and ending. Pronunciation is not guaranteed. / ローカル検証で2番189.9秒・3番202.3秒、モデルの途中打切りなし。音声認識で後半の番と結末を確認。発音の正確さは保証しません。
