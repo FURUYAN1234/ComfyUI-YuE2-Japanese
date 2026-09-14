@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.1)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.0)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.0/YuE2_Japanese_LMStudio_v1.5.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.0/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -16,9 +16,21 @@ This local setup combines LM Studio on Windows with ComfyUI and an isolated YuE2
 
 YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official repository](https://github.com/multimodal-art-projection/YuE) and model licenses. / YuE2モデルはCC BY-NC 4.0の非商用ライセンスなので、[公式リポジトリ](https://github.com/multimodal-art-projection/YuE)と各モデルの条件を確認してください。
 
-![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.4.0.png)
+![Current verse controls / 現行の番数設定](docs/assets/verse-controls-v1.5.0.png)
+
+[Earlier full-layout image / 従来の全体配置画像](docs/assets/workflow-v1.4.0.png)
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
+
+## v1.5.0 / 今回の更新
+
+The default is a full song with two verses; select one to three verses in Input switches. / 初期設定は2番までの1曲完走。入力切替で1〜3番を選べます。
+Adding verses regenerates the whole arrangement, so duration does not grow proportionally. / 番数を増やすと曲全体を作り直すため、長さは比例して増えません。
+Controlled trials with shared lyrics, style and seed produced 181.8s and 193.1s; ASR found the added verse and chorus, but other sections shortened. / 共通歌詞・曲調・seedでの比較は181.8秒と193.1秒。音声認識で追加の番とサビを確認しましたが、他の部分が短くなりました。
+Review hiragana line by line before generation; optionally remember corrected phrases in a private dictionary. / 生成前にひらがなの読みを行ごとに確認し、修正した語句を個人辞書へ記憶できます。
+The confirmation warns that edits after generation require a new song; existing audio is retained. / 生成後の修正は再生成となり曲が変わることを確認画面で案内。元音声は残ります。
+Audio and MIDI lyrics can auto-scroll by playback progress; manual scrolling pauses following. This is approximate, not vocal alignment. / 音声・MIDIの歌詞は再生時間に合わせて自動スクロールし、手動操作で停止。歌声と厳密に同期する方式ではありません。
+Dedicated image loading is disabled when image mode is OFF; the guide includes the folder layout. / 画像OFF時は専用画像読込を無効化し、説明欄にフォルダ構成図を掲載しました。
 
 ## Comics and artwork as song ideas / 漫画・1枚絵からテーマソング
 
@@ -32,7 +44,7 @@ Normal text, preset, free-lyrics, line-count and seconds controls become inactiv
 
 Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
 
-All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.4.1_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.4.1_年月日時分秒.flac` と `.mid` で同じ日時を使います。
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.0_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.0_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -160,7 +172,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.4.1.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.0.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -168,7 +180,7 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.5.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -257,7 +269,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.5.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -441,18 +453,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.1)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.0)
 
-Version: `v1.4.1`; tag: `v1.4.1`. / 配布版は `v1.4.1`、タグは `v1.4.1` です。
+Version: `v1.5.0`; tag: `v1.5.0`. / 配布版は `v1.5.0`、タグは `v1.5.0` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.4.1.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.4.1.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.5.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.0.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.4.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.5.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -513,7 +525,7 @@ Validated in the live workflow: 7 requested lyric lines produced 7 lines, 73.0s 
 
 Pre-v1.4.0 manual API verification preserved the entered 4 lines even with a stored custom count of 17; the LLM was not called. / v1.4.0より前の手動API検証では自由指定17行の保存値があっても入力した4行を保持し、LLMは呼び出されませんでした。
 
-The example starts with four lyric lines and natural duration, with image input OFF. / 配布例は歌詞4行・可変尺で始まり、画像入力はOFFです。
+The example starts with a full song and two verses, with image input OFF. / 配布例は1曲完走・2番で始まり、画像入力はOFFです。
 
 Line validation covers 1–64; actual song generation was checked at 7 lines, not every length. / 行数の検査範囲は1〜64行で、実際の曲生成は7行で確認し、全行数を実生成したわけではありません。
 
@@ -552,7 +564,7 @@ Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked brow
 
 ### Lyric readings and memory / 歌詞の読み修正・記憶
 
-Connect the reading node between the lyric planner and song generator. / 作詞と曲生成の間に読み修正ノードを接続します。
+The included workflow already connects reading review between planning and song generation. / 配布ワークフローは作詞と曲生成の間に読み確認を接続済みです。
 Enter one `単語=よみ` per line, for example `今日=きょう`. / 1行に1件、例として `今日=きょう` を入力します。
 Once applies temporary overrides; Remember adds or updates entries; Delete accepts one registered word per line. / 「今回だけ」は一時修正、「記憶・更新」は登録・更新、「登録を削除」は単語だけを1行ずつ入力します。
 Enabled uses remembered entries even with an empty correction field; OFF bypasses all readings and leaves the dictionary unchanged. / ONでは修正欄が空でも記憶した読みを適用し、OFFでは辞書を変更せず全修正を無効にします。
@@ -561,7 +573,7 @@ Longer phrases win; replacements are literal and context independent. Register a
 The private dictionary is stored under the configured runtime in `private/lyric_readings.json`, outside the distribution. / 個人辞書は設定済み実行環境の `private/lyric_readings.json` に保存し、配布には含めません。
 Regeneration can change melody and vocals; kana does not guarantee correct singing. / 再生成でメロディーや歌い方が変わる場合があり、かな指定でも正しい歌唱を保証しません。
 
-A review window opens after lyric planning and waits for Preview / Generate song or Cancel; pending review recovers after reload. / 作詞後に確認窓が開き、プレビュー・曲生成・中止を選べます。確認待ちはリロード後に復帰します。
+After planning, edit the lower hiragana rows and choose Generate song or Cancel; enable the memory checkbox to remember edits. / 作詞後、下段のひらがなを編集して生成または中止を選びます。修正を記憶する場合は辞書登録のチェックをONにします。
 Review is enabled by default; every execution reopens it even with fixed seeds. / 確認窓は既定でON。同じseedでも実行ごとに開きます。
 
 The review window pairs each original lyric line above its editable reading below. Changed lines can be remembered as phrase readings. / 確認窓は1行ごとに上段へ元の歌詞、下段へ編集可能な読みを表示します。修正した行は語句の読みとして記憶できます。

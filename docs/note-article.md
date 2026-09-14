@@ -2,6 +2,18 @@
 
 ![日本語でおまかせ作曲](assets/note-thumbnail-v1.4.0.png)
 
+## v1.5.0：読み確認・記憶と、1曲完走を初期設定に
+
+初期設定は「1曲完走・2番まで」です。入力切替の「何番まで」で1〜3番を選択できます。画像モードではONにする前に番数を設定してください。手動歌詞はそのまま使用します。番数は歌詞構成の指定で、時間を保証する指定ではありません。
+
+共通の歌詞・曲調・seedを揃えた再検証では、2番181.8秒・3番193.1秒でした。追加の3番＋サビは音声認識上で約42秒ありましたが、前半や終わり方が短くなって差が相殺されました。既存曲にそのまま3番を継ぎ足す機能ではなく、全体を作り直します。無理に尺を引き延ばす処理は加えていません。
+
+作詞後、曲生成前に読み確認の窓が開きます。上段が元の歌詞、下段が編集できるひらがなです。全行を確認し、必要なら「手で修正した読みを発音辞書へ登録する」にチェックします。個人辞書は専用実行環境の private/lyric_readings.json に保存し、配布ZIPには入りません。自動の読み候補には誤りがあるため、固有名詞などは確認してください。
+
+右の「この読みで曲を生成」を押すと、開始後はその回の読みを修正できず、再生成すると曲が変わる可能性があることを1回確認します。キャンセルなら編集へ戻ります。左の中止ボタンは今回の生成を中止します。元の音声は残ります。
+
+音声・MIDI再生ノードに「自動スクロール ON（目安）」を追加しました。再生位置に合わせて歌詞を送り、手でスクロールすると追従を止め、ボタンで再開できます。歌声との正確なカラオケ同期ではありません。画像OFF時には専用の画像読込も非活性化します。左の説明欄にはフォルダ構成図を追加しました。
+
 画像のワークフローと同じように、「こんな感じの曲がほしい」と日本語で書いて、あとはローカルのAIに任せたい。今回は、その入口をComfyUIに用意しました。
 
 入力するのは、たとえばこんな一言です。
@@ -14,8 +26,8 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 ## ワークフローの入手
 
-- [導入ZIP v1.4.1](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip)
-- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio.json)
+- [導入ZIP v1.5.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.0/YuE2_Japanese_LMStudio_v1.5.0.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.0/YuE2_Japanese_LMStudio.json)
 
 初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
 
@@ -29,7 +41,7 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 読み取った内容は詳細欄にも表示します。文字が小さい漫画や特殊なコマ割りには読み違いがあるため、セリフとオチを確認して使ってください。
 
-曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.4.1_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
+曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.5.0_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
 
 ## ボタンで選ぶ・日本語で任せる・自由入力する
 
@@ -55,7 +67,7 @@ v1.3.0では、MiniMax H3の動画ワークフローと同じ形式のLLM通知�
 
 ![LLMをGPUへ読み込んでいる間の通知](assets/llm-status-v1.3.0.png)
 
-v1.4.1の配布例は、画像OFF・歌詞4行・可変尺で開きます。「1曲（イントロ〜エンディング）」は入力切替ノードの曲の長さで選べます。画像ONでは秒数自由の1曲構成に固定されます。AIがイントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロを組み立て、歌唱セクションを各2〜4行、アウトロを1〜2行で作ります。このモードでは秒数と歌詞行数の欄を無効にし、音声を指定秒数でカットしません。自然な終わり方を指示しますが、仕上がりは試聴で確認してください。手動ONなら入力歌詞をそのまま使い、AIによる書き換えは行いません。
+v1.5.0の配布例は、画像OFF・1曲完走・2番で開きます。「1曲（イントロ〜エンディング）」は入力切替ノードの曲の長さで選べます。画像ONでは秒数自由の1曲構成に固定されます。AIがイントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロを組み立て、歌唱セクションを各2〜4行、アウトロを1〜2行で作ります。このモードでは秒数と歌詞行数の欄を無効にし、音声を指定秒数でカットしません。自然な終わり方を指示しますが、仕上がりは試聴で確認してください。手動ONなら入力歌詞をそのまま使い、AIによる書き換えは行いません。
 
 曲の保存・検査が終わると、曲生成ノードが緑枠になり「曲の生成完了」と表示します。上部にも曲名・長さ付きの大きな緑の通知が出ます。通知が消えた後もノードの完了表示は残り、③で再生、④で歌詞・曲情報を確認できます。
 
@@ -143,7 +155,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.5.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -198,7 +210,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.5.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -287,9 +299,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.1)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.0)
 
-配布版：`v1.4.1`、タグ：`v1.4.1`。Releaseの `YuE2_Japanese_LMStudio_v1.4.1.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`v1.5.0`、タグ：`v1.5.0`。Releaseの `YuE2_Japanese_LMStudio_v1.5.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -297,7 +309,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch v1.4.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.5.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 

@@ -1,34 +1,12 @@
-# v1.4.1 — Japanese song creation with image themes and lyrics MIDI / 日本語おまかせ作曲・画像テーマ・歌詞MIDI
+## v1.5.0 / 今回の更新
 
-Casual Japanese requests remain the main workflow; comics and artwork can now provide the story for a complete theme song. / 日本語でざっくり希望を伝える作曲を基本に、漫画・1枚絵から1曲のテーマソングを作れるようにしました。
+The default is a full song with two verses; select one to three verses in Input switches. / 初期設定は2番までの1曲完走。入力切替で1〜3番を選べます。
+Adding verses regenerates the whole arrangement, so duration does not grow proportionally. / 番数を増やすと曲全体を作り直すため、長さは比例して増えません。
+Controlled trials with shared lyrics, style and seed produced 181.8s and 193.1s; ASR found the added verse and chorus, but other sections shortened. / 共通歌詞・曲調・seedでの比較は181.8秒と193.1秒。音声認識で追加の番とサビを確認しましたが、他の部分が短くなりました。
+Review hiragana line by line before generation; optionally remember corrected phrases in a private dictionary. / 生成前にひらがなの読みを行ごとに確認し、修正した語句を個人辞書へ記憶できます。
+The confirmation warns that edits after generation require a new song; existing audio is retained. / 生成後の修正は再生成となり曲が変わることを確認画面で案内。元音声は残ります。
+Audio and MIDI lyrics can auto-scroll by playback progress; manual scrolling pauses following. This is approximate, not vocal alignment. / 音声・MIDIの歌詞は再生時間に合わせて自動スクロールし、手動操作で停止。歌声と厳密に同期する方式ではありません。
+Dedicated image loading is disabled when image mode is OFF; the guide includes the folder layout. / 画像OFF時は専用画像読込を無効化し、説明欄にフォルダ構成図を掲載しました。
 
-- Added full-song structure, an explicit completion banner and green song-node border. / 1曲構成・完了通知・曲生成ノードの緑枠を追加。
-- Image mode lets AI choose the musical settings and disables normal inputs until switched OFF. / 画像モードでは音楽設定をAIに任せ、OFFへ戻すまで通常入力を非活性化。
-- AI generates every title while preserving manually supplied lyrics. / 手動歌詞を維持し、全曲の曲名をAIが作成。
-- Audio and MIDI have separate players, visible downloads and lyric displays. / 音声とMIDIを独立した再生・ダウンロード・歌詞表示ノードに分離。
-- MIDI includes kana lyric events; note assignment is approximate and editable. / MIDIにかなの歌詞イベントを収録し、音符への仮割当を編集可能。
-- Downloads share the song title, semantic workflow version and a 14-digit date/time stamp. / 取得名に曲名・ワークフローのバージョン番号・14桁の年月日時分秒を共通で付加。
-
-VOCALOID6 6.2+ officially supports MIDI lyric import; see README for the phoneme-conversion procedure and limitations. Actual VOCALOID singing has not been tested here. / VOCALOID6 6.2以降は公式にMIDI歌詞読込へ対応。発音記号の変換手順と制限はREADMEへ。本体での歌唱は未検証です。
-
-Use the complete installer ZIP for initial setup and the separate JSON after installation. / 初回は導入ZIP一式を使い、環境構築後は単独JSONでも読み込めます。
-
-Models are downloaded separately and remain subject to their licenses, including YuE2's CC BY-NC 4.0. / モデルは別途取得し、YuE2のCC BY-NC 4.0を含む各ライセンスに従ってください。
-
-The MIDI player highlights kana lyrics at the MIDI event times and follows seeking. This is approximate score alignment, not forced alignment to the generated vocals. / MIDI再生ノードでは歌詞イベントの時刻に合わせてかな歌詞を強調し、シークにも追従します。楽譜への仮割当であり、生成された歌声との厳密な同期ではありません。
-
-Full-song artwork verification generated 214.48 seconds of audio without duration editing and completed both audio and MIDI output; this does not certify every visual detail or musical quality. / 1枚絵の1曲検証では214.48秒の音声を秒数編集なしで生成し、音声・MIDIの両出力が完了しました。画像の全細部の理解や音楽的品質を保証する検証ではありません。
-
-Save the workflow after generation to retain the audio/MIDI player references and lyrics when reopening it. The media files remain in the output folder and are not embedded in the JSON. / 生成後にワークフローを保存すると、開き直した際に音声・MIDIの再生参照と歌詞を復元します。メディア本体はoutputフォルダーに保存され、JSONには埋め込みません。
-
-
-## Known download issue / 既知の保存問題
-
-In one Windows test environment, Chrome blocked downloads to Windows folders while saving to WSL succeeded, despite no configured Chrome policies. / 一部のWindows検証環境で、Chromeのポリシー設定がない状態でもWindows側フォルダーへのダウンロードがブロックされ、WSLへの保存は成功する現象を確認しています。
-
-The cause remains unresolved; this is not established as a Chrome update or a workflow defect. / 原因は未解決で、Chromeの更新またはワークフローの不具合とは特定できていません。
-
-Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked browser download does not mean generation failed. / 生成音声とMIDIはComfyUI/output/audio/YuE2/に残り、ブラウザーの保存失敗は曲生成の失敗を意味しません。
-
-
-This patch corrects documentation attribution for a v1.2.1 measurement; generation code is unchanged from v1.4.0. / この修正版はv1.2.1の実測を示す版の誤記を訂正し、生成コードはv1.4.0と同じです。
+Install the complete ZIP, verify it, run install.py, then restart ComfyUI and reload the saved workflow. / ZIP全体を展開・検査し、install.pyで導入後、ComfyUI再起動と保存済みワークフローの再読込を行ってください。
+Private dictionaries and generated media are not included. / 個人辞書と生成メディアは同梱しません。
