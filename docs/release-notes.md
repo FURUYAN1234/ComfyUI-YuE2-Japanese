@@ -20,3 +20,12 @@ The MIDI player highlights kana lyrics at the MIDI event times and follows seeki
 Full-song artwork verification generated 214.48 seconds of audio without duration editing and completed both audio and MIDI output; this does not certify every visual detail or musical quality. / 1枚絵の1曲検証では214.48秒の音声を秒数編集なしで生成し、音声・MIDIの両出力が完了しました。画像の全細部の理解や音楽的品質を保証する検証ではありません。
 
 Save the workflow after generation to retain the audio/MIDI player references and lyrics when reopening it. The media files remain in the output folder and are not embedded in the JSON. / 生成後にワークフローを保存すると、開き直した際に音声・MIDIの再生参照と歌詞を復元します。メディア本体はoutputフォルダーに保存され、JSONには埋め込みません。
+
+
+## Known download issue / 既知の保存問題
+
+In one Windows test environment, Chrome blocked downloads to Windows folders while saving to WSL succeeded, despite no configured Chrome policies. / 一部のWindows検証環境で、Chromeのポリシー設定がない状態でもWindows側フォルダーへのダウンロードがブロックされ、WSLへの保存は成功する現象を確認しています。
+
+The cause remains unresolved; this is not established as a Chrome update or a workflow defect. / 原因は未解決で、Chromeの更新またはワークフローの不具合とは特定できていません。
+
+Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked browser download does not mean generation failed. / 生成音声とMIDIはComfyUI/output/audio/YuE2/に残り、ブラウザーの保存失敗は曲生成の失敗を意味しません。
