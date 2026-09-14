@@ -62,3 +62,21 @@ def apply(plan_text,enabled,action,corrections,path):
     data["pronunciation"]={"applied":{k:effective[k] for k in dict.fromkeys(applied)},"singing_lyrics":sung}
     report="生成用の読み / Singing lyrics\n"+sung+"\n\n適用 / Applied\n"+"\n".join(k+"="+effective[k] for k in dict.fromkeys(applied))+"\n\n記憶済み / Remembered\n"+"\n".join(k+"="+v for k,v in entries.items())
     return json.dumps(data,ensure_ascii=False,indent=2),report
+
+
+def hiragana_plan(plan_text):
+    from pykakasi import kakasi
+    converter=kakasi();data=json.loads(plan_text)
+    original=data.get('display_lyrics',data['plan']['lyrics'])
+    data['display_lyrics']=original
+    lines=[]
+    for line in data['plan']['lyrics'].split('\n'):
+        if line.lstrip().startswith('['):lines.append(line)
+        else:lines.append(''.join(part['hira'] for part in converter.convert(line)))
+    sung='\n'.join(lines);data['plan']['lyrics']=sung
+    data.setdefault('pronunciation',{})['singing_lyrics']=sung
+    return json.dumps(data,ensure_ascii=False,indent=2)
+
+if __name__=='__main__':
+    import sys
+    if sys.argv[1:]==['--hiragana']:print(hiragana_plan(sys.stdin.read()))

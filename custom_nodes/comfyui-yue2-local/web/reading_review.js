@@ -16,8 +16,9 @@ function show(item){
    if(original[i].trim().startsWith('[')){add('h3',original[i],rows);continue;}
    const row=add('div','',rows);Object.assign(row.style,{padding:'12px',background:'#111827',borderRadius:'8px'});
    add('div',`${readingFields.length+1}. 元の歌詞 / Original`,row);add('p',original[i],row);
-   const input=field('読み（編集できます） / Reading',initial[i]??original[i],false,row);input.setAttribute('aria-label',`歌詞${readingFields.length+1}の読み`);readingFields.push(input);
+   const input=field('ひらがなの読み（編集できます） / Hiragana reading',initial[i]??original[i],false,row);input.setAttribute('aria-label',`歌詞${readingFields.length+1}の読み`);readingFields.push(input);
  }
+ add('p','自動変換の読み候補です。人名・多義語は確認してください。英数字などが残る行は、ひらがなで指定してから進めます。 / Review automatic readings, especially names; replace unresolved letters or numbers.');
  const action=add('select');action.setAttribute('aria-label','辞書の操作');for(const label of ['今回だけ / Once','記憶・更新 / Remember','登録を削除 / Delete']){const opt=add('option',label,action);opt.value=label;}action.value=item.action;
  add('p','単語=よみ を1行ずつ入力（例：今日=きょう）。削除は単語だけ。 / One word=reading per line; deletion uses words only.');
  const edits=field('読みの修正 / Corrections',item.corrections,false,dialog);edits.style.height='100px';edits.setAttribute('aria-label','読みの修正');

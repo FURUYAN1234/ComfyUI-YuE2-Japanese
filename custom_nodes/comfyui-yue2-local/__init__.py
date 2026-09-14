@@ -179,7 +179,11 @@ class YuE2Pronunciation:
         from .reading import apply
         if enabled and review_window:
             action,corrections=wait_for_reading_review(song_plan,action,corrections)
-        return apply(song_plan,enabled,action,corrections,RUNTIME/'private'/'lyric_readings.json')
+        result,report=apply(song_plan,enabled,action,corrections,RUNTIME/'private'/'lyric_readings.json')
+        if enabled:
+            result=hiragana_plan_local(result)
+            report='生成用のひらがな / Singing readings\n'+json.loads(result)['plan']['lyrics']+'\n\n'+report
+        return result,report
 
 class YuE2LocalSong:
     @classmethod
@@ -324,13 +328,19 @@ async def download_required_models(request):
         return web.json_response({'message':'必須13ファイルの取得・SHA256確認が完了しました。モデル一覧を更新、またはComfyUIを再起動してください。'})
 
 
-_reading_sessions={}
+def hiragana_plan_local(plan_text):
+    result=subprocess.run([str(RUNTIME/'.venv/bin/python'),str(Path(__file__).with_name('reading.py')),'--hiragana'],input=plan_text,text=True,capture_output=True,timeout=30)
+    if result.returncode:raise RuntimeError('ひらがな変換に失敗しました: '+result.stderr[-500:])
+    return result.stdout.strip()
+
+_reading_sessions={} 
 _reading_lock=threading.RLock()
 def wait_for_reading_review(song_plan,action,corrections):
     from .reading import apply,load
     request_id=uuid.uuid4().hex
     path=RUNTIME/'private'/'lyric_readings.json'
     preview,_=apply(song_plan,True,'今回だけ / Once',corrections if action!='登録を削除 / Delete' else '',path)
+    preview=hiragana_plan_local(preview)
     data=json.loads(preview)
     payload={'request_id':request_id,'title':data['plan']['title'],'lyrics':data.get('display_lyrics',data['plan']['lyrics']),'singing_lyrics':data['plan']['lyrics'],'corrections':corrections,'action':action,'remembered':load(path)}
     session={'payload':payload,'plan':song_plan,'event':threading.Event(),'result':None}
@@ -398,7 +408,11 @@ async def reading_review_submit(request):
                 preview,_=apply(session['plan'],True,'今回だけ / Once','',temp)
         else:preview,_=apply(session['plan'],True,'今回だけ / Once',corrections,RUNTIME/'private'/'lyric_readings.json')
     except (ValueError,TypeError) as e:return web.json_response({'error':str(e)},status=400)
+    preview=hiragana_plan_local(preview)
     if operation=='submit':
+        import re
+        remaining=[line for line in json.loads(preview)['plan']['lyrics'].split('\n') if not line.lstrip().startswith('[') and re.search(r'[A-Za-z0-9\u3400-\u9fff々]',line)]
+        if remaining:return web.json_response({'error':'読みが未確定の文字があります。下段をひらがなへ修正してください: '+' / '.join(remaining)},status=400)
         with _reading_lock:
             if session['result'] is not None:return web.json_response({'error':'確認は終了済みです。'},status=409)
             session['result']={'action':action,'corrections':corrections};session['event'].set()

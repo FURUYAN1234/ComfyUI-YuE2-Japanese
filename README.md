@@ -565,3 +565,6 @@ A review window opens after lyric planning and waits for Preview / Generate song
 Review is enabled by default; every execution reopens it even with fixed seeds. / 確認窓は既定でON。同じseedでも実行ごとに開きます。
 
 The review window pairs each original lyric line above its editable reading below. Changed lines can be remembered as phrase readings. / 確認窓は1行ごとに上段へ元の歌詞、下段へ編集可能な読みを表示します。修正した行は語句の読みとして記憶できます。
+
+Readings are converted to hiragana before review using the existing MIDI reading dependency; unresolved letters, numbers, or kanji require correction before confirmation. / 既存のMIDI用読み変換を用い、確認前にひらがなへ変換します。未変換の英数字・漢字が残る場合は修正してから確定します。
+Automatic readings are suggestions, not verified pronunciation. / 自動変換は読み候補であり、正しい発音を検証したものではありません。
