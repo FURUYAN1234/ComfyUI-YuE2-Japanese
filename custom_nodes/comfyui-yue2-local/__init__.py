@@ -22,6 +22,13 @@ def runtime_module(name):
 
 def planner_module():return runtime_module('planner')
 
+def notify_planner(node_id,state,message):
+    from server import PromptServer
+    server=PromptServer.instance
+    if server and server.client_id:
+        server.send_sync('yue2.llm_status',{'node_id':str(node_id),'state':state,'message':message},server.client_id)
+
+
 class YuE2SongOptions:
     @classmethod
     def INPUT_TYPES(cls):
@@ -69,9 +76,9 @@ class YuE2ManualLyrics:
 class YuE2JapanesePlanner:
     @classmethod
     def INPUT_TYPES(cls):
-        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})},'optional':{'settings':('YUE2_OPTIONS',),'manual':('YUE2_MANUAL',),'switches':('YUE2_SWITCHES',)}}
+        return {'required':{'brief':('STRING',{'multiline':True,'default':'雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。'}),'length':(['短い試作（4行）','通常（16行）'],),'seed':('INT',{'default':831001,'min':0,'max':2147483647}),'duration_mode':(['歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）'],),'target_seconds':('INT',{'default':30,'min':10,'max':240,'tooltip':'秒数を指定（目安）で使用。生成結果の長さを保証する値ではありません。'})},'optional':{'settings':('YUE2_OPTIONS',),'manual':('YUE2_MANUAL',),'switches':('YUE2_SWITCHES',)},'hidden':{'unique_id':'UNIQUE_ID'}}
     RETURN_TYPES=('YUE2_PLAN',);RETURN_NAMES=('曲の企画JSON / Song plan',);FUNCTION='create';CATEGORY='audio/YuE2'
-    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30,settings=None,manual=None,switches=None,lyric_lines=None):
+    def create(self,brief,length,seed,duration_mode='歌詞量で指定（従来）',target_seconds=30,settings=None,manual=None,switches=None,lyric_lines=None,unique_id=None):
         mm.throw_exception_if_processing_interrupted()
         chosen=None; manual_plan=None; original_brief=brief
         if switches is not None:
@@ -89,8 +96,14 @@ class YuE2JapanesePlanner:
         bar=ProgressBar(4);n=0
         def progress(message):
             nonlocal n
-            print('[YuE2 Planner] '+message,flush=True);n+=1;bar.update_absolute(min(n,4),4)
-        plan,report=planner_module().plan_song(brief,short=length.startswith('短い'),seed=seed,progress=progress,duration_mode=duration_mode,target_seconds=target_seconds,lyric_lines=lyric_lines)
+            print('[YuE2 Planner] '+message,flush=True);notify_planner(unique_id,'running',message);n+=1;bar.update_absolute(min(n,4),4)
+        notify_planner(unique_id,'running','LM Studio: 起動・接続を確認しています / Checking LLM startup')
+        try:
+            plan,report=planner_module().plan_song(brief,short=length.startswith('短い'),seed=seed,progress=progress,duration_mode=duration_mode,target_seconds=target_seconds,lyric_lines=lyric_lines)
+        except Exception:
+            notify_planner(unique_id,'error','LLM処理が停止しました。実行エラーを確認してください / LLM stopped; check execution error')
+            raise
+        notify_planner(unique_id,'complete','作詞完了・LLM解放済み / Lyrics ready; LLM unloaded')
         if chosen:
             report['settings']=chosen
             if chosen['style']:plan['style']=chosen['style']+', '+plan['style']
@@ -104,12 +117,12 @@ class YuE2LyricPlanner(YuE2JapanesePlanner):
         return {'required':{'brief':fields['required']['brief'],
             'lyric_length':([*cls.LINE_PRESETS,'自由に指定'],{'tooltip':'LLMが作詞する歌詞の行数。曲の秒数は入力切替ノードで設定します。'}),
             'lyric_lines':('INT',{'default':8,'min':1,'max':64,'tooltip':'自由に指定を選んだときの行数。空行や[Verse]などの見出しを除く1〜64行。'}),
-            'seed':fields['required']['seed']},'optional':fields['optional']}
-    def create(self,brief,lyric_length,lyric_lines,seed,settings=None,manual=None,switches=None):
+            'seed':fields['required']['seed']},'optional':fields['optional'],'hidden':{'unique_id':'UNIQUE_ID'}}
+    def create(self,brief,lyric_length,lyric_lines,seed,settings=None,manual=None,switches=None,unique_id=None):
         counts={**self.LINE_PRESETS,'自由に指定':lyric_lines}
         if lyric_length not in counts:raise ValueError('歌詞の行数の選択が不正です。')
         if type(lyric_lines) is not int or not 1<=lyric_lines<=64:raise ValueError('自由指定の歌詞は1〜64行です。')
-        return super().create(brief,'短い試作（4行）',seed,settings=settings,manual=manual,switches=switches,lyric_lines=counts[lyric_length])
+        return super().create(brief,'短い試作（4行）',seed,settings=settings,manual=manual,switches=switches,lyric_lines=counts[lyric_length],unique_id=unique_id)
 
 class YuE2LocalSong:
     @classmethod

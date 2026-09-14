@@ -1,0 +1,27 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const listeners={},timeouts=new Map(),intervals=new Map();let serial=0,extension,calls=0,failQueue=false;
+const element=()=>({style:{},dataset:{},setAttribute(k,v){this[k]=v;}}),body={children:[],append(e){this.children.push(e);}};
+const node={type:'YuE2LyricPlanner',title:'作詞',setDirtyCanvas(){}};
+const app={registerExtension:e=>extension=e,graph:{getNodeById:id=>String(id)==='2'?node:null}};
+const api={addEventListener:(k,f)=>listeners[k]=f,queuePrompt:async()=>{calls++;if(failQueue)throw Error('invalid');return 'accepted';}};
+vm.runInNewContext(fs.readFileSync(process.argv[2],'utf8').replace(/^import .*;\r?\n/gm,''),{app,api,document:{body,createElement:element},setTimeout:(f,ms)=>{timeouts.set(++serial,{f,ms});return serial;},clearTimeout:id=>timeouts.delete(id),setInterval:(f,ms)=>{intervals.set(++serial,{f,ms});return serial;},clearInterval:id=>intervals.delete(id)});
+extension.setup();const fire=(name,detail)=>listeners[name]({detail});
+(async()=>{
+const prompt={output:{'2':{class_type:'YuE2LyricPlanner',inputs:{switches:['8',0]}},'8':{class_type:'YuE2InputSwitches',inputs:{use_manual:true}}}};
+await api.queuePrompt(0,prompt);assert.equal(body.children.length,0);
+prompt.output['8'].inputs.use_manual=false;await api.queuePrompt(0,prompt);
+const panel=body.children[0];assert.equal(panel.dataset.state,'queued');assert.equal(panel.style.left,'50%');assert.equal(node._yue2LlmStatus.state,'queued');
+fire('yue2.llm_status',{node_id:'2',state:'running',message:'起動確認'});assert.equal(panel.dataset.state,'running');assert.equal(intervals.size,1);
+function Node(){};extension.beforeRegisterNodeDef(Node,{name:'YuE2LyricPlanner'});assert.ok(Node.prototype.getTitle.call(node).includes('LM Studio処理中'));
+fire('yue2.llm_status',{node_id:'2',state:'running',message:'GPU読込'});assert.equal(intervals.size,1);assert.ok(panel.textContent.includes('GPU読込'));
+fire('yue2.llm_status',{node_id:'2',state:'complete',message:'解放済み'});assert.equal(intervals.size,0);assert.equal(panel.dataset.state,'complete');
+fire('execution_interrupted');assert.equal(panel.dataset.state,'complete');
+await api.queuePrompt(0,prompt);fire('execution_cached',{nodes:['2']});assert.ok(panel.textContent.includes('起動なし'));
+fire('yue2.llm_status',{node_id:'2',state:'running',message:'作詞'});fire('execution_error',{node_id:'9'});assert.equal(panel.dataset.state,'running');
+fire('reconnecting');assert.equal(panel.dataset.state,'error');assert.equal(intervals.size,0);assert.ok(panel.textContent.includes('未確認'));
+fire('yue2.llm_status',{node_id:'2',state:'running',message:'作詞'});fire('execution_interrupted');assert.equal(panel.dataset.state,'error');assert.equal(intervals.size,0);
+await api.queuePrompt(0,prompt);fire('execution_error',{node_id:'8'});assert.equal(panel.dataset.state,'error');assert.equal(intervals.size,0);
+await api.queuePrompt(0,prompt);fire('execution_interrupted');assert.equal(panel.dataset.state,'error');
+failQueue=true;await assert.rejects(api.queuePrompt(0,prompt));assert.equal(panel.dataset.state,'error');assert.equal(calls,6);
+console.log('H3-style center banner/node title: queue, manual exclusion, progress/timer, completion, cached, errors/disconnect/interruption: PASS');
+})().catch(e=>{console.error(e);process.exitCode=1;});

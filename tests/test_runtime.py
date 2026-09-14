@@ -1,4 +1,4 @@
-import importlib.util,unittest,json,ast
+import importlib.util,unittest,json,ast,types
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('planner',ROOT/'runtime/planner.py');planner=importlib.util.module_from_spec(spec);spec.loader.exec_module(planner)
@@ -28,6 +28,32 @@ class RuntimeContract(unittest.TestCase):
             self.assertEqual(cls().create('歌',label,7,123)['lyric_lines'],count)
         self.assertEqual(cls().create('歌','自由に指定',7,123)['lyric_lines'],7)
         with self.assertRaises(ValueError):cls().create('歌','unknown',7,123)
+    def test_planner_notifications(self):
+        source=ast.parse((ROOT/'custom_nodes/comfyui-yue2-local/__init__.py').read_text())
+        classes=[n for n in source.body if isinstance(n,ast.ClassDef) and n.name in ('YuE2JapanesePlanner','YuE2LyricPlanner')]
+        events=[]
+        plan={'title':'雨','style':'Japanese pop','lyrics':'[Verse]\n雨の道'}
+        def generate(*args,**kwargs):
+            kwargs['progress']('LM Studio: LLMをGPUへ読み込んでいます')
+            kwargs['progress']('LM Studio: 作詞・曲調を生成しています')
+            kwargs['progress']('LM Studio: GPUメモリを解放しています')
+            return plan,{}
+        mod=types.SimpleNamespace(plan_song=generate,validate=planner.validate,duration_plan=planner.duration_plan)
+        spec=importlib.util.spec_from_file_location('options',ROOT/'runtime/song_options.py');options=importlib.util.module_from_spec(spec);spec.loader.exec_module(options)
+        scope={'json':json,'mm':types.SimpleNamespace(throw_exception_if_processing_interrupted=lambda:None,unload_all_models=lambda:None,soft_empty_cache=lambda:None),'ProgressBar':lambda n:types.SimpleNamespace(update_absolute=lambda *a:None),'planner_module':lambda:mod,'runtime_module':lambda n:options,'notify_planner':lambda *a:events.append(a)}
+        exec(compile(ast.Module(body=classes,type_ignores=[]),'actual-planners','exec'),scope)
+        node=scope['YuE2LyricPlanner']()
+        node.create('雨の歌','8行',7,123,unique_id='2')
+        self.assertEqual([e[1] for e in events],['running']*4+['complete'])
+        self.assertTrue(all(e[0]=='2' for e in events))
+        events.clear()
+        def fail(*a,**k):raise RuntimeError('test failure')
+        mod.plan_song=fail
+        with self.assertRaises(RuntimeError):node.create('雨の歌','8行',7,123,unique_id='2')
+        self.assertEqual([e[1] for e in events],['running','error'])
+        events.clear()
+        node.create('unused','8行',7,123,settings=options.settings(use_presets=False,use_manual=True),manual=plan,unique_id='2')
+        self.assertEqual(events,[])
     def test_explicit_lyric_lines(self):
         for total in (1,4,7,16,64):
             d=planner.duration_plan(True,'秒数を指定（目安）',30,total)

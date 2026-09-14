@@ -1,5 +1,11 @@
 # v1.1.1
 
+## v1.3.0
+
+Add MiniMax H3-style LLM startup/progress banners and elapsed node titles, with manual/cache exclusion and error handling. / MiniMax H3形式のLLM起動・進行通知とノード名の経過秒数を追加し、手動・キャッシュでの省略とエラー表示に対応しました。
+
+Verified real LLM-to-song execution and cached rerun; update screenshots and installation article. / 実際のLLMから曲生成までとキャッシュ再実行を確認し、画面画像・導入記事を更新しました。
+
 Separate input controller, dimmed OFF inputs, visible combined-input rules and eleven presets. / 入力切替を独立ノードに分離し、OFF入力のグレー表示、両方ON時の規則表示、11種類のプリセットを追加。
 
 

@@ -2,7 +2,7 @@
 Japanese brief → lyrics/style → vocals/music → listen. / 日本語の希望→歌詞・曲調→歌と伴奏→再生。
 
 ## Download and install / 取得と導入
-[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.2.1/YuE2_Japanese_LMStudio_v1.2.1.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
+[Installer ZIP / 導入ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.3.0/YuE2_Japanese_LMStudio_v1.3.0.zip) · [README / 導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
 1. Prepare WSL2 Ubuntu, NVIDIA drivers and ComfyUI; check `nvidia-smi`. / WSL2 Ubuntu・NVIDIAドライバー・ComfyUIを準備し `nvidia-smi` で確認。
 2. Extract the full ZIP; run `python3 verify_package.py` then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。
 3. Launch [LM Studio](https://lmstudio.ai/download) on Windows and download [Qwen3.5 9B Q4_K_M](https://lmstudio.ai/models/qwen/qwen3.5-9b). / WindowsでLM Studioを起動し、指定の作詞モデルを取得。
@@ -26,6 +26,7 @@ Song duration and seconds are set only in Input switches. / 曲の長さ・秒�
 ④ shows completion, title, duration, lyrics, style and saved folder. / ④に完了・曲名・長さ・歌詞・曲調・保存先を表示。
 
 ## Processing and files / 処理と保存
+Top banner + node title show LLM phases and elapsed time; manual lyrics skip LLM. / 上部通知とノード名でLLMの段階・経過秒数を表示。手動歌詞はLLMを省略。
 LM Studio GPU → unload LLM → YuE2 GPU, sequentially. / 作詞LLMを解放してから曲生成し、GPUを順番に使用。
 Runtime location is chosen during installation; nodes: `custom_nodes/comfyui-yue2-local`. / 専用環境の場所は導入時に選択し、ノードは左記へ配置。
 Output: `ComfyUI/output/audio/YuE2/`; FLAC, lyrics/style JSON, ABC score, run details. / 左記へ音声・歌詞曲調JSON・楽譜・生成記録を保存。
