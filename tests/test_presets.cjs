@@ -39,12 +39,12 @@ mockApp.graph={_nodes:[sn,manualNode,plannerNode],links:{1:{origin_id:6},2:{orig
 pw.value=true;toggle(mw,false);
 for(const w of manualNode.widgets){assert.equal(w.disabled,true);assert.equal(w.inputEl.disabled,true);assert.equal(w.inputEl.readOnly,true);assert.equal(w.value,'keep text');}
 toggle(mw,true);
-for(const w of manualNode.widgets){assert.equal(w.disabled,false);assert.equal(w.inputEl.disabled,false);assert.equal(w.inputEl.readOnly,false);assert.equal(w.value,'keep text');}
+for(const w of manualNode.widgets){assert.equal(w.disabled,w.name==='title');assert.equal(w.inputEl.disabled,w.name==='title');assert.equal(w.inputEl.readOnly,w.name==='title');assert.equal(w.value,'keep text');}
 console.log('Manual OFF disables fields; ON restores without data loss: PASS');const external={id:8,type:'YuE2InputSwitches',widgets:[{name:'use_presets',value:false},{name:'use_manual',value:true}]};
 const presetNode={id:9,type:'YuE2PresetOptions',widgets:[{name:'voice',value:'original'}]};
 plannerNode.inputs=[{name:'switches',link:3},{name:'settings',link:4},{name:'manual',link:2}];
 mockApp.graph._nodes=[external,presetNode,manualNode,plannerNode];mockApp.graph.links[3]={origin_id:8};mockApp.graph.links[4]={origin_id:9};mockApp.graph.getNodeById=id=>mockApp.graph._nodes.find(n=>n.id===id);
-extension.afterConfigureGraph();assert.equal(presetNode.widgets[0].disabled,true);assert.equal(manualNode.widgets[0].disabled,false);
+extension.afterConfigureGraph();assert.equal(presetNode.widgets[0].disabled,true);assert.equal(manualNode.widgets[0].disabled,true);assert.equal(manualNode.widgets[1].disabled,false);
 presetNode.widgets[0].value='changed';presetNode.widgets[0].callback('changed');assert.equal(presetNode.widgets[0].value,'original');
 external.widgets[0].value=true;external.widgets[1].value=false;extension.afterConfigureGraph();assert.equal(presetNode.widgets[0].disabled,false);assert.equal(manualNode.widgets[0].disabled,true);
 console.log('External controller disables the correct linked node and preserves values: PASS');
