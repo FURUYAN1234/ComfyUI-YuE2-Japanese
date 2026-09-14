@@ -387,10 +387,11 @@ async def reading_review_submit(request):
             original=json.loads(session['plan']).get('display_lyrics',json.loads(session['plan'])['plan']['lyrics']).split('\n')
             rows=[line for line in original if line.strip() and not line.lstrip().startswith('[')]
             if not isinstance(readings,list) or len(readings)!=len(rows):raise ValueError('歌詞の行数が一致しません。')
+            suggested=[line for line in session['payload']['singing_lyrics'].split('\n') if line.strip() and not line.lstrip().startswith('[')]
             pairs=[]
-            for text,reading in zip(rows,readings):
+            for text,reading,initial in zip(rows,readings,suggested):
                 if not isinstance(reading,str) or not reading.strip() or len(reading)>200 or any(c in reading for c in '\n\r[]=<>'):raise ValueError('読みは空欄にせず、1行ずつ入力してください。')
-                if reading!=text:pairs.append(text+'='+reading)
+                if reading!=initial:pairs.append(text+'='+reading)
             if action!='登録を削除 / Delete':
                 # Exact line corrections take priority over shorter word entries.
                 merged=parse(corrections)
