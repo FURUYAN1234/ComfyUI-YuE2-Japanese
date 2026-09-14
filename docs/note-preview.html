@@ -24,15 +24,44 @@
 <p>YuE2単体でも日本語の歌詞・曲調で生成する実験は通りました。今回LLMを間に入れたのは、日本語が一切使えないからではなく、短く曖昧な依頼から歌詞や楽器・声・曲調まで補ってもらうためです。</p>
 <p>以下は、これまでの<a href="https://note.com/happy_duck780/n/n15e732b3147b">日本語LLMを使う動画ワークフロー記事</a>と同じく、配布物の中身、環境構築、モデル取得、操作、保存先の順で説明します。JSONだけでなく、導入スクリプトとカスタムノードを含むZIP一式を使ってください。</p>
 <h2>配布物と、別途必要なもの</h2>
-<p>|同梱物|用途|
-|---|---|
-|<code>workflows/*.json</code>|説明1枠＋実行ノードのComfyUIワークフロー|
-|<code>custom_nodes/comfyui-yue2-local/</code>|カスタムノード1パッケージ。設定・自由入力・作詞・曲生成の4ノード|
-|<code>runtime/</code>|LM Studio連携とYuE2子プロセスの実行コード|
-|<code>install.py</code>|専用Python環境とノード、JSONの配置|
-|<code>models.json</code> / <code>download_models.py</code>|13ファイルの固定取得先とSHA256確認付き取得|
-|<code>verify_package.py</code> / <code>SHA256SUMS.json</code>|配布内容の欠落・変更・余分なファイル検出|
-|<code>docs/note-article.md</code> / <code>assets/</code>|note用原稿、ワークフロー画像、サムネイル|</p>
+<table>
+<thead>
+<tr>
+<th>同梱物</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>workflows/*.json</code></td>
+<td>説明1枠＋実行ノードのComfyUIワークフロー</td>
+</tr>
+<tr>
+<td><code>custom_nodes/comfyui-yue2-local/</code></td>
+<td>カスタムノード1パッケージ。入力切替・プリセット・自由入力・作詞・曲生成のノード</td>
+</tr>
+<tr>
+<td><code>runtime/</code></td>
+<td>LM Studio連携とYuE2子プロセスの実行コード</td>
+</tr>
+<tr>
+<td><code>install.py</code></td>
+<td>専用Python環境とノード、JSONの配置</td>
+</tr>
+<tr>
+<td><code>models.json</code> / <code>download_models.py</code></td>
+<td>13ファイルの固定取得先とSHA256確認付き取得</td>
+</tr>
+<tr>
+<td><code>verify_package.py</code> / <code>SHA256SUMS.json</code></td>
+<td>配布内容の欠落・変更・余分なファイル検出</td>
+</tr>
+<tr>
+<td><code>docs/note-article.md</code> / <code>assets/</code></td>
+<td>note用原稿、ワークフロー画像、サムネイル</td>
+</tr>
+</tbody>
+</table>
 <p><strong>JSONだけを読み込んでも動きません。</strong> ZIPを全部展開して導入してください。モデル、LM Studio、ComfyUI、生成曲、APIキーは同梱していません。外部の有料APIキーは不要です。初回のソフト・モデル取得にはインターネット接続を使います。</p>
 <h2>動作確認した環境</h2>
 <ul>
@@ -133,43 +162,133 @@ python3 download_models.py --comfyui ~/ComfyUI --check-only
 <p>雨の日にコンビニ行く感じ。ちょっと切ないけど明るい、女の子の声で。歌詞もおまかせ。</p>
 </blockquote>
 <p>処理は「①作詞と曲調 → 作詞LLM解放 → ②YuE2生成 → ③再生」の順です。英語の曲調を書く必要はありません。④には歌詞・英語の曲調・実際の曲の秒数・保存先が表示されます。</p>
-<p>|設定|意味|
-|---|---|
-|<code>brief</code>|日本語の希望。ジャンル、雰囲気、声、場面など|
-|<code>length</code>|従来モードで使う歌詞量。短い試作4行／通常16行|
-|設定ノード <code>use_presets</code> / <code>use_manual</code>|個別ON/OFF。片方だけ・両方ONに対応。両方OFFは不可|
-|設定ノード <code>timing</code>|可変尺・目標尺・ぴったり尺（編集）|
-|設定ノード <code>seconds</code>|目標尺・ぴったり尺で使う10～240の整数|
-|声・曲調・楽器・BPM|ボタンで一括設定した後、個別に調整可能|
-|①<code>seed</code>|作詞候補を変える種|
-|②<code>seed</code>|同じ歌詞・曲調から曲の候補を変える種|
-|<code>model</code> / <code>vae</code>|取得済みYuE2-3B / YuE2-Vaeの重み|</p>
+<table>
+<thead>
+<tr>
+<th>設定</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>brief</code></td>
+<td>日本語の希望。ジャンル、雰囲気、声、場面など</td>
+</tr>
+<tr>
+<td><code>length</code></td>
+<td>従来モードで使う歌詞量。短い試作4行／通常16行</td>
+</tr>
+<tr>
+<td>設定ノード <code>use_presets</code> / <code>use_manual</code></td>
+<td>個別ON/OFF。片方だけ・両方ONに対応。両方OFFは不可</td>
+</tr>
+<tr>
+<td>設定ノード <code>timing</code></td>
+<td>可変尺・目標尺・ぴったり尺（編集）</td>
+</tr>
+<tr>
+<td>設定ノード <code>seconds</code></td>
+<td>目標尺・ぴったり尺で使う10～240の整数</td>
+</tr>
+<tr>
+<td>声・曲調・楽器・BPM</td>
+<td>ボタンで一括設定した後、個別に調整可能</td>
+</tr>
+<tr>
+<td>①<code>seed</code></td>
+<td>作詞候補を変える種</td>
+</tr>
+<tr>
+<td>②<code>seed</code></td>
+<td>同じ歌詞・曲調から曲の候補を変える種</td>
+</tr>
+<tr>
+<td><code>model</code> / <code>vae</code></td>
+<td>取得済みYuE2-3B / YuE2-Vaeの重み</td>
+</tr>
+</tbody>
+</table>
 <p>時間は本文に「30秒くらい」と日本語で書くこともできます。ただし本文だけの秒数はLLMへの希望で、数値として検証する専用パーサーはありません。明確に渡したい場合はノードの時間設定を使います。ノードの秒数モードは本文より優先し、歌詞量と曲調への指示を調整します。</p>
 <p><strong>目標尺は目安です。</strong> 旧版の30秒指定では62.1秒となった実測があります。正確なファイル長が必要なら「ぴったり尺（編集）」を選びます。生成後のカット・フェード・無音補完なので、自然なフレーズ終端は保証しません。60／120秒・数値上限の実生成は未検証です。</p>
 <h2>出力先と記録</h2>
 <p><code>ComfyUI/output/audio/YuE2/日時_ID/</code> へ保存します。主なファイルは <code>audio.flac</code>、<code>song_plan.json</code>、<code>score.abc</code>、<code>result.json</code>、<code>details.json</code> です。元の指示、生成歌詞・曲調、seedなどを残すため、別候補との比較に使えます。再生ノードの一時音声とは別に、完成音声をoutputへ保存します。</p>
 <p>実行ログは専用環境の <code>jobs/</code> にあります。ログには入力した文章が含まれるため、公開配布へそのまま混ぜないでください。</p>
 <h2>実測と確認範囲</h2>
-<p>|条件|生成音声の長さ|全工程時間|
-|---|---:|---:|
-|日本語おまかせ、従来4行|39.5587秒|166.211秒|
-|日本語おまかせ、目標30秒|62.1187秒|191.927秒|</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th style="text-align:right">生成音声の長さ</th>
+<th style="text-align:right">全工程時間</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>日本語おまかせ、従来4行</td>
+<td style="text-align:right">39.5587秒</td>
+<td style="text-align:right">166.211秒</td>
+</tr>
+<tr>
+<td>日本語おまかせ、目標30秒</td>
+<td style="text-align:right">62.1187秒</td>
+<td style="text-align:right">191.927秒</td>
+</tr>
+</tbody>
+</table>
 <p>全工程時間はComfyUIの実行開始から成功まで。LLMのロード、作詞、解放、YuE2のロードと生成、保存を含みます。成功した各1回の値で、前の失敗試行やモデルダウンロード時間は含みません。実行キャッシュによるノード省略はありません。従来4行のYuE2子プロセスのピークGPU確保量は約7.84GiB、予約量は約7.88GiBです。PC全体の最大VRAM値ではありません。</p>
 <p>実際のComfyUIボタンから曲生成・ファイル保存を確認し、39.6秒音声はブラウザーの再生位置が進むことも確認しました。ASRでは日本語の冒頭が認識される一方、サビに歌詞との不一致がありました。歌唱側の違いと認識器の誤りをASRだけでは分けられないため、全歌詞の正確な歌唱や音楽品質の合格とは扱っていません。</p>
 <p>日本語の曖昧な指示はLLMが具体的な歌詞と英語の曲調へ変換できました。またYuE2単体へ日本語の曲調と日本語歌詞を渡す実験でも生成は成功しています。「日本語は全く使えない」という結果ではありません。ただし、曖昧な要望をそのまま毎回意図通りに歌へ変換する能力の保証でもありません。<a href="https://map-yue2.github.io/">公式デモ</a>にも日本語歌唱例があります。</p>
 <h2>困ったとき</h2>
-<p>|症状|確認する場所・対処|
-|---|---|
-|赤い未定義ノード|カスタムノードの配置階層とComfyUI起動ログを確認。配置後に本体再起動とブラウザー再読込|
-|モデルがない／config・tokenizerがない|重みだけでなく13ファイルを取得し <code>download_models.py --check-only</code> で検査|
-|CUDAが使えない／sm_120エラー|WSLの <code>nvidia-smi</code> とYuE2専用venvのTorchを確認。ComfyUI側と混同しない|
-|LM Studio CLIがない|Windowsへ通常インストールして起動。独自配置なら <code>YUE2_LMS_CLI</code> を実パスで指定|
-|モデルが見つからない|LM StudioでQwen3.5 9B Q4_K_Mの取得を完了。識別名 <code>qwen/qwen3.5-9b</code> を確認|
-|接続拒否／タイムアウト|LM Studio Developer画面、ポート1234、WSLからWindowsへの通信を確認|
-|VRAM不足|他の画像・動画・LLM処理を終え、短い試作で再実行|
-|作詞が途中終了|曲生成は開始しません。ログとLM Studioのモデル設定を確認して再実行|
-|中止がすぐ反映されない|YuE2子プロセスは停止処理あり。LM Studioのロード／API応答中は最大約180秒の待ちが残り得ます|
-|秒数や歌詞が期待と違う|④と音声を確認。時間は目標、歌唱品質は候補ごとに試聴。seedで別候補を作成|</p>
+<table>
+<thead>
+<tr>
+<th>症状</th>
+<th>確認する場所・対処</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>赤い未定義ノード</td>
+<td>カスタムノードの配置階層とComfyUI起動ログを確認。配置後に本体再起動とブラウザー再読込</td>
+</tr>
+<tr>
+<td>モデルがない／config・tokenizerがない</td>
+<td>重みだけでなく13ファイルを取得し <code>download_models.py --check-only</code> で検査</td>
+</tr>
+<tr>
+<td>CUDAが使えない／sm_120エラー</td>
+<td>WSLの <code>nvidia-smi</code> とYuE2専用venvのTorchを確認。ComfyUI側と混同しない</td>
+</tr>
+<tr>
+<td>LM Studio CLIがない</td>
+<td>Windowsへ通常インストールして起動。独自配置なら <code>YUE2_LMS_CLI</code> を実パスで指定</td>
+</tr>
+<tr>
+<td>モデルが見つからない</td>
+<td>LM StudioでQwen3.5 9B Q4_K_Mの取得を完了。識別名 <code>qwen/qwen3.5-9b</code> を確認</td>
+</tr>
+<tr>
+<td>接続拒否／タイムアウト</td>
+<td>LM Studio Developer画面、ポート1234、WSLからWindowsへの通信を確認</td>
+</tr>
+<tr>
+<td>VRAM不足</td>
+<td>他の画像・動画・LLM処理を終え、短い試作で再実行</td>
+</tr>
+<tr>
+<td>作詞が途中終了</td>
+<td>曲生成は開始しません。ログとLM Studioのモデル設定を確認して再実行</td>
+</tr>
+<tr>
+<td>中止がすぐ反映されない</td>
+<td>YuE2子プロセスは停止処理あり。LM Studioのロード／API応答中は最大約180秒の待ちが残り得ます</td>
+</tr>
+<tr>
+<td>秒数や歌詞が期待と違う</td>
+<td>④と音声を確認。時間は目標、歌唱品質は候補ごとに試聴。seedで別候補を作成</td>
+</tr>
+</tbody>
+</table>
 <h2>バージョン管理と再構築</h2>
 <p><a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese">GitHubソース</a> / <a href="https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.1">この版のRelease</a></p>
 <p>配布版：<code>v1.1.1</code>、タグ：<code>v1.1.1</code>。Releaseの <code>YuE2_Japanese_LMStudio_v1.1.1.zip</code> を使用してください。GitHub自動生成のSource code ZIPとは別です。</p>

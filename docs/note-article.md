@@ -48,7 +48,7 @@ YuE2単体でも日本語の歌詞・曲調で生成する実験は通りまし�
 |同梱物|用途|
 |---|---|
 |`workflows/*.json`|説明1枠＋実行ノードのComfyUIワークフロー|
-|`custom_nodes/comfyui-yue2-local/`|カスタムノード1パッケージ。設定・自由入力・作詞・曲生成の4ノード|
+|`custom_nodes/comfyui-yue2-local/`|カスタムノード1パッケージ。入力切替・プリセット・自由入力・作詞・曲生成のノード|
 |`runtime/`|LM Studio連携とYuE2子プロセスの実行コード|
 |`install.py`|専用Python環境とノード、JSONの配置|
 |`models.json` / `download_models.py`|13ファイルの固定取得先とSHA256確認付き取得|
