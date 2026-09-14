@@ -105,8 +105,6 @@ function syncManualInputs() {
     control._yue2VisualActive=visual;
     const timing=control.widgets.find(w=>w.name==="timing")?.value;
     const seconds=control.widgets.find(w=>w.name==="seconds");
-    const verses=control.widgets.find(w=>w.name==="verse_count");
-    if(verses)verses.disabled=visual||timing!=="1曲（イントロ〜エンディング）"||control.widgets.find(w=>w.name==="use_manual")?.value===true;
     if(seconds) seconds.disabled=visual||["可変尺（自然な長さ）","1曲（イントロ〜エンディング）"].includes(timing);
   }
   syncImageInputs(graph);
@@ -232,7 +230,7 @@ app.registerExtension({
       const timingWidget=this.widgets.find(w=>w.name==="timing");
       if(timingWidget){const changed=timingWidget.callback;timingWidget.callback=function(...args){const r=changed?.apply(this,args);syncManualInputs();return r;};}
       if (nodeData.name === "YuE2InputSwitches") {
-        for(const [name,label] of [["verse_count","Verses / 何番まで（1曲）"],["timing","Song duration / 曲の長さ"],["seconds","Song seconds / 曲の秒数"]]) {const w=this.widgets.find(w=>w.name===name);if(w)w.label=label;}
+        for(const [name,label] of [["timing","Song duration / 曲の長さ"],["seconds","Song seconds / 曲の秒数"]]) {const w=this.widgets.find(w=>w.name===name);if(w)w.label=label;}
         this.addCustomWidget({name:"switch_usage",type:"yue2_usage",options:{serialize:false},computeSize:()=>[500,172],draw(ctx,node,width,y){
           ctx.save();ctx.font="13px sans-serif";ctx.fillStyle="#e5e7eb";
           [node._yue2VisualActive?"Image ON: full-song auto; controls below ignored / 画像ON：1曲おまかせ・通常設定は無効":"At least one ON; both ON allowed / 最低1つON・両方ONも可能",

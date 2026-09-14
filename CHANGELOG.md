@@ -1,3 +1,7 @@
+# v1.5.1 / 標準の1曲完走へ復帰
+
+Remove selectable verse counts and restore the original standard two-verse planner; preserve reading review and lyric scrolling. / 番数選択を削除し、従来の標準構成（2番まで）へ復帰。読み確認と歌詞スクロールは維持。
+
 ## v1.5.0 / 今回の更新
 
 The default is a full song with two verses; select one to three verses in Input switches. / 初期設定は2番までの1曲完走。入力切替で1〜3番を選べます。

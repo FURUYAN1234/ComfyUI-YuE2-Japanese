@@ -54,11 +54,11 @@ class YuE2InputSwitches(YuE2SongSwitches):
     @classmethod
     def INPUT_TYPES(cls):
         fields=super().INPUT_TYPES()['required']
-        return {'required':{k:fields[k] for k in ('use_presets','use_manual','timing','seconds')},'optional':{'verse_count':('INT',{'default':2,'min':1,'max':3,'tooltip':'Full song: number of verses / 1曲完走で何番まで作るか。手動歌詞は維持。'})}}
+        return {'required':{k:fields[k] for k in ('use_presets','use_manual','timing','seconds')}}
     RETURN_TYPES=('YUE2_SWITCHES',);RETURN_NAMES=('Input control / 入力制御',)
-    def create(self,use_presets,use_manual,timing,seconds,verse_count=2):
-        values=runtime_module('song_options').settings(use_presets=use_presets,use_manual=use_manual,timing=timing,seconds=seconds,verse_count=verse_count)
-        return ({k:values[k] for k in ('use_presets','use_manual','timing','seconds','verse_count')},)
+    def create(self,use_presets,use_manual,timing,seconds):
+        values=runtime_module('song_options').settings(use_presets=use_presets,use_manual=use_manual,timing=timing,seconds=seconds)
+        return ({k:values[k] for k in ('use_presets','use_manual','timing','seconds')},)
 
 class YuE2PresetOptions(YuE2SongOptions):
     @classmethod
@@ -111,7 +111,7 @@ class YuE2JapanesePlanner:
         visual=visual if visual and visual.get('enabled') else None
         if visual:
             current=settings or runtime_module('song_options').settings()
-            settings=runtime_module('song_options').settings(timing='1曲（イントロ〜エンディング）',seconds=current['seconds'],verse_count=current.get('verse_count',2))
+            settings=runtime_module('song_options').settings(timing='1曲（イントロ〜エンディング）',seconds=current['seconds'])
             manual=None
             brief='画像の登場人物・セリフ・物語に合う日本語のテーマソング。曲調と歌声もすべておまかせ。'
         if settings is not None:
@@ -134,7 +134,7 @@ class YuE2JapanesePlanner:
             print('[YuE2 Planner] '+message,flush=True);notify_planner(unique_id,'running',message);n+=1;bar.update_absolute(min(n,4),4)
         notify_planner(unique_id,'running','LM Studio: 起動・接続を確認しています / Checking LLM startup')
         try:
-            plan,report=planner_module().plan_song(brief,short=length.startswith('短い'),seed=seed,progress=progress,duration_mode=duration_mode,target_seconds=target_seconds,lyric_lines=lyric_lines,verse_count=(chosen or {}).get('verse_count',2),**({"visual":visual} if visual else {}))
+            plan,report=planner_module().plan_song(brief,short=length.startswith('短い'),seed=seed,progress=progress,duration_mode=duration_mode,target_seconds=target_seconds,lyric_lines=lyric_lines,**({"visual":visual} if visual else {}))
         except Exception:
             notify_planner(unique_id,'error','LLM処理が停止しました。実行エラーを確認してください / LLM stopped; check execution error')
             raise
