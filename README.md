@@ -568,3 +568,5 @@ The review window pairs each original lyric line above its editable reading belo
 
 Readings are converted to hiragana before review using the existing MIDI reading dependency; unresolved letters, numbers, or kanji require correction before confirmation. / 既存のMIDI用読み変換を用い、確認前にひらがなへ変換します。未変換の英数字・漢字が残る場合は修正してから確定します。
 Automatic readings are suggestions, not verified pronunciation. / 自動変換は読み候補であり、正しい発音を検証したものではありません。
+
+Before generation, a confirmation explains that lyrics/readings cannot be edited during that run and regenerating may change the song; Cancel returns to editing without saving or starting. / 生成前に、その回の歌詞・読みは開始後に修正できず、再生成で曲が変わる可能性があることを確認します。キャンセルでは保存・生成せず編集へ戻ります。

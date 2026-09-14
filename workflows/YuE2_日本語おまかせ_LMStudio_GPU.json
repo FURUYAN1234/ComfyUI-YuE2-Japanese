@@ -577,9 +577,7 @@
         {
           "name": "Review / 読み・辞書の確認",
           "type": "STRING",
-          "links": [
-            15
-          ],
+          "links": [],
           "slot_index": 1
         }
       ],
@@ -592,34 +590,6 @@
         "",
         true
       ]
-    },
-    {
-      "id": 13,
-      "type": "PreviewAny",
-      "pos": [
-        2550,
-        560
-      ],
-      "size": [
-        520,
-        500
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "source",
-          "type": "*",
-          "link": 15
-        }
-      ],
-      "outputs": [],
-      "properties": {
-        "Node name for S&R": "PreviewAny"
-      },
-      "widgets_values": [],
-      "title": "Readings & remembered entries / 生成用の読み・記憶辞書"
     }
   ],
   "links": [
@@ -710,14 +680,6 @@
       3,
       0,
       "YUE2_PLAN"
-    ],
-    [
-      15,
-      12,
-      1,
-      13,
-      0,
-      "STRING"
     ]
   ],
   "groups": [],

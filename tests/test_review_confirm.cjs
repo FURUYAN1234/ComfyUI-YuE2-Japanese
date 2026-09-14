@@ -1,0 +1,7 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+let accepted=false,asks=0,posts=0;const elements=[];
+function element(tag){const e={tag,style:{},children:[],value:'',append(...items){this.children.push(...items)},setAttribute(){},addEventListener(){},showModal(){this.open=true},close(){this.open=false},remove(){this.removed=true}};elements.push(e);return e;}
+const context={app:{registerExtension(){}},api:{async fetchApi(){posts++;return {ok:true,json:async()=>({ok:true})}}},document:{createElement:element,body:element('body')},window:{confirm(message){asks++;assert(message.includes('生成開始後'));return accepted;}},Map};
+vm.createContext(context);vm.runInContext(fs.readFileSync(process.argv[2],'utf8').replace(/^import .*;\r?\n/gm,''),context);
+vm.runInContext("show({request_id:'test',title:'test',lyrics:'今日',singing_lyrics:'きょう',corrections:'',remembered:{}})",context);
+(async()=>{const button=elements.find(e=>e.tag==='button'&&e.textContent==='この読みで曲を生成');const dialog=elements.find(e=>e.tag==='dialog');await button.onclick();assert.equal(asks,1);assert.equal(posts,0);assert.equal(dialog.open,true);accepted=true;await button.onclick();assert.equal(asks,2);assert.equal(posts,1);assert.equal(dialog.removed,true);console.log('PASS: one confirmation per click; Cancel retains dialog and sends nothing; OK submits once');})().catch(e=>{console.error(e);process.exitCode=1});

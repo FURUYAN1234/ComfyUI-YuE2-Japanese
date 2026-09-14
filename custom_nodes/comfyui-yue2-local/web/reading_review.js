@@ -31,7 +31,11 @@ function show(item){
  const close=()=>{dialog.close();dialog.remove();opened.delete(item.request_id);};
  const button=(text,fn)=>{const b=add('button',text,buttons);b.style.padding='10px 16px';b.onclick=async()=>{b.disabled=true;error.textContent='';try{await fn();}catch(e){error.textContent=e.message;}finally{b.disabled=false;}};return b;};
  button('今回の生成を中止',async()=>{await request('submit',true);close();});
- button('この読みで曲を生成',async()=>{await request('submit');close();});
+ button('この読みで曲を生成',async()=>{
+   const proceed=window.confirm('曲の生成を開始しますか？\n\n生成開始後は、この回の歌詞・読みを修正できません。\n修正して再生成すると、同じseedでもメロディー・歌い方・曲の長さが変わる可能性があります。\n元の音声ファイルは残ります。\n\nOK：生成を開始 ／ キャンセル：読みの編集に戻る');
+   if(!proceed)return;
+   await request('submit');close();
+ });
  dialog.addEventListener('cancel',e=>{e.preventDefault();error.textContent='中止する場合は「生成を中止」を押してください。';});
  document.body.append(dialog);dialog.showModal();dialog.style.display='flex';dialog.style.flexDirection='column';
 }
