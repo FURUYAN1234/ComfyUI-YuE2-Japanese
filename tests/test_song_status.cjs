@@ -1,0 +1,15 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+const listeners={},body={append(e){this.panel=e;}};let extension;
+const node={type:'YuE2LocalSong',title:'作曲',size:[500,350],setDirtyCanvas(){}};
+const app={registerExtension:e=>extension=e,graph:{getNodeById:id=>String(id)==='3'?node:null}};
+const api={addEventListener:(n,f)=>listeners[n]=f};
+vm.runInNewContext(fs.readFileSync(process.argv[2],'utf8').replace(/^import .*;\r?\n/gm,''),{app,api,document:{body,createElement:()=>({style:{},setAttribute(){}})},setTimeout:()=>1,clearTimeout(){}});
+extension.setup();const fire=(n,detail)=>listeners[n]({detail});
+function Node(){}extension.beforeRegisterNodeDef(Node,{name:'YuE2LocalSong'});
+fire('executing','3');assert.equal(node._yue2SongState,'running');
+fire('executed',{node:'3',output:{yue2_song:[{title:'雨のあと',seconds:135.5}]}});assert.equal(node._yue2SongState,'complete');assert.ok(body.panel.textContent.includes('135.5秒'));assert.ok(Node.prototype.getTitle.call(node).includes('曲の生成完了'));
+fire('execution_interrupted');assert.equal(node._yue2SongState,'complete');
+fire('executing','3');fire('execution_error',{node_id:'9'});assert.equal(node._yue2SongState,'running');fire('execution_error',{node_id:'3'});assert.equal(node._yue2SongState,'error');
+fire('executing','3');fire('reconnecting');assert.ok(body.panel.textContent.includes('未確認'));
+extension.onNodeOutputsUpdated({'3':{yue2_song:[{}]}});assert.equal(node._yue2SongState,'complete');
+console.log('Song status: running, completion/title, unrelated errors, failure, disconnect and history restoration PASS');

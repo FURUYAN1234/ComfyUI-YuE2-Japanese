@@ -1,12 +1,12 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.3.0)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.0)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.3.0/YuE2_Japanese_LMStudio_v1.3.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.3.0/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio_v1.4.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
-![Japanese song creation / 日本語おまかせ作曲](docs/assets/note-thumbnail.png)
+![Japanese song creation / 日本語おまかせ作曲](docs/assets/note-thumbnail-v1.4.0.png)
 
 Enter a casual Japanese request; LM Studio writes Japanese lyrics and musical style, then YuE2 generates vocals and accompaniment. / 日本語で気軽に希望を入力すると、LM Studioが日本語の歌詞と曲調を作り、YuE2が歌と伴奏を生成します。
 
@@ -16,9 +16,23 @@ This local setup combines LM Studio on Windows with ComfyUI and an isolated YuE2
 
 YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official repository](https://github.com/multimodal-art-projection/YuE) and model licenses. / YuE2モデルはCC BY-NC 4.0の非商用ライセンスなので、[公式リポジトリ](https://github.com/multimodal-art-projection/YuE)と各モデルの条件を確認してください。
 
-![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.3.0.png)
+![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.4.0.png)
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
+
+## Comics and artwork as song ideas / 漫画・1枚絵からテーマソング
+
+Japanese text requests remain the main input; you can also load a comic or artwork and turn its story into a theme song. / メインは日本語おまかせ入力で、漫画や1枚絵を読み込んで物語に合うテーマソングも作れます。
+
+Connect one image to Visual theme and turn it ON. Choose comic or artwork, and the reading order for a four-panel page. / 画像テーマノードへ1枚を接続してONにし、漫画・1枚絵の種類と四コマの読む順番を選びます。
+
+Image mode fixes the duration to a full song and lets the AI choose title, lyrics, style, instruments, tempo and singer gender. / 画像ONでは1曲構成に固定し、曲名・歌詞・曲調・楽器・テンポ・歌声の男女をAIに任せます。
+
+Normal text, preset, free-lyrics, line-count and seconds controls become inactive; their values return when image mode is OFF. / 通常の文章・プリセット・自由歌詞・行数・秒数欄は非活性化し、画像をOFFに戻すと保存していた値を再利用できます。
+
+Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
+
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.4.0_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.4.0_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -26,13 +40,35 @@ A centered banner and the lyric node title show the current LLM phase and elapse
 
 The display follows queue acceptance, startup/connection, GPU loading, lyric generation, GPU release and completion. / 実行受付、起動・接続確認、GPU読込、作詞、GPU解放、完了の順に表示します。
 
-Manual lyrics skip the LLM; cached lyrics explicitly show that no LLM startup is needed. / 手動歌詞ではLLMを省略し、キャッシュ再利用時はLLMの起動がないことを表示します。
+Manual lyrics are preserved while the LLM generates the title; cache reuse shows that no new LLM call is needed. / 手動歌詞は保持してLLMが曲名を考え、キャッシュ再利用時は新たなLLM呼び出しがないことを表示します。
 
 LLM completion means lyrics are ready; song completion is shown separately in the results node. / LLMの完了は作詞完了を意味し、曲の完成は結果ノードで別に表示します。
 
 Errors and interruptions stop the timer; a lost connection is shown as an unknown state. / エラーや中断ではタイマーを止め、接続断では処理状態が未確認であることを表示します。
 
 ![Actual GPU loading notification / 実際のGPU読込通知](docs/assets/llm-status-v1.3.0.png)
+
+## Full song and completion / 1曲構成と完成表示
+
+Select “1曲（イントロ〜エンディング）” in Input switches to request an instrumental intro, two verses, recurring choruses, a bridge, final chorus and outro. / 入力切替の「1曲（イントロ〜エンディング）」を選ぶと、器楽イントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロを持つ構成を依頼します。
+
+The LLM chooses 2–4 lines for each vocal section and 1–2 for the outro; the seconds and lyric-count controls are disabled in this mode. / LLMが各歌唱セクションを2〜4行、アウトロを1〜2行で作り、このモードでは秒数・歌詞行数の指定欄を無効化します。
+
+The audio is kept without duration trimming; a natural ending is requested but must be checked by listening. / 音声は秒数でカットせず保持し、自然な終わり方を指示しますが、結果は試聴で確認してください。
+
+Manual ON preserves your lyrics and asks the LLM only for a title. / 手動ONでは入力歌詞を変更せず、LLMには曲名だけを依頼します。
+
+After audio and details have been saved and validated, the song node gets a green border and completion label, and a large green notification shows the title and duration. / 音声と曲情報の保存・検査が終わると、曲生成ノードに緑枠・完了表示を出し、大きな緑の通知に曲名と長さを表示します。
+
+The node label remains after the notification closes; a new execution switches it back to creating. / 通知が消えた後もノードの完了表示を残し、次の実行時は作曲中へ切り替えます。
+
+## Playback and downloads / 再生とダウンロード
+
+The audio and MIDI nodes each provide a player, visible download button and original lyrics. / 音声とMIDIの各ノードに、プレーヤー・明示的なダウンロードボタン・元の歌詞を表示します。
+
+The installer prepares abcMIDI and the lyric converter in the isolated runtime. / インストーラーが独立環境にabcMIDIと歌詞変換ライブラリを準備します。
+
+MIDI comes from the generated score; it does not reproduce the exact rendered vocals, instrumentation or audio timing. Exact-duration audio edits do not alter MIDI. / MIDIは生成楽譜由来で、完成音声の歌声・全楽器・時間軸を完全再現するものではありません。ぴったり尺の音声編集はMIDIには適用しません。
 
 ## Package contents and separate requirements / 配布物と別途必要なもの
 
@@ -54,10 +90,10 @@ No paid external API key is required; initial software and model downloads need 
 
 ## Tested environment / 動作確認した環境
 
-- Windows and WSL2 Ubuntu, NVIDIA GeForce RTX 5080 16GB. / WindowsとWSL2 Ubuntu、NVIDIA GeForce RTX 5080 16GB。
+- Windows and WSL2 Ubuntu, NVIDIA GPU with 16GB VRAM. / WindowsとWSL2 Ubuntu、NVIDIA GPU（VRAM 16GB）。
 - Existing ComfyUI in WSL, with a separate Python 3.12.3 venv for YuE2. / WSL内の既存ComfyUIと、YuE2専用のPython 3.12.3独立venv。
 - YuE2: PyTorch 2.10.0+cu128, CUDA 12.8; sm_120 support verified on the actual GPU. / YuE2側はPyTorch 2.10.0+cu128、CUDA 12.8で、sm_120対応を実機確認。
-- LM Studio: Qwen3.5 9B Q4_K_M, maximum GPU offload, context 4096. / LM StudioはQwen3.5 9B Q4_K_M、GPU最大オフロード、コンテキスト4096。
+- LM Studio: Qwen3.5 9B Q4_K_M, maximum GPU offload, context 4096 (8192 for images or more than 32 lyric lines). / LM StudioはQwen3.5 9B Q4_K_M、GPU最大オフロード、コンテキスト4096（画像・33行以上は8192）。
 - Unquantized YuE2-3B and YuE2-Vae, pinned official source, standard 32-step generation. / 非量子化YuE2-3BとYuE2-Vae、固定した公式ソース、通常の32ステップ生成。
 
 These are successful short-song measurements on 16GB VRAM, not minimum requirements guaranteed for every GPU or song length. / これは16GBで短い曲を生成できた実例であり、すべてのGPUや曲の長さを保証する最低要件ではありません。
@@ -124,7 +160,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.3.0.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.4.0.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -132,7 +168,7 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.3.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -192,7 +228,7 @@ Only if a nonstandard installation is not found, set `YUE2_LMS_CLI` to the actua
 export YUE2_LMS_CLI='/mnt/c/YOUR_ACTUAL_INSTALL_PATH/lms.exe'
 ```
 
-Keep LM Studio open; the runtime loads a dedicated `yue2-planner` model with maximum GPU offload and context 4096, then unloads that model after planning. / LM Studioは起動したままにし、実行時には専用の `yue2-planner` をGPU最大オフロード・コンテキスト4096でロードし、作詞後にそのモデルだけをアンロードします。
+Keep LM Studio open; the runtime loads a dedicated `yue2-planner` model with maximum GPU offload and context 4096 (8192 for images or more than 32 lyric lines), then unloads that model after planning. / LM Studioは起動したままにし、実行時には専用の `yue2-planner` をGPU最大オフロード・コンテキスト4096（画像・33行以上は8192）でロードし、作詞後にそのモデルだけをアンロードします。
 
 Other large models left loaded manually can exhaust VRAM. / 他の大きなモデルを手動ロードしたままだとVRAMが不足することがあります。
 
@@ -221,7 +257,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.3.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -257,7 +293,7 @@ After downloading, refresh model lists or restart ComfyUI and select the two `mo
 
 Presets ON + Manual OFF: use the selected presets and let LM Studio write lyrics. / プリセットON・手動OFF：選択した設定でLM Studioが作詞します。
 
-Presets OFF + Manual ON: use only your title, lyrics and style; lyrics and style are required. / プリセットOFF・手動ON：自由入力の曲名・歌詞・曲調だけを使い、歌詞と曲調は必須です。
+Presets OFF + Manual ON: use your lyrics and style; AI generates the title. Lyrics and style are required. / プリセットOFF・手動ON：自由入力の歌詞・曲調を使い、AIが曲名を作ります。歌詞と曲調は必須です。
 
 Both ON: use your lyrics and add your style to the selected presets. / 両方ON：手動歌詞を使い、プリセットに手動曲調を追加します。
 
@@ -405,18 +441,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.3.0)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.0)
 
-Version: `v1.3.0`; tag: `v1.3.0`. / 配布版は `v1.3.0`、タグは `v1.3.0` です。
+Version: `v1.4.0`; tag: `v1.4.0`. / 配布版は `v1.4.0`、タグは `v1.4.0` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.3.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.3.0.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.4.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.4.0.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.3.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.4.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -449,7 +485,7 @@ Press one of the eleven preset buttons to fill voice, genre, mood, instruments a
 
 Verified through the actual Run button: the Ballad preset produced 69.4 seconds of audio in 205.047 seconds end to end, including lyric planning and model switching; song generation and saving took 82.3 seconds. / 実際の実行ボタンから、バラード設定で69.4秒の音声を生成し、作詞・モデル切替を含む全工程205.047秒、曲生成・保存82.3秒を確認しました。
 
-Manual free input skipped the LLM and produced an original 53.479-second track; exact editing created 480,000 frames at 48 kHz (10 seconds) and retained the original. / 自由入力ではLLMを呼ばず53.479秒の元音声を生成し、48 kHz・480,000フレーム（10秒）へ編集して元音声を保持しました。
+In pre-v1.4.0 validation, manual free input skipped the LLM and produced an original 53.479-second track; exact editing created 480,000 frames at 48 kHz (10 seconds) and retained the original. / v1.4.0より前の検証では自由入力でLLMを呼ばず53.479秒の元音声を生成し、48 kHz・480,000フレーム（10秒）へ編集して元音声を保持しました。
 
 
 
@@ -464,7 +500,7 @@ The Input switches node controls separate Presets and Free input nodes; timing s
 
 OFF inputs are dimmed and cannot be edited; existing values are retained and restored when enabled. / OFF側はグレー表示・編集不可となり、入力内容は消さずにONへ戻したときに再利用します。
 
-With both ON, title and lyrics come from free input; style combines presets and free text without overwriting. / 両方ONでは曲名と歌詞は自由入力を使い、曲調はプリセットと自由入力を上書きせず併用します。
+With both ON, lyrics come from free input and style combines presets with free text; the AI creates the title. / 両方ONでは自由入力の歌詞とプリセット＋追記の曲調を使い、曲名はAIが作ります。
 
 No automatic priority resolves contradictory styles; use free input alone to exclude all preset style. / 矛盾する曲調の自動優先処理はなく、プリセットの曲調を外したい場合は自由入力のみONにしてください。
 
@@ -475,10 +511,29 @@ All 11 button settings passed the live API. The new Jazz button with free lyrics
 
 Validated in the live workflow: 7 requested lyric lines produced 7 lines, 73.0s original audio and an exact 30.0s edited output in 194.824s end to end, including model loading and no cached node skipping. / 実ワークフローで7行指定から7行の歌詞・約73.0秒の元音声・30.0秒の編集音声を生成し、全工程194.824秒（モデル読込込み・キャッシュ省略なし）でした。
 
-Manual API verification preserved the entered 4 lines even with a stored custom count of 17; the LLM was not called. / 手動の実API検証では自由指定17行の保存値があっても入力した4行を保持し、LLMは呼び出されませんでした。
+Pre-v1.4.0 manual API verification preserved the entered 4 lines even with a stored custom count of 17; the LLM was not called. / v1.4.0より前の手動API検証では自由指定17行の保存値があっても入力した4行を保持し、LLMは呼び出されませんでした。
 
-The distributed example starts with Custom 7 lines and Exact 30 seconds; choose Natural to keep the full generated song. / 配布例の初期値は自由指定7行・ぴったり尺30秒で、生成された曲を全て残す場合は可変尺を選んでください。
+The example starts with four lyric lines and natural duration, with image input OFF. / 配布例は歌詞4行・可変尺で始まり、画像入力はOFFです。
 
 Line validation covers 1–64; actual song generation was checked at 7 lines, not every length. / 行数の検査範囲は1〜64行で、実際の曲生成は7行で確認し、全行数を実生成したわけではありません。
 
 Fixed recursion when disabled DOM inputs restored their values during queueing; a regression test covers the callback setter. / 無効な入力欄が実行時に値を復元して再帰する不具合を修正し、値設定コールバックの回帰テストを追加しました。
+
+## Lyrics MIDI and VOCALOID / 歌詞付きMIDIとVOCALOID
+
+The MIDI playback node shows the original lyrics and downloads MIDI containing kana lyric events on the vocal score track. / MIDI再生ノードには元の歌詞を表示し、歌唱楽譜トラックにかなの歌詞イベントを含むMIDIをダウンロードできます。
+
+The note-to-lyric assignment is approximate; check readings, syllables, held notes and phrase boundaries in your singing editor. The preview uses a simple synthesized instrument, not a singing voice. / 音符と歌詞は仮割り当てです。歌唱編集ソフトで読み・音節・伸ばす音・フレーズの区切りを確認してください。ノードの試聴は簡易楽器音で、歌声ではありません。
+
+VOCALOID6 version 6.2 and later supports importing MIDI lyric information, according to the [official FAQ](https://www.vocaloid.com/support/faq/617). / [公式FAQ](https://www.vocaloid.com/support/faq/617)によると、VOCALOID6 Ver.6.2以降はMIDIの歌詞情報の読み込みに対応しています。
+
+Import the MIDI via File → Import, use its vocal melody track with a Japanese voice, and use Job → Convert Phonemes to Match Language if needed; see page 22 of the [official manual](https://rsc-net.vocaloid.com/assets/pdf_files/bb/VOCALOID_Reference_Manual_JPN.pdf). / 「ファイル→インポート」でMIDIを取り込み、歌唱メロディのトラックに日本語のボイスを設定し、必要に応じて「ジョブ→発音記号を言語に合わせて変換」を実行します。[公式マニュアル](https://rsc-net.vocaloid.com/assets/pdf_files/bb/VOCALOID_Reference_Manual_JPN.pdf)22ページを参照してください。
+
+This provides a route to singing the melody and lyrics with VOCALOID6, using a separately installed editor and Japanese voice; importing alone does not guarantee correct pronunciation or alignment. / 別途導入したVOCALOID6と日本語ボイスで、このメロディーと歌詞を歌わせるための素材として利用できます。ただし、取り込むだけで読み方や音符への割当が正しくなる保証はありません。
+
+This export has been checked by re-reading its Japanese lyric events; import and singing in VOCALOID itself have not been tested here. / この出力は日本語の歌詞イベントを再読み込みして確認しています。VOCALOID本体での取り込み・歌唱は未検証です。
+
+
+The MIDI player highlights kana lyrics at the MIDI event times and follows seeking. This is approximate score alignment, not forced alignment to the generated vocals. / MIDI再生ノードでは歌詞イベントの時刻に合わせてかな歌詞を強調し、シークにも追従します。楽譜への仮割当であり、生成された歌声との厳密な同期ではありません。
+
+Full-song artwork verification generated 214.48 seconds of audio without duration editing and completed both audio and MIDI output; this does not certify every visual detail or musical quality. / 1枚絵の1曲検証では214.48秒の音声を秒数編集なしで生成し、音声・MIDIの両出力が完了しました。画像の全細部の理解や音楽的品質を保証する検証ではありません。

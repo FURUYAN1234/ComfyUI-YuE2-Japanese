@@ -1,6 +1,7 @@
 """Portable validated song presets; no application state or model calls."""
 MODES=['おまかせ','プリセット','手動']
-TIMING=['可変尺（自然な長さ）','目標尺（目安）','ぴったり尺（編集）']
+FULL_SONG='1曲（イントロ〜エンディング）'
+TIMING=[FULL_SONG,'可変尺（自然な長さ）','目標尺（目安）','ぴったり尺（編集）']
 VOICES={'おまかせ':'','女性・やわらかい':'soft female vocals','女性・力強い':'powerful female vocals','男性・やわらかい':'soft male vocals','男性・力強い':'powerful male vocals','中性的・透明感':'clear androgynous vocals'}
 GENRES={'おまかせ':'','ポップ':'pop','ロック':'rock','アコースティック':'acoustic pop','ジャズ':'jazz pop','エレクトロ':'electronic pop','バラード':'ballad','シティポップ':'city pop','Lo-fi':'lo-fi pop','ダンス':'dance pop','オーケストラ':'orchestral pop','和風':'Japanese folk pop','子守歌':'lullaby'}
 MOODS={'おまかせ':'','明るい':'bright and cheerful','切ない':'bittersweet','落ち着いた':'calm and gentle','元気':'energetic','幻想的':'dreamy','壮大':'cinematic and grand'}

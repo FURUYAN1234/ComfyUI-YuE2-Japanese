@@ -8,7 +8,7 @@ vm.runInNewContext(fs.readFileSync(process.argv[2],'utf8').replace(/^import .*;\
 extension.setup();const fire=(name,detail)=>listeners[name]({detail});
 (async()=>{
 const prompt={output:{'2':{class_type:'YuE2LyricPlanner',inputs:{switches:['8',0]}},'8':{class_type:'YuE2InputSwitches',inputs:{use_manual:true}}}};
-await api.queuePrompt(0,prompt);assert.equal(body.children.length,0);
+await api.queuePrompt(0,prompt);assert.equal(body.children.length,1);assert.equal(body.children[0].dataset.state,"queued");
 prompt.output['8'].inputs.use_manual=false;await api.queuePrompt(0,prompt);
 const panel=body.children[0];assert.equal(panel.dataset.state,'queued');assert.equal(panel.style.left,'50%');assert.equal(node._yue2LlmStatus.state,'queued');
 fire('yue2.llm_status',{node_id:'2',state:'running',message:'起動確認'});assert.equal(panel.dataset.state,'running');assert.equal(intervals.size,1);
@@ -23,5 +23,5 @@ fire('yue2.llm_status',{node_id:'2',state:'running',message:'作詞'});fire('exe
 await api.queuePrompt(0,prompt);fire('execution_error',{node_id:'8'});assert.equal(panel.dataset.state,'error');assert.equal(intervals.size,0);
 await api.queuePrompt(0,prompt);fire('execution_interrupted');assert.equal(panel.dataset.state,'error');
 failQueue=true;await assert.rejects(api.queuePrompt(0,prompt));assert.equal(panel.dataset.state,'error');assert.equal(calls,6);
-console.log('H3-style center banner/node title: queue, manual exclusion, progress/timer, completion, cached, errors/disconnect/interruption: PASS');
+console.log('H3-style center banner/node title: queue, manual AI title, progress/timer, completion, cached, errors/disconnect/interruption: PASS');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -7,7 +7,7 @@ def finish_audio(folder,mode='可変尺（自然な長さ）',seconds=30):
  folder=Path(folder); source=folder/'audio.flac'
  info=sf.info(source)
  if info.frames<info.samplerate or info.samplerate!=48000:raise ValueError('生成音声の形式が不正です。')
- if mode not in ['可変尺（自然な長さ）','目標尺（目安）','ぴったり尺（編集）']:raise ValueError('時間モードが不正です。')
+ if mode not in ['1曲（イントロ〜エンディング）','可変尺（自然な長さ）','目標尺（目安）','ぴったり尺（編集）']:raise ValueError('時間モードが不正です。')
  if type(seconds) is not int or not 10<=seconds<=240:raise ValueError('秒数は10〜240の整数です。')
  report={'mode':mode,'original_seconds':info.frames/info.samplerate,'output_seconds':info.frames/info.samplerate,'edited':False,'method':'none','original_file':'audio.flac'}
  if mode!='ぴったり尺（編集）':return report

@@ -1,5 +1,5 @@
 """Install this package into an existing WSL/Linux ComfyUI without modifying its venv."""
-import argparse, json, os, shutil, subprocess, sys, urllib.request
+import argparse, json, os, shutil, subprocess, sys, urllib.request, tempfile
 from datetime import datetime
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
@@ -12,6 +12,17 @@ def copy_with_backup(source,target,backup):
     if target.exists() and target.read_bytes()!=source.read_bytes():
         backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(target,backup)
     shutil.copy2(source,target)
+def install_midi_tools(runtime):
+    if shutil.which('abc2midi') or (runtime/'tools/abcmidi/usr/bin/abc2midi').is_file():return
+    if not shutil.which('apt-get') or not shutil.which('dpkg-deb'):raise SystemExit('Install abcMIDI with your Linux package manager, then rerun the installer.')
+    with tempfile.TemporaryDirectory(prefix='yue2-abcmidi-') as temp:
+        run(['apt-get','download','abcmidi'],cwd=temp)
+        packages=list(Path(temp).glob('abcmidi_*.deb'))
+        if len(packages)!=1:raise RuntimeError('Expected one abcMIDI package from the Ubuntu package source.')
+        target=runtime/'tools/abcmidi';target.mkdir(parents=True,exist_ok=True)
+        run(['dpkg-deb','--extract',packages[0],target])
+    run([runtime/'tools/abcmidi/usr/bin/abc2midi','-ver'])
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--comfyui',type=Path,required=True)
@@ -44,6 +55,8 @@ def main():
         pip=[python,'-m','pip','install'] if has_pip else [uv,'pip','install','--python',python]
         run([*pip,'torch==2.10.0','--index-url','https://download.pytorch.org/whl/cu128'])
         run([*pip,repo])
+        run([*pip,'mido==1.3.3','pykakasi==2.3.0'])
+        install_midi_tools(runtime)
     if not python.exists():raise SystemExit('YuE2 Python environment is missing.')
     run([python,'-c',"import torch,yue2; print(torch.__version__,torch.cuda.is_available(),torch.cuda.get_arch_list()); assert torch.cuda.is_available()"])
     stamp=datetime.now().strftime('%Y%m%d%H%M%S');backup=runtime/'backups'/stamp
@@ -61,6 +74,8 @@ def main():
     workflow_dir=(a.workflow_dir.expanduser().resolve() if a.workflow_dir else comfy/'user/default/workflows/YuE2')
     for source in (ROOT/'workflows').glob('*.json'):
         copy_with_backup(source,workflow_dir/source.name,backup/'workflows'/source.name)
+    example=ROOT/'docs/assets/sample-art.png'
+    if example.is_file():copy_with_backup(example,comfy/'input/yue2_example.png',backup/'input/yue2_example.png')
     (comfy/'models/yue2').mkdir(parents=True,exist_ok=True)
     print('Installed. Restart ComfyUI, reload the workflow, and download missing models from its model links.')
     print('Runtime:',runtime,'\nWorkflow folder:',workflow_dir)

@@ -1,5 +1,13 @@
 # v1.1.1
 
+## v1.4.0
+
+- Added optional comic/artwork theme songs with AI musical choices and full-song structure. / 漫画・1枚絵から音楽設定もおまかせで1曲を作る入力を追加。
+- Added AI titles for every mode, preserving manually entered lyrics. / 入力歌詞を保持し、全モードの曲名をAIが作成。
+- Added completion colors and notifications, separate audio/MIDI players, visible downloads and lyric displays. / 完了色・通知、独立した音声／MIDI再生・保存・歌詞表示を追加。
+- Added kana lyric events to MIDI and documented VOCALOID6 import support and untested limits. / MIDIにかな歌詞を収録し、VOCALOID6の読込対応と未検証範囲を明記。
+- Added version/date/time download names, portable example artwork, and updated installation and workflow guides. / バージョン・日時付き取得名、配布可能な見本画像を追加し、導入・ワークフロー説明を更新。
+
 ## v1.3.0
 
 Add MiniMax H3-style LLM startup/progress banners and elapsed node titles, with manual/cache exclusion and error handling. / MiniMax H3形式のLLM起動・進行通知とノード名の経過秒数を追加し、手動・キャッシュでの省略とエラー表示に対応しました。

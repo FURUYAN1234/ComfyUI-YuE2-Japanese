@@ -3,6 +3,20 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('planner',ROOT/'runtime/planner.py');planner=importlib.util.module_from_spec(spec);spec.loader.exec_module(planner)
 class RuntimeContract(unittest.TestCase):
+    def test_full_song_structure(self):
+        d=planner.duration_plan(True,planner.FULL_SONG,30,7)
+        self.assertIsNone(d['target_seconds']);self.assertTrue(d['full_song'])
+        counts=planner.section_counts(True,7,True)
+        raw={'title':'雨のあと','style':'Japanese pop','lyrics':{k:['歌の言葉']*(1 if k=='outro' else 2) for k in counts}}
+        plan=planner.compile_plan(raw,True,7,True)
+        self.assertTrue(plan['lyrics'].startswith('[Intro]'))
+        self.assertIn('[Bridge]',plan['lyrics']);self.assertIn('[Outro]',plan['lyrics'])
+        self.assertEqual(plan['lyrics'].count('[Chorus]'),3)
+        bad={**raw,'lyrics':{k:v for k,v in raw['lyrics'].items() if k!='outro'}}
+        with self.assertRaises(ValueError):planner.compile_plan(bad,True,7,True)
+        raw['lyrics']['outro']=[]
+        with self.assertRaises(ValueError):planner.compile_plan(raw,True,7,True)
+
     def test_duration_selection_and_boundaries(self):
         self.assertEqual(planner.duration_plan(True,'歌詞量で指定（従来）',30)['lyric_lines'],4)
         self.assertEqual(planner.duration_plan(False,'歌詞量で指定（従来）',30)['lyric_lines'],16)
@@ -38,7 +52,7 @@ class RuntimeContract(unittest.TestCase):
             kwargs['progress']('LM Studio: 作詞・曲調を生成しています')
             kwargs['progress']('LM Studio: GPUメモリを解放しています')
             return plan,{}
-        mod=types.SimpleNamespace(plan_song=generate,validate=planner.validate,duration_plan=planner.duration_plan)
+        mod=types.SimpleNamespace(plan_song=generate,validate=planner.validate,duration_plan=planner.duration_plan,title_song=lambda p,s,progress:(dict(p,title='AIの曲名'),{'model':'test','llm_called':True,'title_only':True}))
         spec=importlib.util.spec_from_file_location('options',ROOT/'runtime/song_options.py');options=importlib.util.module_from_spec(spec);spec.loader.exec_module(options)
         scope={'json':json,'mm':types.SimpleNamespace(throw_exception_if_processing_interrupted=lambda:None,unload_all_models=lambda:None,soft_empty_cache=lambda:None),'ProgressBar':lambda n:types.SimpleNamespace(update_absolute=lambda *a:None),'planner_module':lambda:mod,'runtime_module':lambda n:options,'notify_planner':lambda *a:events.append(a)}
         exec(compile(ast.Module(body=classes,type_ignores=[]),'actual-planners','exec'),scope)
@@ -52,8 +66,16 @@ class RuntimeContract(unittest.TestCase):
         with self.assertRaises(RuntimeError):node.create('雨の歌','8行',7,123,unique_id='2')
         self.assertEqual([e[1] for e in events],['running','error'])
         events.clear()
-        node.create('unused','8行',7,123,settings=options.settings(use_presets=False,use_manual=True),manual=plan,unique_id='2')
-        self.assertEqual(events,[])
+        manual_result=json.loads(node.create('unused','8行',7,123,settings=options.settings(use_presets=False,use_manual=True),manual=plan,unique_id='2')[0])
+        self.assertEqual([e[1] for e in events],['running','complete'])
+        self.assertEqual(manual_result['plan']['lyrics'],plan['lyrics']);self.assertEqual(manual_result['plan']['title'],'AIの曲名')
+        captured={}
+        def visual_generate(brief,**kwargs):captured.update(kwargs);captured['brief']=brief;return plan,{'image_reading':'学食のオチ'}
+        mod.plan_song=visual_generate
+        visual_result=json.loads(node.create('ignored','8行',7,123,settings=options.settings(voice='男性・力強い',timing='ぴったり尺（編集）',use_presets=True,use_manual=True),manual=plan,visual={'enabled':True,'image_url':'data:image/jpeg;base64,test','kind':'4コマ漫画'},unique_id='2')[0])
+        self.assertEqual(captured['duration_mode'],planner.FULL_SONG);self.assertEqual(captured['visual']['kind'],'4コマ漫画')
+        self.assertEqual(visual_result['settings']['style'],'');self.assertFalse(visual_result['settings']['use_manual'])
+        self.assertNotIn('男性・力強い',captured['brief'])
     def test_explicit_lyric_lines(self):
         for total in (1,4,7,16,64):
             d=planner.duration_plan(True,'秒数を指定（目安）',30,total)

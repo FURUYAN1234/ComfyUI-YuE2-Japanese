@@ -1,11 +1,20 @@
-# v1.3.0 — LLM startup status / LLM起動・進行表示
+# v1.4.0 — Japanese song creation with image themes and lyrics MIDI / 日本語おまかせ作曲・画像テーマ・歌詞MIDI
 
-Show a centered status banner and elapsed time in the lyric node title, matching the MiniMax H3 workflow. / MiniMax H3ワークフローと同じ形式の上部中央通知と、作詞ノード名の経過秒数表示を追加しました。
+Casual Japanese requests remain the main workflow; comics and artwork can now provide the story for a complete theme song. / 日本語でざっくり希望を伝える作曲を基本に、漫画・1枚絵から1曲のテーマソングを作れるようにしました。
 
-Follow GPU loading, lyric generation, GPU release and completion; stop the timer on errors, interruption or disconnection. / GPU読込・作詞・GPU解放・完了を表示し、エラー・中断・接続断ではタイマーを止めます。
+- Added full-song structure, an explicit completion banner and green song-node border. / 1曲構成・完了通知・曲生成ノードの緑枠を追加。
+- Image mode lets AI choose the musical settings and disables normal inputs until switched OFF. / 画像モードでは音楽設定をAIに任せ、OFFへ戻すまで通常入力を非活性化。
+- AI generates every title while preserving manually supplied lyrics. / 手動歌詞を維持し、全曲の曲名をAIが作成。
+- Audio and MIDI have separate players, visible downloads and lyric displays. / 音声とMIDIを独立した再生・ダウンロード・歌詞表示ノードに分離。
+- MIDI includes kana lyric events; note assignment is approximate and editable. / MIDIにかなの歌詞イベントを収録し、音符への仮割当を編集可能。
+- Downloads share the song title, semantic workflow version and a 14-digit date/time stamp. / 取得名に曲名・ワークフローのバージョン番号・14桁の年月日時分秒を共通で付加。
 
-Manual lyrics skip LLM startup; cached results explicitly display that the LLM is not starting. / 手動歌詞ではLLMを省略し、キャッシュ再利用時はLLMを起動しないことを表示します。
+VOCALOID6 6.2+ officially supports MIDI lyric import; see README for the phoneme-conversion procedure and limitations. Actual VOCALOID singing has not been tested here. / VOCALOID6 6.2以降は公式にMIDI歌詞読込へ対応。発音記号の変換手順と制限はREADMEへ。本体での歌唱は未検証です。
 
-Preserve the 11 music presets, six lyric-length presets, custom line counts, input switches and duration settings. / 11種類の曲調プリセット、6種類の歌詞行数、自由行数、入力切替、曲の秒数設定を維持します。
+Use the complete installer ZIP for initial setup and the separate JSON after installation. / 初回は導入ZIP一式を使い、環境構築後は単独JSONでも読み込めます。
 
-Validated in the browser with a real seven-line generation (30.0-second output, 193.572 seconds including model loading) and a cached rerun; focused Python and frontend tests also passed. / 実ブラウザーで7行の実生成（出力30.0秒、モデル読込込み193.572秒）とキャッシュ再実行を確認し、Python・通知の検査も合格しました。
+Models are downloaded separately and remain subject to their licenses, including YuE2's CC BY-NC 4.0. / モデルは別途取得し、YuE2のCC BY-NC 4.0を含む各ライセンスに従ってください。
+
+The MIDI player highlights kana lyrics at the MIDI event times and follows seeking. This is approximate score alignment, not forced alignment to the generated vocals. / MIDI再生ノードでは歌詞イベントの時刻に合わせてかな歌詞を強調し、シークにも追従します。楽譜への仮割当であり、生成された歌声との厳密な同期ではありません。
+
+Full-song artwork verification generated 214.48 seconds of audio without duration editing and completed both audio and MIDI output; this does not certify every visual detail or musical quality. / 1枚絵の1曲検証では214.48秒の音声を秒数編集なしで生成し、音声・MIDIの両出力が完了しました。画像の全細部の理解や音楽的品質を保証する検証ではありません。

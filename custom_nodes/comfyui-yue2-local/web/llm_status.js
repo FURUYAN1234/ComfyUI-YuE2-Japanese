@@ -7,9 +7,10 @@ function llmNodes(prompt) {
   return Object.entries(prompt || {}).filter(([,node]) => {
     if (!plannerTypes.has(node?.class_type)) return false;
     const inputs = node.inputs || {};
+    if(Array.isArray(inputs.visual)&&prompt[inputs.visual[0]]?.inputs?.enabled===true)return true;
     const link = inputs.switches || inputs.settings;
     const control = Array.isArray(link) ? prompt[link[0]]?.inputs : null;
-    return control?.use_manual !== true && control?.mode !== "手動";
+    return true;
   }).map(([id]) => String(id));
 }
 function titlePrefix(node) {

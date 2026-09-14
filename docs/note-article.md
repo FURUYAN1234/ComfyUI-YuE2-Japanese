@@ -1,6 +1,6 @@
-# 日本語でおまかせ作曲。LM Studio × YuE2のComfyUI導入ガイド
+# 日本語でおまかせ作曲。漫画・1枚絵からテーマソングも作れるComfyUI導入ガイド
 
-![日本語でおまかせ作曲](assets/note-thumbnail.png)
+![日本語でおまかせ作曲](assets/note-thumbnail-v1.4.0.png)
 
 画像のワークフローと同じように、「こんな感じの曲がほしい」と日本語で書いて、あとはローカルのAIに任せたい。今回は、その入口をComfyUIに用意しました。
 
@@ -14,12 +14,22 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 ## ワークフローの入手
 
-- [導入ZIP v1.3.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.3.0/YuE2_Japanese_LMStudio_v1.3.0.zip)
-- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.3.0/YuE2_Japanese_LMStudio.json)
+- [導入ZIP v1.4.0](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio_v1.4.0.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio.json)
 
 初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
 
-![プリセットと自由入力に対応したワークフロー](assets/workflow-v1.3.0.png)
+![プリセットと自由入力に対応したワークフロー](assets/workflow-v1.4.0.png)
+
+## 漫画や1枚絵から、テーマソングも作れる
+
+メインは「日本語でざっくり希望を伝えて、おまかせ作曲」。それに加えて、四コマ漫画や1枚絵を読み込ませ、物語や雰囲気からテーマソングを作る入力も用意しました。
+
+画像テーマのノードをONにして画像の種類・読む順番を選ぶと、歌詞・曲名・曲調・楽器・テンポ・歌手の男女までAIに任せます。画像を使う場合は「1曲」に固定し、イントロから最後のサビ・アウトロまで作る構成です。通常の日本語入力、プリセット、自由歌詞、行数・秒数設定はグレーになり、OFFへ戻すと元の設定を再利用できます。
+
+読み取った内容は詳細欄にも表示します。文字が小さい漫画や特殊なコマ割りには読み違いがあるため、セリフとオチを確認して使ってください。
+
+曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.4.0_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
 
 ## ボタンで選ぶ・日本語で任せる・自由入力する
 
@@ -27,7 +37,7 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 プリセットノードには「明るいポップ」「穏やかアコースティック」「切ないバラード」「元気なロック」「幻想的エレクトロ」に加え、「夜のジャズ」「ゆったりLo-fi」「軽快なダンス」「壮大なオーケストラ」「しっとり和風」「穏やかな子守歌」の計11種類のボタンがあります。押すと声・曲調・雰囲気・楽器・BPMがまとめて入り、個別の選択欄で調整できます。音声の特徴を指示するもので、特定の歌手の声を再現する音声クローン機能ではありません。
 
-独立した入力切替ノードに「プリセットを使う」「手動入力を使う」のON/OFFスイッチがあります。プリセットだけONなら、日本語の希望と選択設定からLM Studioが作詞します。手動だけONなら、入力した曲名・歌詞・曲調だけを使います（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加します。最後に残ったONをOFFにしようとしてもONを維持します。片方を切り替えるときは、先にもう片方をONにしてください。
+独立した入力切替ノードに「プリセットを使う」「手動入力を使う」のON/OFFスイッチがあります。プリセットだけONなら、日本語の希望と選択設定からLM Studioが作詞します。手動だけONなら、入力した歌詞・曲調を使い、曲名だけAIが考えます（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加します。最後に残ったONをOFFにしようとしてもONを維持します。片方を切り替えるときは、先にもう片方をONにしてください。
 
 OFF側のプリセット・自由入力欄はグレー表示になり編集できません。入力済みの内容は消さず、ONにすると再び使えます。曲調の矛盾は自動調整しないため、声や楽器を変更するときはプリセット側も合わせるか、その項目をおまかせにしてください。
 
@@ -41,11 +51,17 @@ OFF側のプリセット・自由入力欄はグレー表示になり編集で�
 
 v1.2.0の実生成検証では、自由指定7行から実際に7行の歌詞を生成し、約73.0秒の元音声を30.0秒へ編集できました。全工程194.824秒（モデル読込込み、キャッシュ省略なし）。手動入力は行数設定にかかわらず入力歌詞を保持することも確認しています。1〜64行の入力検査を行い、実曲生成は7行で確認しました。
 
-v1.3.0では、MiniMax H3の動画ワークフローと同じ形式のLLM通知を追加しました。画面上部中央の通知と作詞ノード名に、起動・接続確認、GPUへの読込、作詞、GPU解放、完了を表示し、処理中は経過秒数が進みます。「LLM完了」は作詞が終わった段階で、曲そのものの完成は結果ノードで確認してください。手動歌詞ではLLMを起動せず、キャッシュを使う場合も「LLMの起動なし」と表示します。エラー・中断でタイマーを止め、接続が切れた場合は処理状態が未確認であることを表示します。
+v1.3.0では、MiniMax H3の動画ワークフローと同じ形式のLLM通知を追加しました。画面上部中央の通知と作詞ノード名に、起動・接続確認、GPUへの読込、作詞、GPU解放、完了を表示し、処理中は経過秒数が進みます。「LLM完了」は作詞が終わった段階で、曲そのものの完成は結果ノードで確認してください。手動歌詞は変更せず曲名用にLLMを起動し、キャッシュを使う場合も「LLMの起動なし」と表示します。エラー・中断でタイマーを止め、接続が切れた場合は処理状態が未確認であることを表示します。
 
 ![LLMをGPUへ読み込んでいる間の通知](assets/llm-status-v1.3.0.png)
 
-配布例は「自由指定7行・ぴったり尺30秒」で開きます。生成された曲を全て残したい場合は、曲の長さを「可変尺」に変更してください。
+v1.4.0の配布例は、画像OFF・歌詞4行・可変尺で開きます。「1曲（イントロ〜エンディング）」は入力切替ノードの曲の長さで選べます。画像ONでは秒数自由の1曲構成に固定されます。AIがイントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロを組み立て、歌唱セクションを各2〜4行、アウトロを1〜2行で作ります。このモードでは秒数と歌詞行数の欄を無効にし、音声を指定秒数でカットしません。自然な終わり方を指示しますが、仕上がりは試聴で確認してください。手動ONなら入力歌詞をそのまま使い、AIによる書き換えは行いません。
+
+曲の保存・検査が終わると、曲生成ノードが緑枠になり「曲の生成完了」と表示します。上部にも曲名・長さ付きの大きな緑の通知が出ます。通知が消えた後もノードの完了表示は残り、③で再生、④で歌詞・曲情報を確認できます。
+
+音声とMIDIは別々の再生ノードになり、それぞれに歌詞とダウンロードボタンを表示します。MIDIには歌唱メロディーの音符とかなの歌詞イベントを入れています。試聴は簡易楽器音です。元の歌声を再現するものではなく、歌詞の読み・音符への割り当て・タイミングは歌唱編集ソフトで調整してください。ぴったり尺の音声編集はMIDIには反映しません。
+
+通常の文章入力では歌詞行数を選び、必要に応じて「ぴったり尺」へ変更できます。画像モードでは通常の行数・秒数指定を使いません。
 
 ## 最初に知っておいてほしいこと
 
@@ -71,10 +87,10 @@ YuE2単体でも日本語の歌詞・曲調で生成する実験は通りまし�
 
 ## 動作確認した環境
 
-- Windows＋WSL2 Ubuntu、NVIDIA GeForce RTX 5080 16GB。
+- Windows＋WSL2 Ubuntu、NVIDIA GPU（VRAM 16GB）。
 - ComfyUIはWSL内の既存環境。YuE2だけPython 3.12.3の独立venv。
 - YuE2側：PyTorch 2.10.0+cu128 / CUDA 12.8、sm_120対応を実機確認。
-- LM Studio：Qwen3.5 9B Q4_K_M、GPU最大オフロード、コンテキスト4096。
+- LM Studio：Qwen3.5 9B Q4_K_M、GPU最大オフロード、コンテキスト4096（画像・33行以上は8192）。
 - YuE2：非量子化YuE2-3B＋YuE2-Vae、公式コードの固定コミット。通常の32ステップ生成。独自のステップ削減は行っていません。
 
 これは16GBで短い曲を生成できた実例です。すべての長さ・他GPUの動作を保証する最低要件ではありません。YuE2のモデル本体等で約7.8GBに加え、LLM・Python環境・ダウンロード用の空き容量が必要です。余裕を持って数十GBの空き容量を用意してください。
@@ -127,7 +143,7 @@ unzip /mnt/c/Users/Windowsのユーザー名/Downloads/受け取ったZIP名.zip
 展開されたフォルダーへ移動します。`README.md` と `install.py` が見える階層が正しい位置です。ブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空の状態にしてから導入してください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.3.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -182,7 +198,7 @@ export YUE2_LMS_CLI='/mnt/c/実際の配置先/lms.exe'
 **重み2ファイルだけでは動きません。** 設定・トークナイザー・ライセンスを含む13ファイルが必要です。ComfyUIの版によってはブラウザーのDownloadsへ保存され、自動でWSLの正しいフォルダーへ配置されません。**②の「必須モデル一式を取得 / Download models」ボタン**なら、全13ファイルを所定位置へ保存し、サイズとSHA256も確認します。取得中は同じボタンに状態を表示します。失敗時にはエラーが表示され、未完了の `.part` は完成品として使われません。ボタンと同じ処理をUbuntuから実行する方法は次です。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.3.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -271,9 +287,9 @@ ComfyUI/models/yue2/
 
 ## バージョン管理と再構築
 
-[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.3.0)
+[GitHubソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) / [この版のRelease](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.0)
 
-配布版：`v1.3.0`、タグ：`v1.3.0`。Releaseの `YuE2_Japanese_LMStudio_v1.3.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
+配布版：`v1.4.0`、タグ：`v1.4.0`。Releaseの `YuE2_Japanese_LMStudio_v1.4.0.zip` を使用してください。GitHub自動生成のSource code ZIPとは別です。
 
 
 配布識別子は `VERSION`、変更点は `CHANGELOG.md` に記載しています。ソースはGitで管理し、改行変換を止める `.gitattributes` を設定しています。GitHubのタグ付きReleaseから配布ZIPを取得できます。
@@ -281,7 +297,7 @@ ComfyUI/models/yue2/
 タグ付きソースからの構築：
 
 ```bash
-git clone --branch v1.3.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.4.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 ```
 
@@ -329,13 +345,32 @@ python3 build_package.py --output /保存先フォルダー
 
 ## プリセットと手動入力を個別にON/OFF
 
-プリセットON・手動OFFなら、選択した設定を使ってLM Studioが作詞します。プリセットOFF・手動ONなら、自由入力の曲名・歌詞・曲調だけを使います（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加できます。最後に残ったONをOFFにしようとしてもONを維持します。片方を切り替えるときは、先にもう片方をONにしてください。
+プリセットON・手動OFFなら、選択した設定を使ってLM Studioが作詞します。プリセットOFF・手動ONなら、自由入力の歌詞・曲調を使い、曲名だけAIが考えます（歌詞と曲調は必須）。両方ONなら、手動歌詞を使い、プリセットに手動曲調を追加できます。最後に残ったONをOFFにしようとしてもONを維持します。片方を切り替えるときは、先にもう片方をONにしてください。
 
 プリセットボタンはプリセット側がONのときだけ使用できます。曲調の矛盾は自動解消しないため、声や楽器を変更したい場合はプリセット側も合わせるか、その項目をおまかせにしてください。
 
-v1.3.0の独立した切り替えノードで両方ONを実機確認しました。59.039秒の音声を、実行開始から保存完了まで81.695秒で生成（キャッシュ省略なし）。曲生成・保存は81.45秒です。歌唱品質は別途試聴して確認してください。
+v1.4.0の独立した切り替えノードで両方ONを実機確認しました。59.039秒の音声を、実行開始から保存完了まで81.695秒で生成（キャッシュ省略なし）。曲生成・保存は81.45秒です。歌唱品質は別途試聴して確認してください。
 
-両方ONの優先関係は切り替えノードにも記載しました。曲名・歌詞は自由入力を使用。曲調はプリセット＋自由入力を上書きせず併用し、矛盾する指定の自動優先処理はありません。プリセット曲調を使わない場合は自由入力だけONにします。
+両方ONの優先関係は切り替えノードにも記載しました。歌詞は自由入力、曲名はAIが作成。曲調はプリセット＋自由入力を上書きせず併用し、矛盾する指定の自動優先処理はありません。プリセット曲調を使わない場合は自由入力だけONにします。
 
 
 追加した11種類のボタン設定は、すべて実APIで確認しました。「夜のジャズ」＋自由入力歌詞では38.679秒の音声を、実行開始から保存完了まで51.354秒で生成（キャッシュ省略なし）。全11種類を聴き比べて音楽品質を評価したものではありません。
+
+## Lyrics MIDI and VOCALOID / 歌詞付きMIDIとVOCALOID
+
+The MIDI playback node shows the original lyrics and downloads MIDI containing kana lyric events on the vocal score track. / MIDI再生ノードには元の歌詞を表示し、歌唱楽譜トラックにかなの歌詞イベントを含むMIDIをダウンロードできます。
+
+The note-to-lyric assignment is approximate; check readings, syllables, held notes and phrase boundaries in your singing editor. The preview uses a simple synthesized instrument, not a singing voice. / 音符と歌詞は仮割り当てです。歌唱編集ソフトで読み・音節・伸ばす音・フレーズの区切りを確認してください。ノードの試聴は簡易楽器音で、歌声ではありません。
+
+VOCALOID6 version 6.2 and later supports importing MIDI lyric information, according to the [official FAQ](https://www.vocaloid.com/support/faq/617). / [公式FAQ](https://www.vocaloid.com/support/faq/617)によると、VOCALOID6 Ver.6.2以降はMIDIの歌詞情報の読み込みに対応しています。
+
+Import the MIDI via File → Import, use its vocal melody track with a Japanese voice, and use Job → Convert Phonemes to Match Language if needed; see page 22 of the [official manual](https://rsc-net.vocaloid.com/assets/pdf_files/bb/VOCALOID_Reference_Manual_JPN.pdf). / 「ファイル→インポート」でMIDIを取り込み、歌唱メロディのトラックに日本語のボイスを設定し、必要に応じて「ジョブ→発音記号を言語に合わせて変換」を実行します。[公式マニュアル](https://rsc-net.vocaloid.com/assets/pdf_files/bb/VOCALOID_Reference_Manual_JPN.pdf)22ページを参照してください。
+
+This provides a route to singing the melody and lyrics with VOCALOID6, using a separately installed editor and Japanese voice; importing alone does not guarantee correct pronunciation or alignment. / 別途導入したVOCALOID6と日本語ボイスで、このメロディーと歌詞を歌わせるための素材として利用できます。ただし、取り込むだけで読み方や音符への割当が正しくなる保証はありません。
+
+This export has been checked by re-reading its Japanese lyric events; import and singing in VOCALOID itself have not been tested here. / この出力は日本語の歌詞イベントを再読み込みして確認しています。VOCALOID本体での取り込み・歌唱は未検証です。
+
+
+The MIDI player highlights kana lyrics at the MIDI event times and follows seeking. This is approximate score alignment, not forced alignment to the generated vocals. / MIDI再生ノードでは歌詞イベントの時刻に合わせてかな歌詞を強調し、シークにも追従します。楽譜への仮割当であり、生成された歌声との厳密な同期ではありません。
+
+Full-song artwork verification generated 214.48 seconds of audio without duration editing and completed both audio and MIDI output; this does not certify every visual detail or musical quality. / 1枚絵の1曲検証では214.48秒の音声を秒数編集なしで生成し、音声・MIDIの両出力が完了しました。画像の全細部の理解や音楽的品質を保証する検証ではありません。

@@ -18,6 +18,7 @@ export function readableLyrics(value) {
     `元の曲の長さ / Original：${seconds(data.postprocess?.original_seconds ?? data.audio_seconds)}`,
     `時間設定 / Mode：${data.duration_mode || "歌詞量で指定（従来）"}`,
     `曲生成・保存 / Generation：${seconds(data.song_generation_seconds)}（作詞時間を除く）`,
+    ...(data.image_reading?["", "画像の読み取り / Image interpretation", data.image_reading]:[]),
     "", "歌詞 / Lyrics", data.lyrics,
     "", "曲調・声・楽器 / Style", data.style,
     "", "保存先 / Saved folder", "ComfyUI/output/audio/YuE2/" + data.folder.split("/audio/YuE2/")[1],

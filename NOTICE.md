@@ -7,3 +7,6 @@ This integration code is provided under Apache-2.0 (LICENSE). It is an independe
 - Qwen3.5 9B: download separately in LM Studio. See the license at https://huggingface.co/Qwen/Qwen3.5-9B .
 - LM Studio and ComfyUI are separate products. Follow their respective terms/licenses. No API keys, model weights, generated songs, or personal dictionaries are bundled.
 - docs/assets/workflow-v1.png is a screenshot captured from the final workflow. docs/assets/note-thumbnail.png was generated for this project with the built-in image generation tool.
+
+- MIDI dependencies are installed separately: mido (MIT), pykakasi (GPL-3.0-or-later), and the Ubuntu abcMIDI package with its included copyright notices. They are not bundled in this source ZIP. / MIDI関連依存は別途導入します。midoはMIT、pykakasiはGPL-3.0-or-later、abcMIDIはUbuntuパッケージの著作権表記を参照。本ソースZIPには同梱しません。
+- The v1.4.0 workflow screenshot is captured from ComfyUI; the cover and sample artwork were generated for this project. / v1.4.0のワークフロー画像はComfyUI実画面、表紙と見本の1枚絵は本プロジェクト用に生成しました。
