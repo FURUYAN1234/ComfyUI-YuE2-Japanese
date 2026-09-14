@@ -159,6 +159,25 @@ class YuE2LyricPlanner(YuE2JapanesePlanner):
         if type(lyric_lines) is not int or not 1<=lyric_lines<=64:raise ValueError('自由指定の歌詞は1〜64行です。')
         return super().create(brief,'短い試作（4行）',seed,settings=settings,manual=manual,switches=switches,lyric_lines=counts[lyric_length],unique_id=unique_id,visual=visual)
 
+
+class YuE2Pronunciation:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {'required':{'song_plan':('YUE2_PLAN',),'enabled':('BOOLEAN',{'default':True}),
+            'action':(['今回だけ / Once','記憶・更新 / Remember','登録を削除 / Delete'],),
+            'corrections':('STRING',{'multiline':True,'default':'','tooltip':'単語=よみ を1行ずつ入力。同じ単語の登録で更新。削除時は単語だけ。長い語句を優先。'})}}
+    RETURN_TYPES=('YUE2_PLAN','STRING');RETURN_NAMES=('Readings applied / 読み適用済み','Review / 読み・辞書の確認')
+    FUNCTION='correct';CATEGORY='audio/YuE2'
+    @classmethod
+    def IS_CHANGED(cls,**kwargs):
+        # Dictionary changes made by another workflow must invalidate cached results.
+        import hashlib
+        path=RUNTIME/'private'/'lyric_readings.json'
+        return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else 'empty'
+    def correct(self,song_plan,enabled,action,corrections):
+        from .reading import apply
+        return apply(song_plan,enabled,action,corrections,RUNTIME/'private'/'lyric_readings.json')
+
 class YuE2LocalSong:
     @classmethod
     def INPUT_TYPES(cls):
@@ -220,12 +239,13 @@ class YuE2LocalSong:
         if sr!=48000 or len(wave)<sr or not np.isfinite(wave).all() or np.max(np.abs(wave))<1e-5:raise RuntimeError('生成音声の形式または波形が不正です。')
         (output/'song_plan.json').write_text(song_plan)
         bar.update_absolute(5,5)
-        details={'workflow_version':Path(__file__).with_name('VERSION').read_text().strip(),'created_at':job[:14],'title':plan['title'],'folder':str(output),'audio_seconds':result['audio_seconds'],'lyrics':plan['lyrics'],'style':plan['style'],'target_seconds':data.get('report',{}).get('duration',{}).get('target_seconds'),'duration_mode':data.get('report',{}).get('duration',{}).get('mode','歌詞量で指定（従来）'),'song_generation_seconds':round(time.monotonic()-start,2),'duration_note':'目標秒数は目安です。実際の秒数はaudio_secondsを確認してください。','note':'日本語歌唱の品質は試聴して確認してください。モデルはCC BY-NC 4.0。'}
+        details={'workflow_version':Path(__file__).with_name('VERSION').read_text().strip(),'created_at':job[:14],'title':plan['title'],'folder':str(output),'audio_seconds':result['audio_seconds'],'lyrics':data.get('display_lyrics',plan['lyrics']),'style':plan['style'],'target_seconds':data.get('report',{}).get('duration',{}).get('target_seconds'),'duration_mode':data.get('report',{}).get('duration',{}).get('mode','歌詞量で指定（従来）'),'song_generation_seconds':round(time.monotonic()-start,2),'duration_note':'目標秒数は目安です。実際の秒数はaudio_secondsを確認してください。','note':'日本語歌唱の品質は試聴して確認してください。モデルはCC BY-NC 4.0。'}
         if data.get('report',{}).get('image_reading'):details['image_reading']=data['report']['image_reading']
         if chosen:
             details.update(creation_mode=chosen['mode'],settings=chosen,duration_mode=chosen['timing'],target_seconds=None if chosen['timing'] in ['可変尺（自然な長さ）','1曲（イントロ〜エンディング）'] else chosen['seconds'],postprocess=finish)
             if chosen['timing']=='ぴったり尺（編集）':details['duration_note']='指定尺へ編集済み。末尾フェード・カット／無音補完を使用。元音声はaudio_original.flacに保存。'
         if chosen and chosen['timing']=='1曲（イントロ〜エンディング）':details['duration_note']='1曲構成・秒数カットなし。手動ONでは入力歌詞を維持。曲の終わり方は試聴で確認してください。'
+        if data.get('pronunciation'): details['pronunciation']=data['pronunciation']
         (output/'details.json').write_text(json.dumps(details,ensure_ascii=False,indent=2))
         return {'ui':{'yue2_song':[{'title':plan['title'],'seconds':result['audio_seconds']}]},'result':({'waveform':torch.from_numpy(wave.T.copy()).unsqueeze(0),'sample_rate':sr},json.dumps(details,ensure_ascii=False,indent=2))}
 
@@ -269,8 +289,8 @@ class YuE2MidiOutput:
         filename=named_asset(data,folder,'score.mid');preview=named_asset(data,folder,'midi_preview.wav','MIDI試聴')
         return {'ui':{'yue2_media':[{'kind':'midi','lyrics':data['lyrics'],'lyric_alignment':report['lyric_alignment'],'lyric_timeline':report['lyric_timeline'],'title':data['title'],'seconds':report['seconds'],'notes':report['notes'],'subfolder':subfolder,'play':preview,'download':filename}]},'result':()}
 
-NODE_CLASS_MAPPINGS={'YuE2VisualTheme':YuE2VisualTheme,'YuE2AudioOutput':YuE2AudioOutput,'YuE2MidiOutput':YuE2MidiOutput,'YuE2LyricPlanner':YuE2LyricPlanner,'YuE2InputSwitches':YuE2InputSwitches,'YuE2PresetOptions':YuE2PresetOptions,'YuE2SongSwitches':YuE2SongSwitches,'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
-NODE_DISPLAY_NAME_MAPPINGS={'YuE2VisualTheme':'Visual theme / 画像・漫画から全部おまかせ','YuE2AudioOutput':'Audio playback & download / 音声の再生・保存','YuE2MidiOutput':'Lyrics MIDI / 歌詞付きMIDIの試聴・保存','YuE2LyricPlanner':'Japanese lyrics / 日本語の作詞・歌詞行数','YuE2InputSwitches':'Input switches / 入力切り替え','YuE2PresetOptions':'Music presets / 音楽プリセット','YuE2SongSwitches':'Preset / Manual switches / プリセット・手動切替','YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
+NODE_CLASS_MAPPINGS={'YuE2Pronunciation':YuE2Pronunciation,'YuE2VisualTheme':YuE2VisualTheme,'YuE2AudioOutput':YuE2AudioOutput,'YuE2MidiOutput':YuE2MidiOutput,'YuE2LyricPlanner':YuE2LyricPlanner,'YuE2InputSwitches':YuE2InputSwitches,'YuE2PresetOptions':YuE2PresetOptions,'YuE2SongSwitches':YuE2SongSwitches,'YuE2SongOptions':YuE2SongOptions,'YuE2ManualLyrics':YuE2ManualLyrics,'YuE2JapanesePlanner':YuE2JapanesePlanner,'YuE2LocalSong':YuE2LocalSong}
+NODE_DISPLAY_NAME_MAPPINGS={'YuE2Pronunciation':'Lyric readings & memory / 歌詞の読み修正・記憶','YuE2VisualTheme':'Visual theme / 画像・漫画から全部おまかせ','YuE2AudioOutput':'Audio playback & download / 音声の再生・保存','YuE2MidiOutput':'Lyrics MIDI / 歌詞付きMIDIの試聴・保存','YuE2LyricPlanner':'Japanese lyrics / 日本語の作詞・歌詞行数','YuE2InputSwitches':'Input switches / 入力切り替え','YuE2PresetOptions':'Music presets / 音楽プリセット','YuE2SongSwitches':'Preset / Manual switches / プリセット・手動切替','YuE2SongOptions':'Song presets / 曲のプリセット','YuE2ManualLyrics':'Manual lyrics / 手動歌詞・曲調','YuE2JapanesePlanner':'YuE2 日本語おまかせ作詞 / LM Studio GPU','YuE2LocalSong':'YuE2 曲生成 / Isolated GPU'}
 
 # Fixed official manifest only: the browser cannot choose URLs or destination paths.
 import asyncio, sys

@@ -1,8 +1,8 @@
 {
   "id": "90faf78b-117e-43f0-bd40-3fb44fa5a837",
   "revision": 0,
-  "last_node_id": 11,
-  "last_link_id": 13,
+  "last_node_id": 13,
+  "last_link_id": 15,
   "nodes": [
     {
       "id": 1,
@@ -25,7 +25,7 @@
         "Node name for S&R": "MarkdownNote"
       },
       "widgets_values": [
-        "# Japanese Song Creation / 日本語おまかせ作曲\nJapanese requests become lyrics, vocals and music. Comics and artwork can also become theme songs. / 日本語の希望から歌詞・歌・伴奏を作成。漫画や1枚絵からテーマソングも作れます。\n\n## Setup / 導入\n[Download v1.4.1 / 配布ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip) · [README / 詳しい導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)\n1. Prepare Windows LM Studio and WSL2 Ubuntu ComfyUI with a working NVIDIA GPU. / WindowsのLM Studioと、NVIDIA GPUが動くWSL2 UbuntuのComfyUIを用意。\n2. Extract the full ZIP and run `python3 -B verify_package.py`, then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。\n3. Download Qwen3.5 9B Q4_K_M in LM Studio; use node ②'s model-download button for YuE2's 13 required files. / LM StudioでQwen3.5 9B Q4_K_Mを取得し、②のモデル取得ボタンでYuE2の必須13ファイルを取得。\n4. Restart ComfyUI and load this JSON. / ComfyUIを再起動し、このJSONを開きます。\n\n## Inputs / 入力\nNormal mode: enter a Japanese request in ①; select presets if desired. / 通常は①へ日本語の希望を入力し、必要ならプリセットを選択。\nUse the input controller for presets, free lyrics and duration; both inputs cannot be OFF. / 切替ノードでプリセット・自由歌詞・時間を設定し、両方OFFは不可。\nBoth ON uses your lyrics and combines preset style with your additions; contradictory styles have no automatic priority. / 両方ONは入力歌詞を使い、曲調はプリセット＋追記。矛盾する曲調の自動優先処理はありません。\nOFF fields are dimmed and read-only; turning them ON restores the values. AI creates every song title. / OFF欄はグレー・編集不可で、ONへ戻すと値を再利用。曲名は全曲AIが作成。\n\n## Images / 画像\nLoad a comic or artwork and enable Visual theme; choose its type and reading order. / 漫画・1枚絵を読み込み、画像テーマをONにして種類・読む順番を選択。\nImage ON fixes full-song mode and lets AI choose lyrics, voice, style, instruments and tempo; normal inputs become inactive. / 画像ONでは1曲構成に固定し、歌詞・声・曲調・楽器・テンポをおまかせ。通常の入力欄は非活性化。\nImage OFF restores normal input. Read the interpretation in Details to check dialogue and the ending. / 画像OFFで通常入力へ戻ります。詳細欄の画像解釈でセリフ・結末を確認。\n\n## Length / 長さ\nFull song requests intro, verses, choruses, bridge and ending, without trimming. / 1曲はイントロ・各番・サビ・ブリッジ・結末を作り、秒数で切りません。\nNatural keeps the generated length; Target is approximate; Exact fades/cuts or pads silence and preserves original audio. / 可変尺は生成尺を保持。目標尺は目安。ぴったり尺はフェード・カット／無音補完し、元音声を保存。\nLyrics: 4 / 8 / 12 / 16 / 24 / 32 or Custom 1–64 lines; full song and manual lyrics override this count. / 歌詞は4・8・12・16・24・32行または自由1〜64行。1曲・手動歌詞では行数指定を使いません。\n\n## Progress and output / 進行と出力\nLM Studio GPU → unload → YuE2 GPU → playback and MIDI. Startup banner shows the LLM phase; green song border and completion banner show saved audio. / LLM→解放→YuE2→再生・MIDIの順。起動通知でLLM段階、緑枠・完了通知で音声保存完了を表示。\nAudio and MIDI nodes show lyrics, players and download buttons. MIDI uses kana lyric events with approximate note assignment; its preview is synthetic instrument audio. / 音声・MIDIノードに歌詞・再生・ダウンロードを表示。MIDIはかな歌詞の仮割当で、試聴は簡易楽器音。\nThe MIDI player highlights timed kana lyrics, shows instrumental sections and marks playback completion. / MIDIはかな歌詞を再生位置に合わせて強調し、間奏・後奏・再生完了も表示。\nVOCALOID6 6.2+ supports MIDI lyric import; editor singing is untested here. See README for conversion and adjustment. / VOCALOID6 6.2以降はMIDI歌詞読込対応。本体歌唱は未検証。変換・調整手順はREADMEへ。\nSaved under `ComfyUI/output/audio/YuE2/`: title, version and date/time in audio/MIDI download names, plus score and JSON records. / 左記に保存し、音声・MIDIの取得名に曲名・バージョン・年月日時分秒を付加。楽譜・JSONも保存。\n\n## Requirements and validation / 必須環境・検証\nModels: YuE2-3B + YuE2-Vae, about 7.8GB, under `models/yue2`; runtime is separate from ComfyUI Python. / 必須モデルは左記2種・約7.8GB。専用環境はComfyUIのPythonと分離。\nText full-song test: 194.9s audio, 283.5s including LLM loading; no truncation or duration cut. Listen to each result. / 文章の1曲検証：194.9秒の曲・LLM読込込み283.5秒。打切り・秒数カットなし。結果は試聴してください。\nModels: CC BY-NC 4.0, noncommercial; integration code: Apache-2.0. / モデルは非商用、連携コードはApache-2.0。各配布元の条件を参照。"
+        "# Japanese Song Creation / 日本語おまかせ作曲\nJapanese requests become lyrics, vocals and music. Comics and artwork can also become theme songs. / 日本語の希望から歌詞・歌・伴奏を作成。漫画や1枚絵からテーマソングも作れます。\n\n## Setup / 導入\n[Download v1.4.1 / 配布ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip) · [README / 詳しい導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)\n1. Prepare Windows LM Studio and WSL2 Ubuntu ComfyUI with a working NVIDIA GPU. / WindowsのLM Studioと、NVIDIA GPUが動くWSL2 UbuntuのComfyUIを用意。\n2. Extract the full ZIP and run `python3 -B verify_package.py`, then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。\n3. Download Qwen3.5 9B Q4_K_M in LM Studio; use node ②'s model-download button for YuE2's 13 required files. / LM StudioでQwen3.5 9B Q4_K_Mを取得し、②のモデル取得ボタンでYuE2の必須13ファイルを取得。\n4. Restart ComfyUI and load this JSON. / ComfyUIを再起動し、このJSONを開きます。\n\n## Inputs / 入力\nNormal mode: enter a Japanese request in ①; select presets if desired. / 通常は①へ日本語の希望を入力し、必要ならプリセットを選択。\nUse the input controller for presets, free lyrics and duration; both inputs cannot be OFF. / 切替ノードでプリセット・自由歌詞・時間を設定し、両方OFFは不可。\nBoth ON uses your lyrics and combines preset style with your additions; contradictory styles have no automatic priority. / 両方ONは入力歌詞を使い、曲調はプリセット＋追記。矛盾する曲調の自動優先処理はありません。\nOFF fields are dimmed and read-only; turning them ON restores the values. AI creates every song title. / OFF欄はグレー・編集不可で、ONへ戻すと値を再利用。曲名は全曲AIが作成。\n\n## Images / 画像\nLoad a comic or artwork and enable Visual theme; choose its type and reading order. / 漫画・1枚絵を読み込み、画像テーマをONにして種類・読む順番を選択。\nImage ON fixes full-song mode and lets AI choose lyrics, voice, style, instruments and tempo; normal inputs become inactive. / 画像ONでは1曲構成に固定し、歌詞・声・曲調・楽器・テンポをおまかせ。通常の入力欄は非活性化。\nImage OFF restores normal input. Read the interpretation in Details to check dialogue and the ending. / 画像OFFで通常入力へ戻ります。詳細欄の画像解釈でセリフ・結末を確認。\n\n## Length / 長さ\nFull song requests intro, verses, choruses, bridge and ending, without trimming. / 1曲はイントロ・各番・サビ・ブリッジ・結末を作り、秒数で切りません。\nNatural keeps the generated length; Target is approximate; Exact fades/cuts or pads silence and preserves original audio. / 可変尺は生成尺を保持。目標尺は目安。ぴったり尺はフェード・カット／無音補完し、元音声を保存。\nLyrics: 4 / 8 / 12 / 16 / 24 / 32 or Custom 1–64 lines; full song and manual lyrics override this count. / 歌詞は4・8・12・16・24・32行または自由1〜64行。1曲・手動歌詞では行数指定を使いません。\n\n## Progress and output / 進行と出力\nLM Studio GPU → unload → YuE2 GPU → playback and MIDI. Startup banner shows the LLM phase; green song border and completion banner show saved audio. / LLM→解放→YuE2→再生・MIDIの順。起動通知でLLM段階、緑枠・完了通知で音声保存完了を表示。\nAudio and MIDI nodes show lyrics, players and download buttons. MIDI uses kana lyric events with approximate note assignment; its preview is synthetic instrument audio. / 音声・MIDIノードに歌詞・再生・ダウンロードを表示。MIDIはかな歌詞の仮割当で、試聴は簡易楽器音。\nThe MIDI player highlights timed kana lyrics, shows instrumental sections and marks playback completion. / MIDIはかな歌詞を再生位置に合わせて強調し、間奏・後奏・再生完了も表示。\nVOCALOID6 6.2+ supports MIDI lyric import; editor singing is untested here. See README for conversion and adjustment. / VOCALOID6 6.2以降はMIDI歌詞読込対応。本体歌唱は未検証。変換・調整手順はREADMEへ。\nSaved under `ComfyUI/output/audio/YuE2/`: title, version and date/time in audio/MIDI download names, plus score and JSON records. / 左記に保存し、音声・MIDIの取得名に曲名・バージョン・年月日時分秒を付加。楽譜・JSONも保存。\n\n## Requirements and validation / 必須環境・検証\nModels: YuE2-3B + YuE2-Vae, about 7.8GB, under `models/yue2`; runtime is separate from ComfyUI Python. / 必須モデルは左記2種・約7.8GB。専用環境はComfyUIのPythonと分離。\nText full-song test: 194.9s audio, 283.5s including LLM loading; no truncation or duration cut. Listen to each result. / 文章の1曲検証：194.9秒の曲・LLM読込込み283.5秒。打切り・秒数カットなし。結果は試聴してください。\nModels: CC BY-NC 4.0, noncommercial; integration code: Apache-2.0. / モデルは非商用、連携コードはApache-2.0。各配布元の条件を参照。\n\n### Lyric readings / 歌詞の読み修正\nBetween planner and generation / 作詞→読み修正→曲生成。\nOne word=reading per line / 今日=きょう の形式で1行ずつ入力。\nOnce / 今回だけ、Remember / 記憶・更新、Delete / 単語だけ入力して削除。\nON applies saved readings; OFF keeps dictionary / ONで記憶を適用、OFFでは辞書保持。\nDisplay lyrics are unchanged / 表示歌詞は元の表記を保持。\nReadings are literal; singing may vary / 文字列置換。正しい歌唱を保証せず、再生成で曲も変わる場合があります。"
       ],
       "color": "#432",
       "bgcolor": "#653"
@@ -94,7 +94,7 @@
       "type": "YuE2LocalSong",
       "pos": [
         1940,
-        560
+        1110
       ],
       "size": [
         500,
@@ -107,7 +107,7 @@
         {
           "name": "song_plan",
           "type": "YUE2_PLAN",
-          "link": 1
+          "link": 14
         }
       ],
       "outputs": [
@@ -263,7 +263,7 @@
       "type": "YuE2AudioOutput",
       "pos": [
         1940,
-        1000
+        1550
       ],
       "size": [
         500,
@@ -439,7 +439,7 @@
       "type": "YuE2MidiOutput",
       "pos": [
         1940,
-        1500
+        2050
       ],
       "size": [
         500,
@@ -543,6 +543,82 @@
         "image"
       ],
       "title": "画像を読み込む / Load image"
+    },
+    {
+      "id": 12,
+      "type": "YuE2Pronunciation",
+      "pos": [
+        1940,
+        560
+      ],
+      "size": [
+        540,
+        360
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "song_plan",
+          "type": "YUE2_PLAN",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Readings applied / 読み適用済み",
+          "type": "YUE2_PLAN",
+          "links": [
+            14
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "Review / 読み・辞書の確認",
+          "type": "STRING",
+          "links": [
+            15
+          ],
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "YuE2Pronunciation"
+      },
+      "widgets_values": [
+        true,
+        "今回だけ / Once",
+        ""
+      ]
+    },
+    {
+      "id": 13,
+      "type": "PreviewAny",
+      "pos": [
+        2550,
+        560
+      ],
+      "size": [
+        520,
+        500
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 15
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [],
+      "title": "Readings & remembered entries / 生成用の読み・記憶辞書"
     }
   ],
   "links": [
@@ -550,7 +626,7 @@
       1,
       2,
       0,
-      3,
+      12,
       0,
       "YUE2_PLAN"
     ],
@@ -625,6 +701,22 @@
       10,
       0,
       "IMAGE"
+    ],
+    [
+      14,
+      12,
+      0,
+      3,
+      0,
+      "YUE2_PLAN"
+    ],
+    [
+      15,
+      12,
+      1,
+      13,
+      0,
+      "STRING"
     ]
   ],
   "groups": [],

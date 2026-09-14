@@ -548,3 +548,15 @@ In one Windows test environment, Chrome blocked downloads to Windows folders whi
 The cause remains unresolved; this is not established as a Chrome update or a workflow defect. / 原因は未解決で、Chromeの更新またはワークフローの不具合とは特定できていません。
 
 Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked browser download does not mean generation failed. / 生成音声とMIDIはComfyUI/output/audio/YuE2/に残り、ブラウザーの保存失敗は曲生成の失敗を意味しません。
+
+
+### Lyric readings and memory / 歌詞の読み修正・記憶
+
+Connect the reading node between the lyric planner and song generator. / 作詞と曲生成の間に読み修正ノードを接続します。
+Enter one `単語=よみ` per line, for example `今日=きょう`. / 1行に1件、例として `今日=きょう` を入力します。
+Once applies temporary overrides; Remember adds or updates entries; Delete accepts one registered word per line. / 「今回だけ」は一時修正、「記憶・更新」は登録・更新、「登録を削除」は単語だけを1行ずつ入力します。
+Enabled uses remembered entries even with an empty correction field; OFF bypasses all readings and leaves the dictionary unchanged. / ONでは修正欄が空でも記憶した読みを適用し、OFFでは辞書を変更せず全修正を無効にします。
+The review output shows singing lyrics and remembered entries after execution; display lyrics remain unchanged. / 実行後の確認出力で生成用の読みと記憶済み一覧を表示し、表示歌詞の表記は保持します。
+Longer phrases win; replacements are literal and context independent. Register a longer phrase for ambiguous readings. / 長い語句を優先する文字列置換です。文脈で読みが違う場合は長い語句で登録してください。
+The private dictionary is stored under the configured runtime in `private/lyric_readings.json`, outside the distribution. / 個人辞書は設定済み実行環境の `private/lyric_readings.json` に保存し、配布には含めません。
+Regeneration can change melody and vocals; kana does not guarantee correct singing. / 再生成でメロディーや歌い方が変わる場合があり、かな指定でも正しい歌唱を保証しません。

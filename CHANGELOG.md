@@ -1,3 +1,8 @@
+## 1.5.0
+
+Add lyric reading overrides and private persistent dictionary; retain display lyrics. / 表示歌詞を保持する読み修正と個人用記憶辞書を追加。
+Disable dedicated image loaders when image mode is OFF. / 画像OFF時に専用の画像読込を無効化。
+
 # v1.4.1
 
 Correct the version attributed to the historical both-inputs-ON measurement; retain the v1.4.0 features and known download issue. / 両方ONの過去実測に付いていた版の誤記を訂正し、v1.4.0の機能と既知の保存問題を維持します。

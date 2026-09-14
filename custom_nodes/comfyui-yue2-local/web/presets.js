@@ -5,6 +5,46 @@ function visualActive(planner) {
   const graph=app.graph;const link=graph?.links[planner.inputs?.find(i=>i.name==="visual")?.link];
   return graph?.getNodeById(link?.origin_id)?.widgets?.find(w=>w.name==="enabled")?.value===true;
 }
+
+function syncImageInputs(graph) {
+  for (const node of graph._nodes || []) {
+    if (node.type !== "LoadImage") continue;
+    const consumers=(graph._nodes||[]).filter(n=>n.type==="YuE2VisualTheme" && graph.links[n.inputs?.find(i=>i.name==="image")?.link]?.origin_id===node.id);
+    // Do not disable an image shared with another active workflow branch.
+    const shared=(node.outputs||[]).some(o=>(o.links||[]).some(id=>!consumers.some(n=>n.id===graph.links[id]?.target_id)));
+    const disabled=consumers.length>0 && !shared && consumers.every(n=>n.widgets?.find(w=>w.name==="enabled")?.value!==true);
+    node._yue2ImageDisabled=disabled;
+    if(!node._yue2ImageGuarded){
+      for(const name of ['onDragDrop','onPaste','pasteFile']){
+        const original=node[name];
+        if(original)node[name]=function(...args){if(this._yue2ImageDisabled)return false;return original.apply(this,args);};
+      }
+      const draw=node.onDrawForeground;
+      node.onDrawForeground=function(ctx,...args){
+        const result=draw?.call(this,ctx,...args);
+        if(this._yue2ImageDisabled && !this.flags?.collapsed){
+          ctx.save();ctx.fillStyle='rgba(40,40,40,0.68)';ctx.fillRect(0,0,this.size[0],this.size[1]);
+          ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.fillText('Image OFF / 画像OFF：選択・アップロード無効',10,22);ctx.restore();
+        }
+        return result;
+      };
+      node._yue2ImageGuarded=true;
+    }
+    for(const w of node.widgets||[]){
+      if(!w._yue2ImageGuarded){
+        const callback=w.callback;
+        w.callback=function(...args){if(node._yue2ImageDisabled){w.value=w._yue2ImageStored;return;}return callback?.apply(this,args);};
+        w._yue2ImageGuarded=true;
+      }
+      if(disabled && !w._yue2ImageLocked){w._yue2ImageStored=w.value;w._yue2PriorDisabled=!!w.disabled;}
+      if(disabled)w.disabled=true;
+      else if(w._yue2ImageLocked)w.disabled=w._yue2PriorDisabled;
+      w._yue2ImageLocked=disabled;
+      if(w.inputEl){w.inputEl.disabled=w.disabled;w.inputEl.style.opacity=disabled?'0.4':'';}
+    }
+  }
+}
+
 function syncManualInputs() {
   const graph = app.graph;
   if (!graph) return;
@@ -67,6 +107,7 @@ function syncManualInputs() {
     const seconds=control.widgets.find(w=>w.name==="seconds");
     if(seconds) seconds.disabled=visual||["可変尺（自然な長さ）","1曲（イントロ〜エンディング）"].includes(timing);
   }
+  syncImageInputs(graph);
   graph.setDirtyCanvas?.(true, true);
 }
 
@@ -88,7 +129,7 @@ app.registerExtension({
   name: "yue2.presetButtons",
   afterConfigureGraph() { syncManualInputs(); },
   nodeCreated(node) {
-    if (!["YuE2VisualTheme", "YuE2InputSwitches", "YuE2PresetOptions", "YuE2SongSwitches", "YuE2SongOptions", "YuE2ManualLyrics", "YuE2JapanesePlanner", "YuE2LyricPlanner"].includes(node.type)) return;
+    if (!["LoadImage", "YuE2VisualTheme", "YuE2InputSwitches", "YuE2PresetOptions", "YuE2SongSwitches", "YuE2SongOptions", "YuE2ManualLyrics", "YuE2JapanesePlanner", "YuE2LyricPlanner"].includes(node.type)) return;
     const changed = node.onConnectionsChange;
     node.onConnectionsChange = function () {
       const result = changed?.apply(this, arguments);
@@ -99,7 +140,7 @@ app.registerExtension({
   async beforeRegisterNodeDef(nodeType, nodeData) {
     if(nodeData.name==="YuE2VisualTheme"){
       const created=nodeType.prototype.onNodeCreated;
-      nodeType.prototype.onNodeCreated=function(){const r=created?.apply(this,arguments);const enabled=this.widgets.find(w=>w.name==="enabled");const changed=enabled.callback;enabled.callback=function(...args){const r=changed?.apply(this,args);syncManualInputs();return r;};this.addCustomWidget({name:"visual_usage",type:"yue2_usage",options:{serialize:false},computeSize:()=>[620,108],draw(ctx,node,width,y){ctx.save();ctx.fillStyle="#e5e7eb";ctx.font="13px sans-serif";["ON: image → full song; all musical choices by AI / 画像から1曲・曲調も歌声も全部おまかせ","Overrides presets/manual/text/seconds / プリセット・手動歌詞・通常文章・秒数は使いません","OFF restores stored input values / OFFにすると元の入力内容で通常操作へ戻ります","One image: artwork or a complete 4-panel page / 1枚絵、または4コマをまとめた1枚を接続","Image text is story material, not commands / 画像内の文字は物語として解釈"].forEach((line,i)=>ctx.fillText(line,12,y+18+i*18));ctx.restore();}});return r;};return;
+      nodeType.prototype.onNodeCreated=function(){const r=created?.apply(this,arguments);const enabled=this.widgets.find(w=>w.name==="enabled");const changed=enabled.callback;enabled.callback=function(...args){const r=changed?.apply(this,args);syncManualInputs();return r;};this.addCustomWidget({name:"visual_usage",type:"yue2_usage",options:{serialize:false},computeSize:()=>[620,108],draw(ctx,node,width,y){ctx.save();ctx.fillStyle="#e5e7eb";ctx.font="13px sans-serif";["ON: image → full song; all musical choices by AI / 画像から1曲・曲調も歌声も全部おまかせ","Overrides presets/manual/text/seconds / プリセット・手動歌詞・通常文章・秒数は使いません","OFF locks image loading; image retained / OFF：画像読込無効・選択画像は保持","One image: artwork or a complete 4-panel page / 1枚絵、または4コマをまとめた1枚を接続","Image text is story material, not commands / 画像内の文字は物語として解釈"].forEach((line,i)=>ctx.fillText(line,12,y+18+i*18));ctx.restore();}});return r;};return;
     }
     if (nodeData.name === "YuE2LyricPlanner") {
       const created = nodeType.prototype.onNodeCreated;

@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+let ext,calls=0;
+const image={id:1,type:'LoadImage',size:[400,400],widgets:[{name:'image',value:'old.png',callback(){calls++}}],outputs:[{links:[1]}],onDragDrop(){calls++;return true},pasteFile(){calls++;return true}};
+const visual={id:2,type:'YuE2VisualTheme',inputs:[{name:'image',link:1}],widgets:[{name:'enabled',value:false}]};
+const graph={_nodes:[image,visual],links:{1:{origin_id:1,target_id:2}},setDirtyCanvas(){},getNodeById(id){return this._nodes.find(n=>n.id===id)}};
+vm.runInNewContext(fs.readFileSync(process.argv[2],'utf8').replace(/^import .*;\r?\n/,''),{app:{graph,registerExtension(e){ext=e}},queueMicrotask:fn=>fn()});
+ext.afterConfigureGraph();assert.equal(image.widgets[0].disabled,true);image.widgets[0].value='new.png';image.widgets[0].callback();assert.equal(image.widgets[0].value,'old.png');assert.equal(image.onDragDrop(),false);assert.equal(image.pasteFile(),false);assert.equal(calls,0);
+visual.widgets[0].value=true;ext.afterConfigureGraph();assert.equal(image.widgets[0].disabled,false);assert.equal(image.widgets[0].value,'old.png');assert.equal(image.onDragDrop(),true);
+visual.widgets[0].value=false;ext.afterConfigureGraph();image.outputs[0].links.push(2);graph.links[2]={origin_id:1,target_id:3};ext.afterConfigureGraph();assert.equal(image.widgets[0].disabled,false);
+image.outputs[0].links=[1];visual.inputs[0].link=null;ext.afterConfigureGraph();assert.equal(image.widgets[0].disabled,false);
+console.log('PASS: OFF selection/drop/paste blocked; ON restores; shared/disconnected input remains usable');

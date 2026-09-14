@@ -5,3 +5,7 @@ __pycache__/
 *.log
 models/
 output/
+
+# Personal pronunciation dictionaries
+private/
+**/lyric_readings.json
