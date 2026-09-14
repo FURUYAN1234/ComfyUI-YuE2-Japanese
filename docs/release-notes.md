@@ -1,4 +1,4 @@
-# v1.4.0 — Japanese song creation with image themes and lyrics MIDI / 日本語おまかせ作曲・画像テーマ・歌詞MIDI
+# v1.4.1 — Japanese song creation with image themes and lyrics MIDI / 日本語おまかせ作曲・画像テーマ・歌詞MIDI
 
 Casual Japanese requests remain the main workflow; comics and artwork can now provide the story for a complete theme song. / 日本語でざっくり希望を伝える作曲を基本に、漫画・1枚絵から1曲のテーマソングを作れるようにしました。
 
@@ -29,3 +29,6 @@ In one Windows test environment, Chrome blocked downloads to Windows folders whi
 The cause remains unresolved; this is not established as a Chrome update or a workflow defect. / 原因は未解決で、Chromeの更新またはワークフローの不具合とは特定できていません。
 
 Generated audio and MIDI remain under ComfyUI/output/audio/YuE2/; a blocked browser download does not mean generation failed. / 生成音声とMIDIはComfyUI/output/audio/YuE2/に残り、ブラウザーの保存失敗は曲生成の失敗を意味しません。
+
+
+This patch corrects documentation attribution for a v1.2.1 measurement; generation code is unchanged from v1.4.0. / この修正版はv1.2.1の実測を示す版の誤記を訂正し、生成コードはv1.4.0と同じです。

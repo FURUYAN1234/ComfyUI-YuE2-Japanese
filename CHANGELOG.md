@@ -1,3 +1,7 @@
+# v1.4.1
+
+Correct the version attributed to the historical both-inputs-ON measurement; retain the v1.4.0 features and known download issue. / 両方ONの過去実測に付いていた版の誤記を訂正し、v1.4.0の機能と既知の保存問題を維持します。
+
 # v1.1.1
 
 ## v1.4.0

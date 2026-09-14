@@ -2,7 +2,7 @@
 Japanese requests become lyrics, vocals and music. Comics and artwork can also become theme songs. / 日本語の希望から歌詞・歌・伴奏を作成。漫画や1枚絵からテーマソングも作れます。
 
 ## Setup / 導入
-[Download v1.4.0 / 配布ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio_v1.4.0.zip) · [README / 詳しい導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
+[Download v1.4.1 / 配布ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip) · [README / 詳しい導入手順](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese#readme)
 1. Prepare Windows LM Studio and WSL2 Ubuntu ComfyUI with a working NVIDIA GPU. / WindowsのLM Studioと、NVIDIA GPUが動くWSL2 UbuntuのComfyUIを用意。
 2. Extract the full ZIP and run `python3 -B verify_package.py`, then `python3 install.py --comfyui YOUR_COMFYUI_PATH` in Ubuntu. / ZIP全体を展開し、Ubuntuで左記を実行。配置先は自分のComfyUIへ置換。
 3. Download Qwen3.5 9B Q4_K_M in LM Studio; use node ②'s model-download button for YuE2's 13 required files. / LM StudioでQwen3.5 9B Q4_K_Mを取得し、②のモデル取得ボタンでYuE2の必須13ファイルを取得。

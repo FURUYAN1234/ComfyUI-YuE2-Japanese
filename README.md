@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.0)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.1)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio_v1.4.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.0/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio_v1.4.1.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.4.1/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -32,7 +32,7 @@ Normal text, preset, free-lyrics, line-count and seconds controls become inactiv
 
 Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
 
-All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.4.0_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.4.0_年月日時分秒.flac` と `.mid` で同じ日時を使います。
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.4.1_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.4.1_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -160,7 +160,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.4.0.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.4.1.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -168,7 +168,7 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -257,7 +257,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.0
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.4.1
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -441,18 +441,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.0)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.4.1)
 
-Version: `v1.4.0`; tag: `v1.4.0`. / 配布版は `v1.4.0`、タグは `v1.4.0` です。
+Version: `v1.4.1`; tag: `v1.4.1`. / 配布版は `v1.4.1`、タグは `v1.4.1` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.4.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.4.0.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.4.1.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.4.1.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.4.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.4.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -491,7 +491,7 @@ In pre-v1.4.0 validation, manual free input skipped the LLM and produced an orig
 
 Switch validation: all three valid combinations passed the actual ComfyUI planning API; both OFF returned HTTP 400 before execution. / 切替検証：有効な3通りは実ComfyUIの作詞APIで成功し、両方OFFは実行前にHTTP 400で拒否しました。
 
-The separate controller with both inputs ON produced 59.039 seconds of audio in 81.695 seconds from Run to saved completion, with no cached nodes; song generation/saving took 81.45 seconds. / 独立した切替ノードで両方ONにして59.039秒の音声を生成し、実行開始から保存完了まで81.695秒（キャッシュ省略なし）、曲生成・保存81.45秒を確認しました。
+In v1.2.1, the separate controller with both inputs ON produced 59.039 seconds of audio in 81.695 seconds from Run to saved completion, with no cached nodes; song generation/saving took 81.45 seconds. / v1.2.1の独立した切替ノードで両方ONにして59.039秒の音声を生成し、実行開始から保存完了まで81.695秒（キャッシュ省略なし）、曲生成・保存81.45秒を確認しました。
 
 
 ### Separate input control / 独立した入力切り替え
