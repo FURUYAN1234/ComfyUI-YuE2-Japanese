@@ -12,6 +12,19 @@ class RuntimeContract(unittest.TestCase):
         for invalid in [9,241,30.5,'30',True]:
             with self.assertRaises(ValueError):planner.duration_plan(True,'秒数を指定（目安）',invalid)
         with self.assertRaises(ValueError):planner.duration_plan(True,'unknown',30)
+    def test_explicit_lyric_lines(self):
+        for total in (1,4,7,16,64):
+            d=planner.duration_plan(True,'秒数を指定（目安）',30,total)
+            self.assertEqual(d['lyric_lines'],total)
+            self.assertEqual(d['target_seconds'],30)
+            counts=planner.section_counts(True,total)
+            self.assertEqual(sum(counts.values()),total)
+            self.assertTrue(all(n>0 for n in counts.values()))
+            raw={'title':'検証','style':'Japanese pop','lyrics':{k:['歌の言葉']*n for k,n in counts.items()}}
+            plan=planner.compile_plan(raw,True,total)
+            self.assertEqual(sum(bool(x) and not x.startswith('[') for x in plan['lyrics'].splitlines()),total)
+        for invalid in (0,65,True,7.5,'7'):
+            with self.assertRaises(ValueError):planner.duration_plan(True,'歌詞量で指定（従来）',30,invalid)
     def test_structured_lyrics_normal_and_abnormal(self):
         raw={'title':'雨','style':'J-pop','lyrics':{'verse':['雨の道','街の灯り'],'chorus':['明日へ行こう','君と歩く']}}
         plan=planner.compile_plan(raw,True);self.assertEqual(plan['lyrics'].count('\n'),6)

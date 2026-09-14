@@ -48,3 +48,14 @@ extension.afterConfigureGraph();assert.equal(presetNode.widgets[0].disabled,true
 presetNode.widgets[0].value='changed';presetNode.widgets[0].callback('changed');assert.equal(presetNode.widgets[0].value,'original');
 external.widgets[0].value=true;external.widgets[1].value=false;extension.afterConfigureGraph();assert.equal(presetNode.widgets[0].disabled,false);assert.equal(manualNode.widgets[0].disabled,true);
 console.log('External controller disables the correct linked node and preserves values: PASS');
+plannerNode.type='YuE2LyricPlanner';plannerNode.widgets=[{name:'lyric_length',value:'短い試作（4行）'},{name:'lyric_lines',value:7}];
+extension.afterConfigureGraph();assert.equal(plannerNode.widgets[0].disabled,false);assert.equal(plannerNode.widgets[1].disabled,true);
+plannerNode.widgets[0].value='自由に指定';extension.afterConfigureGraph();assert.equal(plannerNode.widgets[1].disabled,false);
+external.widgets[1].value=true;extension.afterConfigureGraph();assert.equal(plannerNode.widgets[0].disabled,true);assert.equal(plannerNode.widgets[1].disabled,true);assert.equal(plannerNode.widgets[1].value,7);
+external.widgets[1].value=false;extension.afterConfigureGraph();assert.equal(plannerNode.widgets[0].disabled,false);assert.equal(plannerNode.widgets[1].disabled,false);
+console.log('Custom lyric lines and manual OFF/ON enabled states: PASS');
+
+const recursiveWidget=manualNode.widgets[1];let stored=recursiveWidget.value;let callbackCount=0;
+Object.defineProperty(recursiveWidget,'value',{get(){return stored;},set(v){stored=v;if(++callbackCount>5)throw Error('Recursive disabled callback');recursiveWidget.callback(v);}});
+recursiveWidget.value='unwanted mutation';assert.equal(recursiveWidget.value,'keep text');assert.equal(callbackCount,2);
+console.log('DOM value setter callback does not recurse on disabled inputs: PASS');

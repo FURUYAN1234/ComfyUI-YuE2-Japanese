@@ -46,16 +46,19 @@ def validate(plan):
  if '<think>' in plan['lyrics'] or '```' in plan['lyrics']:raise ValueError('歌詞に生成用の説明が混入しました。')
  return plan
 DURATION_MODES=('歌詞量で指定（従来）','目標30秒（試験的）','目標60秒（試験的）','目標120秒（試験的）','秒数を指定（目安）')
-def duration_plan(short,mode,target_seconds):
+def duration_plan(short,mode,target_seconds,lyric_lines=None):
  if mode not in DURATION_MODES:raise ValueError('長さの指定方法が不正です。')
  if type(target_seconds) is not int or not 10<=target_seconds<=240:raise ValueError('目標秒数は10〜240の整数で指定してください。')
  target={'目標30秒（試験的）':30,'目標60秒（試験的）':60,'目標120秒（試験的）':120}.get(mode)
  if mode=='秒数を指定（目安）':target=target_seconds
  total=(4 if short else 16) if target is None else max(2,min(24,2*int(target/20+.5)))
+ if lyric_lines is not None:
+  if type(lyric_lines) is not int or not 1<=lyric_lines<=64:raise ValueError('歌詞の行数は1〜64の整数で指定してください。')
+  total=lyric_lines
  return {'mode':mode,'target_seconds':target,'lyric_lines':total,'exact_duration':False}
 def section_counts(short,target_lines=None):
  total=target_lines if target_lines is not None else (4 if short else 16)
- names=('verse','chorus') if total<=8 else ('verse1','chorus1','verse2','chorus2')
+ names=('verse',) if total==1 else (('verse','chorus') if total<=8 else ('verse1','chorus1','verse2','chorus2'))
  q,r=divmod(total,len(names));return {name:q+(i<r) for i,name in enumerate(names)}
 def response_schema(short,target_lines=None):
  counts=section_counts(short,target_lines)
@@ -74,9 +77,9 @@ def compile_plan(raw,short,target_lines=None):
  plan=validate(dict(raw,lyrics='\n\n'.join(chunks)))
  if not re.search(r'Japanese',plan['style'],re.I):plan['style']='Japanese vocals, '+plan['style']
  return plan
-def plan_song(brief,short=True,seed=831001,progress=print,duration_mode=DURATION_MODES[0],target_seconds=30):
+def plan_song(brief,short=True,seed=831001,progress=print,duration_mode=DURATION_MODES[0],target_seconds=30,lyric_lines=None):
  if not isinstance(brief,str) or not brief.strip() or len(brief)>6000:raise ValueError('日本語の指示を1〜6000文字で入力してください。')
- duration=duration_plan(short,duration_mode,target_seconds)
+ duration=duration_plan(short,duration_mode,target_seconds,lyric_lines)
  base=endpoint()
  try:api(base,'/api/v1/models',timeout=5)
  except Exception:
@@ -87,15 +90,16 @@ def plan_song(brief,short=True,seed=831001,progress=print,duration_mode=DURATION
  report={'model':MODEL,'gpu':'max','seed':seed,'duration':duration};start=time.perf_counter();owned=False
  try:
   progress('LM Studio: LLMをGPUへ読み込んでいます')
-  cli('load',MODEL,'--gpu','max','--context-length','4096','--parallel','1','--ttl','300','--identifier',IDENTIFIER,'--yes');owned=True
+  cli('load',MODEL,'--gpu','max','--context-length',str(8192 if duration['lyric_lines']>32 else 4096),'--parallel','1','--ttl','300','--identifier',IDENTIFIER,'--yes');owned=True
   report['load_seconds']=time.perf_counter()-start
   progress('LM Studio: 作詞・曲調を生成しています')
   counts=section_counts(short,duration['lyric_lines'])
   length='lyricsはJSONオブジェクト。各配列の歌詞行数: '+json.dumps(counts,ensure_ascii=False)+'。配列の各要素は歌う短い言葉だけ。タグや改行を含めない。イントロ・アウトロは短い楽器演奏としてstyleだけに記述。'
   if duration['target_seconds'] is not None:
    length+=' 目標は曲全体で約'+str(duration['target_seconds'])+'秒。ノードの指定時間を本文より優先して歌詞量、テンポ、構成を調整し、styleにも英語で目標秒数を含める。'
+  if lyric_lines is not None:length+=' 歌詞の行数は上記配列で指定済み。目標秒数に合わせて行数を増減せず、短い表現とテンポで調整する。'
   length+='/no_think'
-  body={'model':IDENTIFIER,'messages':[{'role':'system','content':SYSTEM+'\n'+length},{'role':'user','content':brief}],'temperature':.7,'seed':seed,'max_tokens':1800,'reasoning_effort':'none','chat_template_kwargs':{'enable_thinking':False},'response_format':{'type':'json_schema','json_schema':{'name':'song_plan','strict':True,'schema':response_schema(short,duration['lyric_lines'])}}}
+  body={'model':IDENTIFIER,'messages':[{'role':'system','content':SYSTEM+'\n'+length},{'role':'user','content':brief}],'temperature':.7,'seed':seed,'max_tokens':max(1800,min(4000,duration['lyric_lines']*45+500)),'reasoning_effort':'none','chat_template_kwargs':{'enable_thinking':False},'response_format':{'type':'json_schema','json_schema':{'name':'song_plan','strict':True,'schema':response_schema(short,duration['lyric_lines'])}}}
   t=time.perf_counter();response=api(base,'/v1/chat/completions',body);report['generation_seconds']=time.perf_counter()-t;report['usage']=response.get('usage')
   choice=response['choices'][0]
   if choice.get('finish_reason')!='stop':raise RuntimeError('作詞が途中終了しました。曲生成を開始しません。')

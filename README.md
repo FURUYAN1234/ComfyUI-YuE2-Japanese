@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.1)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.2.0)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.1/YuE2_Japanese_LMStudio_v1.1.1.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.1.1/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.2.0/YuE2_Japanese_LMStudio_v1.2.0.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.2.0/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -16,7 +16,7 @@ This local setup combines LM Studio on Windows with ComfyUI and an isolated YuE2
 
 YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official repository](https://github.com/multimodal-art-projection/YuE) and model licenses. / YuE2モデルはCC BY-NC 4.0の非商用ライセンスなので、[公式リポジトリ](https://github.com/multimodal-art-projection/YuE)と各モデルの条件を確認してください。
 
-![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.1.1.png)
+![Current workflow captured in ComfyUI / ComfyUIで撮影した現行ワークフロー](docs/assets/workflow-v1.2.0.png)
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
 
@@ -110,7 +110,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.1.1.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.2.0.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -118,7 +118,7 @@ Enter the extracted folder containing `README.md` and `install.py`. / `README.md
 Save unsaved browser workflows and let the ComfyUI queue finish before installation. / 導入前にブラウザーで編集中のワークフローを保存し、ComfyUIの実行キューが空になるまで待ってください。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.2.0
 python3 verify_package.py
 python3 install.py --comfyui ~/ComfyUI
 ```
@@ -207,7 +207,7 @@ Progress and errors appear on the button, and incomplete `.part` files are never
 These Ubuntu commands run the same download and verification process. / Ubuntuから次のコマンドでも同じ取得・検査処理を実行できます。
 
 ```bash
-cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.1.1
+cd ~/Downloads/yue2-packages/YuE2_Japanese_LMStudio_v1.2.0
 python3 download_models.py --comfyui ~/ComfyUI
 python3 download_models.py --comfyui ~/ComfyUI --check-only
 ```
@@ -265,6 +265,18 @@ Manual lyrics can contain sections such as `[Verse]` and `[Chorus]`; if none exi
 Empty manual lyrics or a missing style and preset produce an error before generation. / 手動歌詞が空欄、または曲調とプリセットが両方未指定なら、生成前にエラーを表示します。
 
 Manual OFF ignores the manual node, so its example does not replace automatic lyrics. / 手動OFFでは手動ノードの内容を使わず、初期例が自動作詞へ混ざることはありません。
+
+## Lyric line count / 歌詞の行数
+
+Choose Short trial (4 lines), Normal (16 lines), or Custom (1–64 lines) in the lyric planner. / 作詞ノードの「歌詞の行数」で「短い試作（4行）」「通常（16行）」「自由に指定（1〜64行）」を選べます。
+
+Headings and blank lines do not count; Custom lines is editable only in Custom mode. / 見出し・空行を除いて数え、「自由指定の行数」は自由指定のときだけ編集できます。
+
+Manual ON uses the entered lyrics unchanged and disables both line-count controls. / 手動ONでは入力歌詞をそのまま使い、行数の設定は両方とも無効になります。
+
+Set song duration and seconds in Input switches & priority; the current planner has no duplicate time controls. / 曲の長さと秒数は「入力切替・優先関係」で設定し、現行の作詞ノードには重複する時間設定を置きません。
+
+Target seconds do not change the selected lyric count; short targets with many lines may require editing or a different lyric count. / 目標秒数によって選択した行数は変えず、短い秒数に多くの行を指定した場合は編集や行数の見直しが必要になることがあります。
 
 ## Duration modes / 時間の指定方法
 
@@ -377,18 +389,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.1.1)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.2.0)
 
-Version: `v1.1.1`; tag: `v1.1.1`. / 配布版は `v1.1.1`、タグは `v1.1.1` です。
+Version: `v1.2.0`; tag: `v1.2.0`. / 配布版は `v1.2.0`、タグは `v1.2.0` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.1.1.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.1.1.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.2.0.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.2.0.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.1.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.2.0 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```
@@ -417,7 +429,7 @@ Qwen, LM Studio and ComfyUI have their own terms; see `LICENSE`, `NOTICE.md` and
 
 Press one of the eleven preset buttons to fill voice, genre, mood, instruments and BPM, then fine-tune the selection fields. / 11種類のプリセットボタンで声・曲調・雰囲気・楽器・BPMを一括設定し、選択欄で調整できます。
 
-![Preset buttons / プリセットボタン](docs/assets/switches-v1.1.1.png)
+![Preset buttons / プリセットボタン](docs/assets/switches-v1.2.0.png)
 
 Verified through the actual Run button: the Ballad preset produced 69.4 seconds of audio in 205.047 seconds end to end, including lyric planning and model switching; song generation and saving took 82.3 seconds. / 実際の実行ボタンから、バラード設定で69.4秒の音声を生成し、作詞・モデル切替を含む全工程205.047秒、曲生成・保存82.3秒を確認しました。
 
@@ -444,3 +456,13 @@ Additional presets: Night jazz, Lo-fi, Dance, Orchestral, Japanese folk and Lull
 
 
 All 11 button settings passed the live API. The new Jazz button with free lyrics generated 38.679 seconds of audio in 51.354 seconds end to end, without cached nodes; genre quality was not rated for every preset. / 全11ボタンの設定は実APIで確認済みです。追加したジャズと自由入力歌詞では38.679秒の音声を全工程51.354秒・キャッシュ省略なしで生成しました。全プリセットの曲調再現品質を評価したものではありません。
+
+Validated in the live workflow: 7 requested lyric lines produced 7 lines, 73.0s original audio and an exact 30.0s edited output in 194.824s end to end, including model loading and no cached node skipping. / 実ワークフローで7行指定から7行の歌詞・約73.0秒の元音声・30.0秒の編集音声を生成し、全工程194.824秒（モデル読込込み・キャッシュ省略なし）でした。
+
+Manual API verification preserved the entered 4 lines even with a stored custom count of 17; the LLM was not called. / 手動の実API検証では自由指定17行の保存値があっても入力した4行を保持し、LLMは呼び出されませんでした。
+
+The distributed example starts with Custom 7 lines and Exact 30 seconds; choose Natural to keep the full generated song. / 配布例の初期値は自由指定7行・ぴったり尺30秒で、生成された曲を全て残す場合は可変尺を選んでください。
+
+Line validation covers 1–64; actual song generation was checked at 7 lines, not every length. / 行数の検査範囲は1〜64行で、実際の曲生成は7行で確認し、全行数を実生成したわけではありません。
+
+Fixed recursion when disabled DOM inputs restored their values during queueing; a regression test covers the callback setter. / 無効な入力欄が実行時に値を復元して再帰する不具合を修正し、値設定コールバックの回帰テストを追加しました。

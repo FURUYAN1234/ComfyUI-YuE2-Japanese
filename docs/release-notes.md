@@ -1,22 +1,23 @@
-# v1.1.1 — Keep one input enabled / 最低1つの入力をONに維持
+# v1.2.0 — Custom lyric lines / 歌詞の自由行数
 
-The last enabled switch stays ON when clicked OFF; enable the other switch first to change sides. / 最後のONをOFFにしようとしてもONを維持します。切り替える場合は先にもう片方をONにしてください。
+Choose Short trial (4 lines), Normal (16 lines), or Custom (1–64 lines) in the lyric planner. / 作詞ノードの「歌詞の行数」で「短い試作（4行）」「通常（16行）」「自由に指定（1〜64行）」を選べます。
 
-Saved files with both OFF are restored with presets ON; valid manual-only and combined states are preserved. / 両方OFFの保存ファイルはプリセットONで復元し、手動のみ・両方ONの有効な状態は維持します。
+Headings and blank lines do not count; Custom lines is editable only in Custom mode. / 見出し・空行を除いて数え、「自由指定の行数」は自由指定のときだけ編集できます。
 
-Server-side rejection of invalid external API requests remains in place. / 外部APIからの不正な指定を拒否するサーバー側検査も維持します。
+Manual ON uses the entered lyrics unchanged and disables both line-count controls. / 手動ONでは入力歌詞をそのまま使い、行数の設定は両方とも無効になります。
 
+Set song duration and seconds in Input switches & priority; the current planner has no duplicate time controls. / 曲の長さと秒数は「入力切替・優先関係」で設定し、現行の作詞ノードには重複する時間設定を置きません。
 
-### Separate input control / 独立した入力切り替え
+Target seconds do not change the selected lyric count; short targets with many lines may require editing or a different lyric count. / 目標秒数によって選択した行数は変えず、短い秒数に多くの行を指定した場合は編集や行数の見直しが必要になることがあります。
 
-The Input switches node controls separate Presets and Free input nodes; timing stays in the controller. / 入力切替ノードで独立したプリセット・自由入力ノードを制御し、時間も切替ノードで設定します。
+Eleven presets, last-ON protection, disabled inputs and existing workflows remain supported. / 11種類のプリセット、最後のONの保護、OFF入力の無効化、既存ワークフローの互換性を維持します。
 
-OFF inputs are dimmed and cannot be edited; existing values are retained and restored when enabled. / OFF側はグレー表示・編集不可となり、入力内容は消さずにONへ戻したときに再利用します。
+Validated in the live workflow: 7 requested lyric lines produced 7 lines, 73.0s original audio and an exact 30.0s edited output in 194.824s end to end, including model loading and no cached node skipping. / 実ワークフローで7行指定から7行の歌詞・約73.0秒の元音声・30.0秒の編集音声を生成し、全工程194.824秒（モデル読込込み・キャッシュ省略なし）でした。
 
-With both ON, title and lyrics come from free input; style combines presets and free text without overwriting. / 両方ONでは曲名と歌詞は自由入力を使い、曲調はプリセットと自由入力を上書きせず併用します。
+Manual API verification preserved the entered 4 lines even with a stored custom count of 17; the LLM was not called. / 手動の実API検証では自由指定17行の保存値があっても入力した4行を保持し、LLMは呼び出されませんでした。
 
-No automatic priority resolves contradictory styles; use free input alone to exclude all preset style. / 矛盾する曲調の自動優先処理はなく、プリセットの曲調を外したい場合は自由入力のみONにしてください。
+The distributed example starts with Custom 7 lines and Exact 30 seconds; choose Natural to keep the full generated song. / 配布例の初期値は自由指定7行・ぴったり尺30秒で、生成された曲を全て残す場合は可変尺を選んでください。
 
-Eleven preset buttons now include jazz, Lo-fi, dance, orchestral, Japanese folk and lullaby. / ジャズ・Lo-fi・ダンス・オーケストラ・和風・子守歌を追加し、プリセットボタンを11種類に増やしました。
+Line validation covers 1–64; actual song generation was checked at 7 lines, not every length. / 行数の検査範囲は1〜64行で、実際の曲生成は7行で確認し、全行数を実生成したわけではありません。
 
-Validated: 11 preset configurations via the live API, last-ON protection and disabled inputs in the browser, and actual song generation. / 全11プリセット設定の実API、実画面での最後のON保護・OFF入力の無効化、実際の曲生成を確認しました。
+Fixed recursion when disabled DOM inputs restored their values during queueing; a regression test covers the callback setter. / 無効な入力欄が実行時に値を復元して再帰する不具合を修正し、値設定コールバックの回帰テストを追加しました。

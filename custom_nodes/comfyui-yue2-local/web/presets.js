@@ -1,5 +1,6 @@
 import { app } from "/scripts/app.js";
 
+const plannerTypes = ["YuE2JapanesePlanner", "YuE2LyricPlanner"];
 function syncManualInputs() {
   const graph = app.graph;
   if (!graph) return;
@@ -7,7 +8,7 @@ function syncManualInputs() {
     const isManual = target.type === "YuE2ManualLyrics";
     if (!isManual && target.type !== "YuE2PresetOptions") continue;
     const field = isManual ? "manual" : "settings";
-    const consumers = (graph._nodes || []).filter(n => n.type === "YuE2JapanesePlanner" &&
+    const consumers = (graph._nodes || []).filter(n => plannerTypes.includes(n.type) &&
       graph.links[n.inputs?.find(i => i.name === field)?.link]?.origin_id === target.id);
     const enabled = !consumers.length || consumers.some(n => {
       const switchLink = graph.links[n.inputs?.find(i => i.name === "switches")?.link];
@@ -22,7 +23,7 @@ function syncManualInputs() {
       if (!widget._yue2Guarded) {
         const callback = widget.callback;
         widget.callback = function (...args) {
-          if (widget.disabled) { widget.value = widget._yue2StoredValue; return; }
+          if (widget.disabled) { if (widget.value !== widget._yue2StoredValue) widget.value = widget._yue2StoredValue; return; }
           return callback?.apply(this, args);
         };
         widget._yue2Guarded = true;
@@ -35,6 +36,16 @@ function syncManualInputs() {
         widget.inputEl.style.opacity = enabled ? "" : "0.4";
       }
     }
+  }
+  for (const planner of graph._nodes || []) {
+    if (planner.type !== "YuE2LyricPlanner") continue;
+    const link = graph.links[planner.inputs?.find(i => i.name === "switches")?.link] || graph.links[planner.inputs?.find(i => i.name === "settings")?.link];
+    const control = graph.getNodeById(link?.origin_id);
+    const manual = control?.widgets?.find(w => w.name === "use_manual")?.value === true || control?.widgets?.find(w => w.name === "mode")?.value === "手動";
+    const mode = planner.widgets.find(w => w.name === "lyric_length");
+    if (mode) mode.disabled = manual;
+    const lines = planner.widgets.find(w => w.name === "lyric_lines");
+    if (lines) lines.disabled = manual || mode?.value !== "自由に指定";
   }
   graph.setDirtyCanvas?.(true, true);
 }
@@ -57,7 +68,7 @@ app.registerExtension({
   name: "yue2.presetButtons",
   afterConfigureGraph() { syncManualInputs(); },
   nodeCreated(node) {
-    if (!["YuE2InputSwitches", "YuE2PresetOptions", "YuE2SongSwitches", "YuE2SongOptions", "YuE2ManualLyrics", "YuE2JapanesePlanner"].includes(node.type)) return;
+    if (!["YuE2InputSwitches", "YuE2PresetOptions", "YuE2SongSwitches", "YuE2SongOptions", "YuE2ManualLyrics", "YuE2JapanesePlanner", "YuE2LyricPlanner"].includes(node.type)) return;
     const changed = node.onConnectionsChange;
     node.onConnectionsChange = function () {
       const result = changed?.apply(this, arguments);
@@ -66,6 +77,27 @@ app.registerExtension({
     };
   },
   async beforeRegisterNodeDef(nodeType, nodeData) {
+    if (nodeData.name === "YuE2LyricPlanner") {
+      const created = nodeType.prototype.onNodeCreated;
+      nodeType.prototype.onNodeCreated = function () {
+        const result = created?.apply(this, arguments);
+        for (const [name,label] of [["lyric_length","Lyric lines / 歌詞の行数"],["lyric_lines","Custom lines / 自由指定の行数"]]) {
+          const widget=this.widgets.find(w=>w.name===name);if(widget) widget.label=label;
+        }
+        const mode=this.widgets.find(w=>w.name==="lyric_length");
+        const changed=mode?.callback;
+        if(mode) mode.callback=function(...args){const result=changed?.apply(this,args);syncManualInputs();return result;};
+        this.addCustomWidget({name:"lyric_usage",type:"yue2_usage",options:{serialize:false},computeSize:()=>[490,80],draw(ctx,node,width,y){
+          ctx.save();ctx.font="13px sans-serif";ctx.fillStyle="#e5e7eb";
+          ["Rows exclude headings/blank lines / 空行・見出しを除く歌詞の行数",
+           "Song seconds: Input switches node / 曲の秒数は入力切替ノードで設定",
+           "Manual ON uses your lyrics unchanged / 手動ON：入力歌詞をそのまま使用",
+           "Manual ON disables lyric-line controls / 手動ONでは行数設定を無効化"]
+          .forEach((line,i)=>ctx.fillText(line,12,y+16+i*18));ctx.restore();
+        }});
+        return result;
+      };return;
+    }
     if (nodeData.name === "YuE2ManualLyrics") {
       const created = nodeType.prototype.onNodeCreated;
       nodeType.prototype.onNodeCreated = function () {
@@ -131,6 +163,7 @@ app.registerExtension({
         }
       }
       if (nodeData.name === "YuE2InputSwitches") {
+        for(const [name,label] of [["timing","Song duration / 曲の長さ"],["seconds","Song seconds / 曲の秒数"]]) {const w=this.widgets.find(w=>w.name===name);if(w)w.label=label;}
         this.addCustomWidget({name:"switch_usage",type:"yue2_usage",options:{serialize:false},computeSize:()=>[500,132],draw(ctx,node,width,y){
           ctx.save();ctx.font="13px sans-serif";ctx.fillStyle="#e5e7eb";
           ["At least one ON; both ON allowed / 最低1つON・両方ONも可能",
