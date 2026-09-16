@@ -38,6 +38,35 @@ def cli(*args,timeout=180):
 def api(base,path,data=None,timeout=180):
  req=urllib.request.Request(base+path,data=None if data is None else json.dumps(data,ensure_ascii=False).encode(),headers={'Content-Type':'application/json'})
  with urllib.request.urlopen(req,timeout=timeout) as response:return json.load(response)
+def ensure_server(base,progress=print):
+ # CLI completion is not server readiness: cold app startup can outlive lms.
+ def ready():
+  try:
+   result=api(base,'/api/v1/models',timeout=3)
+  except urllib.error.HTTPError:
+   raise  # An HTTP error is not evidence of a stopped server.
+  except (urllib.error.URLError,TimeoutError,ConnectionError):
+   return False
+  if not isinstance(result,dict) or not isinstance(result.get('models'),list):
+   raise RuntimeError('LM Studio APIの応答形式が不正です。接続先を確認してください。')
+  return True
+ if ready():return
+ last_error=None
+ for attempt in range(2):
+  progress(f'LM Studio APIを起動しています（{attempt+1}/2）')
+  try:
+   cli('server','start','--port','1234','--bind',base.split('//')[1].split(':')[0],timeout=30)
+  except (subprocess.TimeoutExpired,RuntimeError) as exc:
+   last_error=exc
+  progress('LM Studioの起動完了を待っています（最大30秒）')
+  deadline=time.monotonic()+30
+  while True:
+   if ready():return
+   remaining=deadline-time.monotonic()
+   if remaining<=0:break
+   time.sleep(min(2,remaining))
+ raise RuntimeError('LM Studio APIの起動を2回試しましたが応答がありません。LM Studioの起動状態と接続先 '+base+' を確認してください。') from last_error
+
 def validate(plan):
  if not isinstance(plan,dict) or set(plan)!=set(SCHEMA['required']): raise ValueError('曲データの項目が不正です。')
  for k,limit in [('title',160),('style',3000),('lyrics',12000)]:
@@ -85,10 +114,7 @@ def plan_song(brief,short=True,seed=831001,progress=print,duration_mode='歌詞�
  if not isinstance(brief,str) or not brief.strip() or len(brief)>6000:raise ValueError('日本語の指示を1〜6000文字で入力してください。')
  duration=duration_plan(short,duration_mode,target_seconds,lyric_lines)
  base=endpoint()
- try:api(base,'/api/v1/models',timeout=5)
- except Exception:
-  progress('LM Studio APIを起動しています')
-  cli('server','start','--port','1234','--bind',base.split('//')[1].split(':')[0],timeout=30)
+ ensure_server(base,progress)
  instances=json.loads(cli('ps','--json',timeout=20))
  if any(m.get('identifier')==IDENTIFIER for m in instances):raise RuntimeError('YuE2用LLMが既に使用されています。終了後に再実行してください。')
  report={'model':MODEL,'gpu':'max','seed':seed,'duration':duration};start=time.perf_counter();owned=False
@@ -158,8 +184,7 @@ def plan_song(brief,short=True,seed=831001,progress=print,duration_mode='歌詞�
 def title_song(plan,seed,progress=print):
  base=endpoint();owned=False
  try:
-  try:api(base,'/api/v1/models',timeout=5)
-  except Exception:cli('server','start','--port','1234','--bind',base.split('//')[1].split(':')[0],timeout=30)
+  ensure_server(base,progress)
   instances=json.loads(cli('ps','--json',timeout=20))
   if any(m.get('identifier')==IDENTIFIER for m in instances):raise RuntimeError('YuE2用LLMが既に使用されています。')
   progress('LM Studio: 曲名用LLMをGPUへ読み込んでいます')

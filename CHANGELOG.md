@@ -1,3 +1,9 @@
+# v1.5.3
+
+Wait for the LM Studio API after CLI startup and retry startup once when the server is initially unavailable. / CLI起動後にLM Studio APIの応答を待機し、最初にサーバーが使えない場合は1回だけ起動を再試行。
+
+Keep HTTP failures and malformed API responses visible instead of treating them as a stopped server. / HTTP失敗や不正なAPI応答は停止扱いで隠さず、そのまま表示。
+
 # v1.5.2
 
 Explain per-song JSON records, their lack of workflow import, and how to preserve playback when saving a workflow. / 曲ごとのJSONの用途、ワークフローへの読込非対応、再生を保持する保存方法を説明。

@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.2)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.3)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio_v1.5.2.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.2/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio_v1.5.3.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -22,7 +22,13 @@ YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official reposito
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
 
-## v1.5.1 / 今回の更新
+## v1.5.3 / LM Studio startup recovery / LM Studio起動の復旧
+
+When the API is not already reachable, the workflow now waits for the server to become ready after starting LM Studio; it retries the start at most once before returning a clear connection error. / APIへ接続できない場合、LM Studioの起動後にサーバー応答を待ち、最大1回だけ再起動を試してから接続エラーを表示します。
+
+This covers a cold LM Studio launch that continues after the CLI's first 30-second wait. It does not hide invalid API responses, incorrect ports, or model-loading errors. / CLIの最初の30秒待機後も続くLM Studioのコールド起動を扱います。不正なAPI応答、誤ったポート、モデル読込失敗を隠す処理ではありません。
+
+## v1.5.1 / Previous full-song update / 以前の1曲完走更新
 
 Full songs use the original standard structure: verse 1, chorus, verse 2, chorus, bridge, final chorus and outro, with an instrumental intro. There is no verse-count selector. / 1曲完走は従来の標準構成（器楽イントロ・1番・サビ・2番・サビ・ブリッジ・最後のサビ・アウトロ）を使い、番数選択はありません。
 Manual lyrics stay unchanged; this restriction applies to AI-written full songs. / 手動歌詞はそのまま使い、この標準構成はAI作詞の1曲完走に適用します。
@@ -44,7 +50,7 @@ Normal text, preset, free-lyrics, line-count and seconds controls become inactiv
 
 Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
 
-All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.2_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.2_年月日時分秒.flac` と `.mid` で同じ日時を使います。
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.3_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.3_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -172,7 +178,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.2.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.3.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -469,7 +475,7 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 | CUDA or sm_120 error / CUDA・sm_120エラー | Check WSL `nvidia-smi` and Torch in the YuE2 venv, separately from ComfyUI / WSLの `nvidia-smi` とYuE2専用venvのTorchを確認し、ComfyUI側と区別 |
 | CLI not found / CLIがない | Launch the installed Windows LM Studio; set an actual `YUE2_LMS_CLI` path for nonstandard layouts / WindowsのLM Studioを起動し、独自配置なら `YUE2_LMS_CLI` を実パスで指定 |
 | LLM not found / 作詞モデルがない | Finish Qwen3.5 9B Q4_K_M download and check identifier `qwen/qwen3.5-9b` / Qwen3.5 9B Q4_K_Mの取得を完了し、識別名 `qwen/qwen3.5-9b` を確認 |
-| Connection refused or timeout / 接続拒否・タイムアウト | Check LM Studio Developer, port 1234 and WSL-to-Windows communication / LM Studio Developer画面・ポート1234・WSLからWindowsへの通信を確認 |
+| Connection refused or timeout / 接続拒否・タイムアウト | The workflow waits for LM Studio after one automatic retry; if it still fails, check LM Studio Developer, port 1234 and WSL-to-Windows communication / ワークフローは自動再試行後にLM Studioの応答を待機します。それでも失敗するときはDeveloper画面・ポート1234・WSLからWindowsへの通信を確認 |
 | Out of VRAM / VRAM不足 | Finish other image, video or LLM workloads and retry a short song / 他の画像・動画・LLM処理を終え、短い試作で再実行 |
 | Truncated lyrics planning / 作詞が途中終了 | Music generation will not start; inspect logs and model settings before retrying / 曲生成は開始しないため、ログとモデル設定を確認して再実行 |
 | Slow cancellation / 中止の反映が遅い | YuE2 has subprocess cancellation, but LM Studio loading or API waits can take up to about 180 seconds / YuE2子プロセスは停止処理があるが、LM Studioロード・API応答中は最大約180秒の待ちが残る場合あり |
@@ -477,18 +483,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.2)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.3)
 
-Version: `v1.5.1`; tag: `v1.5.1`. / 配布版は `v1.5.1`、タグは `v1.5.1` です。
+Version: `v1.5.3`; tag: `v1.5.3`. / 配布版は `v1.5.3`、タグは `v1.5.3` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.5.2.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.2.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.5.3.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.3.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.5.1 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.5.3 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```

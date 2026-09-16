@@ -1,8 +1,30 @@
-import importlib.util,unittest,json,ast,types
+import importlib.util,unittest,json,ast,types,subprocess,urllib.error
+from unittest.mock import patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('planner',ROOT/'runtime/planner.py');planner=importlib.util.module_from_spec(spec);spec.loader.exec_module(planner)
 class RuntimeContract(unittest.TestCase):
+    def test_lm_studio_startup_recovery(self):
+        clock=[0]
+        def sleep(seconds):clock[0]+=seconds
+        with patch.object(planner,'api',side_effect=[urllib.error.URLError('offline'),{'models':[]}]),patch.object(planner,'cli',side_effect=subprocess.TimeoutExpired('lms',30)) as cli,patch.object(planner.time,'monotonic',side_effect=lambda:clock[0]),patch.object(planner.time,'sleep',side_effect=sleep):
+            planner.ensure_server('http://127.0.0.1:1234',lambda _:None)
+        self.assertEqual(cli.call_count,1)
+
+    def test_lm_studio_startup_stops_after_two_attempts(self):
+        clock=[0]
+        def sleep(seconds):clock[0]+=seconds
+        with patch.object(planner,'api',side_effect=urllib.error.URLError('offline')),patch.object(planner,'cli',side_effect=subprocess.TimeoutExpired('lms',30)) as cli,patch.object(planner.time,'monotonic',side_effect=lambda:clock[0]),patch.object(planner.time,'sleep',side_effect=sleep):
+            with self.assertRaisesRegex(RuntimeError,'2回'):planner.ensure_server('http://127.0.0.1:1234',lambda _:None)
+        self.assertEqual(cli.call_count,2)
+        self.assertEqual(clock[0],60)
+
+    def test_lm_studio_http_error_does_not_restart(self):
+        error=urllib.error.HTTPError('http://127.0.0.1:1234',401,'Unauthorized',{},None)
+        with patch.object(planner,'api',side_effect=error),patch.object(planner,'cli') as cli:
+            with self.assertRaises(urllib.error.HTTPError):planner.ensure_server('http://127.0.0.1:1234')
+        cli.assert_not_called()
+
     def test_full_song_structure(self):
         d=planner.duration_plan(True,planner.FULL_SONG,30,7)
         self.assertIsNone(d['target_seconds']);self.assertTrue(d['full_song'])
