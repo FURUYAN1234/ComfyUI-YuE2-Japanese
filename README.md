@@ -1,8 +1,8 @@
 # Japanese Song Creation / 日本語おまかせ作曲 — LM Studio × YuE2 / ComfyUI
 
-[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.3)
+[Download this release / この版をダウンロード](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.4)
 
-[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio_v1.5.3.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio.json)
+[Installer ZIP / 導入用ZIP](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.4/YuE2_Japanese_LMStudio_v1.5.4.zip) · [Workflow JSON / ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.4/YuE2_Japanese_LMStudio_GPU.json)
 
 Install the complete ZIP first; the JSON is also provided separately for importing after setup. / 初回はZIP一式を導入し、環境構築後の読込用にJSONも単独配布しています。
 
@@ -21,6 +21,12 @@ YuE2 models use CC BY-NC 4.0 for noncommercial use; check the [official reposito
 [Earlier full-layout image / 従来の全体配置画像](docs/assets/workflow-v1.4.0.png)
 
 This image is captured from the final workflow in ComfyUI, with no personal paths or private input included. / この画像は完成したワークフローをComfyUIで撮影したもので、個人のパスや私的な入力は含めていません。
+
+## v1.5.4 / Image-text lyric recovery / 画像文字混入時の歌詞復旧
+
+When an image reading places a label, licence fragment, or other ASCII/numeric text into a lyric line, the planner still asks the LLM to rewrite it first. If the same problem remains, it replaces only that line with a natural Japanese lyric and continues the song. / 画像の読取りでラベル・ライセンス断片など英数字を含む文字列が歌詞へ混ざった場合、まずLLMへ修正を依頼します。それでも残る場合は、その行だけ自然な日本語の歌詞へ置き換えて作曲を続行します。
+
+A full image-mode run using the failing image completed with a 183-second FLAC and MIDI output. This does not treat unrelated image-reading, API, or song-generation errors as success. / 問題が出た画像を使う画像モードの実行では、183秒のFLACとMIDI出力まで完走しました。画像読取り・API・曲生成の別の失敗まで成功扱いにする変更ではありません。
 
 ## v1.5.3 / LM Studio startup recovery / LM Studio起動の復旧
 
@@ -50,7 +56,7 @@ Normal text, preset, free-lyrics, line-count and seconds controls become inactiv
 
 Read the image interpretation in Details to check dialogue and the ending; small text or unusual layouts can be misread. / 詳細欄の画像解釈でセリフや結末を確認してください。細かな文字や特殊なレイアウトは読み違える場合があります。
 
-All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.3_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.3_年月日時分秒.flac` と `.mid` で同じ日時を使います。
+All output titles are AI-generated, including manual-lyrics songs. Downloads use `TITLE_v1.5.4_YYYYMMDDHHMMSS.flac` and `.mid` with the same timestamp. / 手動歌詞を含む全曲の曲名はAIが考え、ダウンロード名は `曲名_v1.5.4_年月日時分秒.flac` と `.mid` で同じ日時を使います。
 
 ## LLM startup and progress / LLMの起動・進行表示
 
@@ -178,7 +184,7 @@ Replace `YOUR_WINDOWS_USER` with your Windows username and use the actual downlo
 
 ```bash
 mkdir -p ~/Downloads/yue2-packages
-unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.3.zip -d ~/Downloads/yue2-packages
+unzip /mnt/c/Users/YOUR_WINDOWS_USER/Downloads/YuE2_Japanese_LMStudio_v1.5.4.zip -d ~/Downloads/yue2-packages
 ```
 
 Enter the extracted folder containing `README.md` and `install.py`. / `README.md` と `install.py` が見える展開先フォルダーへ移動してください。
@@ -483,18 +489,18 @@ The [official demo](https://map-yue2.github.io/) also contains Japanese singing 
 
 ## Version control and rebuilding / バージョン管理と再構築
 
-[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.3)
+[Source / ソース](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese) · [Release / 配布版](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.4)
 
-Version: `v1.5.3`; tag: `v1.5.3`. / 配布版は `v1.5.3`、タグは `v1.5.3` です。
+Version: `v1.5.4`; tag: `v1.5.4`. / 配布版は `v1.5.4`、タグは `v1.5.4` です。
 
-Use the named `YuE2_Japanese_LMStudio_v1.5.3.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.3.zip` を使用してください。
+Use the named `YuE2_Japanese_LMStudio_v1.5.4.zip` Release asset, not GitHub's automatic Source code ZIP. / GitHub自動生成のSource code ZIPではなく、Releaseの `YuE2_Japanese_LMStudio_v1.5.3.zip` を使用してください。
 
 `VERSION` contains the distribution identifier, `CHANGELOG.md` records changes, and `.gitattributes` prevents line-ending conversion in Git. / `VERSION` に配布識別子、`CHANGELOG.md` に変更点を記録し、Gitの改行変換は `.gitattributes` で止めています。
 
 Build from the exact tagged source with these commands. / タグ付きソースから次のコマンドで構築できます。
 
 ```bash
-git clone --branch v1.5.3 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
+git clone --branch v1.5.4 https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese.git
 cd ComfyUI-YuE2-Japanese
 python3 build_package.py --output /YOUR_OUTPUT_FOLDER
 ```

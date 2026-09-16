@@ -1,3 +1,9 @@
+# v1.5.4
+
+Continue image-based song creation when an image label or licence fragment with Latin characters or digits remains in a lyric after the LLM rewrite; replace only the affected line with singable Japanese. / 画像のラベル・ライセンス断片など英数字を含む文字列がLLM修正後も歌詞に残る場合、その行だけ歌える日本語へ置き換えて画像からの作曲を継続。
+
+Verified a full image-mode run from the previously failing image through 183-second FLAC and MIDI output. / 以前失敗した画像で、183秒のFLACとMIDI出力まで画像モードの実行を確認。
+
 # v1.5.3
 
 Wait for the LM Studio API after CLI startup and retry startup once when the server is initially unavailable. / CLI起動後にLM Studio APIの応答を待機し、最初にサーバーが使えない場合は1回だけ起動を再試行。

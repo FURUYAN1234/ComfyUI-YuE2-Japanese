@@ -110,6 +110,18 @@ def compile_plan(raw,short,target_lines=None,full_song=False):
  plan=validate(dict(raw,lyrics='\n\n'.join(chunks)))
  if not re.search(r'Japanese',plan['style'],re.I):plan['style']='Japanese vocals, '+plan['style']
  return plan
+def sanitize_visual_lyrics(lyrics):
+ """Replace image labels and licence fragments that are not singable lyrics."""
+ replacements=('映る景色を胸に抱く','静かな気配を追いかける','物語の先へ歩き出す','揺れる想いを歌にする')
+ cleaned=[];changed=False;line_number=0
+ for line in lyrics.splitlines():
+  if line.startswith('[') and line.endswith(']'):
+   cleaned.append(line);continue
+  if re.search(r'[A-Za-zＡ-Ｚａ-ｚ0-9０-９]',line):
+   cleaned.append(replacements[line_number%len(replacements)]);changed=True
+  else:cleaned.append(line)
+  line_number+=1
+ return '\n'.join(cleaned),changed
 def plan_song(brief,short=True,seed=831001,progress=print,duration_mode='歌詞量で指定（従来）',target_seconds=30,lyric_lines=None,visual=None):
  if not isinstance(brief,str) or not brief.strip() or len(brief)>6000:raise ValueError('日本語の指示を1〜6000文字で入力してください。')
  duration=duration_plan(short,duration_mode,target_seconds,lyric_lines)
@@ -163,6 +175,10 @@ def plan_song(brief,short=True,seed=831001,progress=print,duration_mode='歌詞�
     if re.search(r'[0-9０-９]',plan['lyrics']):problem='画像由来の数字を歌詞に転記せず、時の長さや意味を自然な言葉へ言い換える。'
     try:plan['lyrics'].encode('cp932')
     except UnicodeEncodeError:problem='日本語の歌詞に簡体字や装飾記号が混入した。常用の日本語表記とひらがなへ修正する。'
+   if attempt and problem and re.search(r'画像由来の数字',problem):
+    lyrics,changed=sanitize_visual_lyrics(plan['lyrics'])
+    if changed:
+     plan['lyrics']=lyrics;report['lyric_sanitized']=True;problem=None
    if not problem:break
    if attempt:
     failed=ROOT/'jobs';failed.mkdir(exist_ok=True)

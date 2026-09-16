@@ -25,6 +25,16 @@ class RuntimeContract(unittest.TestCase):
             with self.assertRaises(urllib.error.HTTPError):planner.ensure_server('http://127.0.0.1:1234')
         cli.assert_not_called()
 
+    def test_visual_lyric_sanitizing_recovers_image_text_only(self):
+        source="[Bridge]\nA24えいがかメモもCC BY-SA 3.0じょうけんひょうも\n静かな歌"
+        cleaned,changed=planner.sanitize_visual_lyrics(source)
+        self.assertTrue(changed)
+        self.assertIn("映る景色を胸に抱く",cleaned)
+        self.assertIn("静かな歌",cleaned)
+        self.assertNotRegex(cleaned.splitlines()[1],r"[A-Za-zＡ-Ｚａ-ｚ0-9０-９]")
+        untouched,changed=planner.sanitize_visual_lyrics("[Verse]\n雨の歌")
+        self.assertEqual(untouched,"[Verse]\n雨の歌");self.assertFalse(changed)
+
     def test_full_song_structure(self):
         d=planner.duration_plan(True,planner.FULL_SONG,30,7)
         self.assertIsNone(d['target_seconds']);self.assertTrue(d['full_song'])

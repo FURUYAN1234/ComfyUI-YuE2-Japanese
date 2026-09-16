@@ -2,6 +2,15 @@
 
 ![日本語でおまかせ作曲](assets/note-thumbnail-v1.4.0.png)
 
+## v1.5.4：画像内の文字断片で作詞を止めず、歌を続ける
+
+画像から歌を作るとき、画像中のラベルやライセンス表記などの英数字が歌詞へ混ざる場合があります。まずLLMに歌詞として自然な日本語へ直すよう依頼し、それでも残ったときだけ該当する1行を自然な日本語の歌詞へ置き換え、曲の生成を続けるようにしました。
+
+実際にエラーになった同じ画像で、画像モードから182.96秒のFLACとMIDI出力まで完走しています。画像の読取り違い、LM Studio接続、曲生成の別の失敗を成功扱いにする変更ではありません。
+
+- [導入ZIP v1.5.4](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.4/YuE2_Japanese_LMStudio_v1.5.4.zip)
+- [リリースページ v1.5.4](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/tag/v1.5.4)
+
 ## v1.5.3：LM Studioが起動途中でも待機して再試行
 
 LM StudioのAPIがまだ起動していないとき、作詞ノードは起動コマンドの直後に失敗とはせず、APIが応答するまで待機するようにしました。最初の待機で応答しなければ、起動を1回だけ再試行します。
@@ -30,8 +39,8 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 ## ワークフローの入手
 
-- [導入ZIP v1.5.3](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio_v1.5.3.zip)
-- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.3/YuE2_Japanese_LMStudio.json)
+- [導入ZIP v1.5.4](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.4/YuE2_Japanese_LMStudio_v1.5.4.zip)
+- [ワークフローJSON](https://github.com/FURUYAN1234/ComfyUI-YuE2-Japanese/releases/download/v1.5.4/YuE2_Japanese_LMStudio_GPU.json)
 
 初回はZIP全体を導入してください。JSON単体は導入済み環境への読み込み用です。
 
@@ -45,7 +54,7 @@ LM StudioのQwen3.5 9Bがこの文章から歌詞と曲調を作り、YuE2が歌
 
 読み取った内容は詳細欄にも表示します。文字が小さい漫画や特殊なコマ割りには読み違いがあるため、セリフとオチを確認して使ってください。
 
-曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.5.3_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
+曲名は手動歌詞を含めて全曲AIが考えます。音声とMIDIのダウンロード名は `曲名_v1.5.4_年月日時分秒.flac`／`.mid`。年から秒まで14桁で、同じ曲には同じ日時を付けます。
 
 ## ボタンで選ぶ・日本語で任せる・自由入力する
 
@@ -432,6 +441,7 @@ Records can include your prompts, lyrics and local paths; they are excluded from
 
 ## 更新履歴
 
+- **v1.5.4（2026年9月16日）**：画像内のラベル・ライセンス表記などの英数字がLLM修正後も歌詞へ残る場合、その行だけ自然な日本語へ置換して画像モードの作曲を続けます。以前エラーになった同じ画像で、182.96秒のFLACとMIDI出力まで完走しました。
 - **v1.5.3（2026年9月16日）**：LM StudioのAPIが停止しているとき、CLIでの起動直後に失敗と扱わず、API応答を待つ処理を追加しました。応答がない場合は起動を1回だけ再試行し、それでも接続できなければ原因を確認できるエラーを表示します。ポート設定や不正なAPI応答、モデル読込の失敗を成功扱いにする変更ではありません。
 - **v1.5.2（2026年9月14日）**：曲ごとのJSONの用途、ワークフローへの読込・復元非対応、再開用ワークフローと音声・MIDI本体の保管方法、FLACとMIDIの違いを追記。曲生成の動作は変更なし。
 - **v1.5.1（2026年9月14日）**：番数選択を削除し、従来の標準構成（2番までを含む1曲完走）へ復帰。README・説明欄・記事・設定画像・配布リンクを修正。
